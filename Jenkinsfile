@@ -13,7 +13,7 @@ pipeline {
         stage('Checkout') {
             steps {
           		  // credentialId '{github credential id}'
-                git url: 'https://lab.ssafy.com/s11-webmobile1-sub2/S11P12C107.git', branch: 'main', credentialsId: 'gitlab'
+                git url: 'https://lab.ssafy.com/s11-webmobile1-sub2/S11P12C107.git', branch: 'master', credentialsId: 'gitlab'
             }
         }
         stage('Build') {
