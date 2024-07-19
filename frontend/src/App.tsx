@@ -7,9 +7,6 @@ import LandingPage from "./pages/LandingPage.tsx";
 
 function App() { 
   const isLogin:number = 1
-  
-
-
 
 
   if (isLogin!==1) {
