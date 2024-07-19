@@ -1,10 +1,11 @@
 import styled from "styled-components"
+import { Tag } from "../components/Tag"
 
 const MyCharPage = () => {
     return (
         <>
         내 캐릭터 보관함 페이지
-        
+        <Tag/>
         </>
     )
 
