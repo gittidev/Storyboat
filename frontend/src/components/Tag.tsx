@@ -2,7 +2,7 @@ import { useState } from 'react';
 import styled from 'styled-components';
 
 export const TagsInput = styled.div`
-  margin: 8rem auto;
+
   display: flex;
   align-items: flex-start;
   flex-wrap: wrap;
@@ -66,7 +66,7 @@ export const TagsInput = styled.div`
 `;
 
 export const Tag = () => {
-  const initialTags = ['CodeStates', 'kimcoding'];
+  const initialTags = ['판타지', '공포'];
 
   const [tags, setTags] = useState(initialTags);
   const removeTags = (indexToRemove : number) => {
