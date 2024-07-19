@@ -16,38 +16,28 @@ pipeline {
                 git url: 'https://lab.ssafy.com/s11-webmobile1-sub2/S11P12C107.git', branch: 'master', credentialsId: 'gitlab'
             }
         }
-        stage('Build') {
-            steps {
-                // Gradle executable permissions 허용
-                sh 'chmod +x ./gradlew'
 
-                // build the project using Gradle Wrapper
-                sh './gradlew clean build'
+        stage('Build and Push Docker Images') {
+            steps {
+                script {
+                    docker-compose build
+                    docker-compose push
+                }
             }
         }
 
-        stage('Build Docker Image') {
+        stage('Run Docker Containers') {
             steps {
-		            // Dockerhub link
-                sh 'docker build -t siokim002/jenkins_test .'
+                script {
+                    docker-compose up -d
+                }
             }
         }
-
-        stage('Push Docker Image') {
-            steps {
-                sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
-								// Dockerhub link
-                sh 'docker push siokim002/jenkins_test'
-            }
-        }
-
-        stage('Run Docker Container') {
-            steps {
-                sh '''
-                    docker stop jenkins_test || true
-                    docker rm jenkins_test || true
-                    docker run -d -p 80:8080 --name jenkins_test siokim002/jenkins_test
-                '''
+    }
+    post {
+        always {
+            script {
+                docker-compose down
             }
         }
     }
