@@ -1,56 +1,46 @@
-import { Routes, Route } from "react-router-dom"
-import styled from "styled-components";
+import React, { useState } from 'react';
+import { Outlet } from 'react-router-dom';
+import { styled } from '@mui/system';
 
-import NavBar from "../components/NavBar.tsx";
-import TopBar from "../components/TopBar.tsx";
-
-
-import MyStoryPage from "../pages/MyStoryPage.tsx"
-import MyCharPage from "../pages/MyCharPage.tsx"
-import MyIdeaPage from "../pages/MyIdeaPage.tsx"
-import StoryBoxPage from "../pages/StoryBoxPage.tsx"
-import StoryEditPage from "../pages/StoryEditPage.tsx"
-import CharBoxPage from "../pages/CharBoxPage.tsx"
-import IdeaBoxPage from "../pages/IdeaBoxPage.tsx"
-import StudioPage from "../pages/StudioPage.tsx"
-import FindTeamPage from "../pages/FindTeamPage.tsx"
-import ProfilePage from "./ProfilePage.tsx";
+import NavBar from '../components/NavBar';
+import TopBar from '../components/TopBar';
 
 
-const styledMainPage = styled.div`
-  display : flex;
-`
+import { Box } from '@mui/material';
 
+const NavBarFrame = styled(Box)`
+  width: ${(props) => (props.open ? '250px' : '50px')};
+  height: 100%;
+  border: 1px solid #d9d9d9;
+  transition: width 0.3s;
+`;
+
+const MainPageFrame = styled(Box)`
+  margin-left: ${(props) => (props.open ? '250px' : '50px')};
+  width: calc(100% - ${(props) => (props.open ? '250px' : '50px')});
+  transition: margin-left 0.3s, width 0.3s;
+  display :flex;
+`;
 
 const MainPage = () => {
+  const [isNavBarOpen, setIsNavBarOpen] = useState(true); // Default state of NavBar
 
- 
-    return (
-      <>
-        <styledMainPage>
+  const handleNavBarToggle = (open: boolean) => {
+    setIsNavBarOpen(open);
+  };
 
-        <NavBar/> 
-        <TopBar/>
+  return (
+    <>
+      <NavBarFrame open={isNavBarOpen}>
+        <NavBar onToggle={handleNavBarToggle} />
+      </NavBarFrame>
 
-        </styledMainPage>
-    
-        {/* 페이지 이동 경로 */}
-        <Routes>    
-          <Route path='/mystory' element={<MyStoryPage/>}/>
-          <Route path='/mychar' element={<MyCharPage/>}/>
-          <Route path='/myidea' element={<MyIdeaPage/>}/>
-          <Route path='/storybox' element={<StoryBoxPage/>}/>
-          <Route path='/storyedit' element={<StoryEditPage/>}/>
-          <Route path='/charbox' element={<CharBoxPage/>}/>
-          <Route path='/ideabox' element={<IdeaBoxPage/>}/>
-          <Route path='/studio' element={<StudioPage/>}/>
-          <Route path='/findteam' element={<FindTeamPage/>}/>
-          <Route path='/profile' element={<ProfilePage/>}/>
+      <MainPageFrame open={isNavBarOpen}>
+        <TopBar />
+        <Outlet/>
+      </MainPageFrame>
+    </>
+  );
+};
 
-        </Routes>
-      </>
-      
-    )   
-}
-
-export default MainPage
+export default MainPage;
