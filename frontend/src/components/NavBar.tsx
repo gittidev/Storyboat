@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Link as RouterLink, LinkProps as RouterLinkProps } from 'react-router-dom';
-import { Box, Drawer, Button as MuiButton, List, Divider, ListItem, ListItemIcon, ListItemText } from '@mui/material';
+import { Box, Drawer, Button as MuiButton, List, Divider, ListItem, ListItemIcon, ListItemText, IconButton } from '@mui/material';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import Logo from '../assets/logo.png';
 import {
@@ -8,6 +8,7 @@ import {
   DriveFileRenameOutlineRoundedIcon, Face5Icon, BatchPredictionIcon, SettingsRoundedIcon,
   SailingRoundedIcon, ArrowBackIosNewRoundedIcon
 } from './Icons';
+import { styled } from '@mui/system'
 
 type Anchor = 'left';
 
@@ -17,6 +18,14 @@ interface ListItemLinkProps {
   to: string;
   textSize?: string;
 }
+
+const StyledHomeDiv = styled('div')`
+  display : flex;
+  align-items: center;
+  color : black;
+  text-decoration: none;
+  justify-content: space-between;
+`
 
 const theme = createTheme({
   components: {
@@ -83,7 +92,7 @@ interface NavBarProps {
 
 export default function NavBar({ onToggle }: NavBarProps) {
   const [state, setState] = React.useState({
-    left: true,
+    left: false,
   });
 
   const toggleDrawer = (anchor: Anchor, open: boolean) => (event: React.KeyboardEvent | React.MouseEvent) => {
@@ -95,9 +104,7 @@ export default function NavBar({ onToggle }: NavBarProps) {
     onToggle(open); // Update the width based on the drawer state
   };
 
-
-
-  //네브바 목록
+  // 네브바 목록
   const list = (anchor: Anchor) => (
     <Box
       sx={{ width: 250, color: 'inherit' }}
@@ -105,13 +112,15 @@ export default function NavBar({ onToggle }: NavBarProps) {
     >
       <ThemeProvider theme={theme}>
         <List>
-          <div>
-            <RouterLink to={'/'}>
-              <img src={Logo} width={30} />
-              <ListItemLink to="/" primary="StoryBoat"/>
+          <StyledHomeDiv>
+            <RouterLink to={'/'} style={{ display: 'flex', alignItems: 'center', color: 'black', textDecoration: 'none' }}>
+              <img src={Logo} width={30} alt="Logo" />
+              <span>StoryBoat</span>
             </RouterLink>
-            <ArrowBackIosNewRoundedIcon onClick={toggleDrawer(anchor, false)} />
-          </div>
+            <IconButton onClick={toggleDrawer(anchor, false)}>
+              <ArrowBackIosNewRoundedIcon />
+            </IconButton>
+          </StyledHomeDiv>
         </List>
         <Divider />
         <List>
@@ -153,27 +162,24 @@ export default function NavBar({ onToggle }: NavBarProps) {
               borderRadius: '0px 16px 16px 0px',
             }}
           >
-            <img src={Logo} width={30} />
+            <img src={Logo} width={30} alt="Logo" />
           </MuiButton>
 
-
-
-
-
-
-            {/* 내부 네브바 */}
           <Drawer
             elevation={0}
             anchor={anchor}
             open={state[anchor]}
             onClose={toggleDrawer(anchor, false)}
             hideBackdrop={true}
+            ModalProps={{
+              keepMounted: true, // 컴포넌트를 계속 마운트 상태로 유지
+            }}
+            PaperProps={{
+              style: { pointerEvents: 'auto' } // 내부 요소 클릭 허용
+            }}
           >
             {list(anchor)}
           </Drawer>
-
-
-
         </React.Fragment>
       ))}
     </>
