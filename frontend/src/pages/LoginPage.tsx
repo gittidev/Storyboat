@@ -1,9 +1,16 @@
 import styled from "styled-components"
 
+import KakaoLoginButton from "../components/Login/KakaoLoginButton"
+import GoogleLoginButton from "../components/Login/GoogleLoginButton"
+
 const LoginPage = () => {
     return (
         <>
-        로그인 페이지z
+        <h1>Login</h1>
+        <KakaoLoginButton/>
+        <br />
+        <GoogleLoginButton/>
+
         </>
     )
 
