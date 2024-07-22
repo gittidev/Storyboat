@@ -1,153 +1,187 @@
 import * as React from 'react';
-import {      
-  Link as RouterLink, 
-  LinkProps as RouterLinkProps } from 'react-router-dom';
-import { Box, Drawer, Button, List, Divider, ListItem, ListItemIcon, ListItemText, Typography, } from '@mui/material';
-
-import Logo from '../assets/logo.png'
-
+import { Link as RouterLink, LinkProps as RouterLinkProps } from 'react-router-dom';
+import { Box, Drawer, Button as MuiButton, List, Divider, ListItem, ListItemIcon, ListItemText, IconButton } from '@mui/material';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import Logo from '../assets/logo.png';
+import {
+  FolderOpenRoundedIcon, AddReactionRoundedIcon, LightbulbIcon, MediationRoundedIcon,
+  DriveFileRenameOutlineRoundedIcon, Face5Icon, BatchPredictionIcon, SettingsRoundedIcon,
+  SailingRoundedIcon, ArrowBackIosNewRoundedIcon
+} from './Icons';
+import { styled } from '@mui/system'
 
 type Anchor = 'left';
 
 interface ListItemLinkProps {
-    icon?: React.ReactElement;
-    primary: string;
-    to: string;
-  }
-  
+  icon?: React.ReactElement;
+  primary: string;
+  to: string;
+  textSize?: string;
+}
 
-const Link = React.forwardRef<HTMLAnchorElement, RouterLinkProps>(
-  function Link(itemProps, ref) {
-    return <RouterLink ref={ref} {...itemProps} role={undefined} />;
+const StyledHomeDiv = styled('div')`
+  display : flex;
+  align-items: center;
+  color : black;
+  text-decoration: none;
+  justify-content: space-between;
+`
+
+const theme = createTheme({
+  components: {
+    MuiListItem: {
+      styleOverrides: {
+        root: {
+          '&:hover': {
+            backgroundColor: '#f5f5f5',
+          },
+        },
+      },
+    },
+    MuiListItemIcon: {
+      styleOverrides: {
+        root: {
+          minWidth: '30px',
+          marginLeft: '3px',
+          '& .MuiSvgIcon-root': {
+            fontSize: '16px',
+          },
+        },
+      },
+    },
+    MuiListItemText: {
+      styleOverrides: {
+        root: {
+          fontSize: '10px',
+          color: 'black',
+          marginLeft: '16px',
+        },
+      },
+    },
   },
-);
+});
+
+const Link = React.forwardRef<HTMLAnchorElement, RouterLinkProps>(function Link(itemProps, ref) {
+  return <RouterLink ref={ref} {...itemProps} role={undefined} />;
+});
 
 function ListItemLink(props: ListItemLinkProps) {
-  const { icon, primary, to } = props;
+  const { icon, primary, to, textSize } = props;
 
   return (
     <li>
       <ListItem component={Link} to={to}>
         {icon ? <ListItemIcon>{icon}</ListItemIcon> : null}
-        <ListItemText primary={primary} />
+        <ListItemText
+          primary={primary}
+          sx={{
+            fontFamily: 'Inter',
+            color: 'black',
+            marginLeft: icon ? '0px' : '0px',
+            fontSize: textSize || 'inherit',
+          }}
+        />
       </ListItem>
     </li>
   );
 }
 
+interface NavBarProps {
+  onToggle: (open: boolean) => void;
+}
 
+export default function NavBar({ onToggle }: NavBarProps) {
+  const [state, setState] = React.useState({
+    left: false,
+  });
 
-export default function NavBar() {
-    const [state, setState] = React.useState({
-        left: false, 
-      });
+  const toggleDrawer = (anchor: Anchor, open: boolean) => (event: React.KeyboardEvent | React.MouseEvent) => {
+    if (event.type === 'keydown' && ((event as React.KeyboardEvent).key === 'Tab' || (event as React.KeyboardEvent).key === 'Shift')) {
+      return;
+    }
 
+    setState({ ...state, [anchor]: open });
+    onToggle(open); // Update the width based on the drawer state
+  };
 
-      const toggleDrawer =
-    (anchor: Anchor, open: boolean) =>
-    (event: React.KeyboardEvent | React.MouseEvent) => {
-      if (
-        event.type === 'keydown' &&
-        ((event as React.KeyboardEvent).key === 'Tab' ||
-          (event as React.KeyboardEvent).key === 'Shift')
-      ) {
-        return;
-      }
-
-      setState({ ...state, [anchor]: open });
-    };
-
-
-  // navbar 내용 들어가는 부분 ...
+  // 네브바 목록
   const list = (anchor: Anchor) => (
     <Box
-      sx={{ width: 250, color : 'inherit' }}
+      sx={{ width: 250, color: 'inherit' }}
       role="presentation"
-      onClick={toggleDrawer(anchor, false)}
-      onKeyDown={toggleDrawer(anchor, false)}
     >
-
-      <List>   
-      <ListItemLink to="/mystory" primary="StoryBoat" icon={''} sx={{
-          color: '#000',
-          fontFamily: 'Inter',
-          fontSize: '24px',
-          fontStyle: 'italic',
-          fontWeight: 900,
-          lineHeight: '36px', // 150%
-      }}/>
-      </List>     
-      
-      <Divider />
-      
-      <List>        
-        <ListItemLink to="/mystory" primary="나만의 스토리" icon={''} />
-        <ListItemLink to="/mychar" primary="나만의 캐릭터" icon={''} />
-        <ListItemLink to="/myidea" primary="나만의 아이디어" icon={''} />
-      </List>
-
-
-      <Divider />
-          <List aria-label="main mailbox folders">
-            <ListItemLink to="/storybox" primary="Story Box" icon={''} />
-            <ListItemLink to="/storyedit" primary="Story 보관소" icon={''} />
-            <ListItemLink to="/charbox" primary="캐릭터 보관소" icon={''} />
-            <ListItemLink to="/ideabox" primary="아이디어 보관소" icon={''} />
-            <ListItemLink to="/studio" primary="스튜디오 설정" icon={''} />
-          </List>
-
-
-
-      <Divider />
-
-      <List aria-label="main mailbox folders">
-            <ListItemLink to="/inbox" primary="Inbox" icon={ '' } />
-            <ListItemLink to="/findteam" primary="팀 찾기" icon={''} />
-
-      </List>
-      <Divider />
-
-      <List aria-label="main mailbox folders">
-      <ListItemLink to="/profile" primary="사용자명" icon={''} />
-          
-
-      </List>
-
-        
-      
-
+      <ThemeProvider theme={theme}>
+        <List>
+          <StyledHomeDiv>
+            <RouterLink to={'/'} style={{ display: 'flex', alignItems: 'center', color: 'black', textDecoration: 'none' }}>
+              <img src={Logo} width={30} alt="Logo" />
+              <span>StoryBoat</span>
+            </RouterLink>
+            <IconButton onClick={toggleDrawer(anchor, false)}>
+              <ArrowBackIosNewRoundedIcon />
+            </IconButton>
+          </StyledHomeDiv>
+        </List>
+        <Divider />
+        <List>
+          <ListItemText primary="개인 보관함" sx={{ color: 'black', marginLeft: '16px', fontSize: '10px' }} />
+          <ListItemLink to="/main/mystory" primary="나만의 스토리" icon={<FolderOpenRoundedIcon />} />
+          <ListItemLink to="/main/mychar" primary="나만의 캐릭터" icon={<AddReactionRoundedIcon />} />
+          <ListItemLink to="/main/myidea" primary="나만의 아이디어" icon={<LightbulbIcon />} />
+        </List>
+        <Divider />
+        <List aria-label="main mailbox folders">
+          <ListItemText primary="스튜디오 보관함" sx={{ color: 'black', marginLeft: '16px', fontSize: '12px' }} />
+          <ListItemLink to="/main/storybox" primary="Story Box" icon={<MediationRoundedIcon />} />
+          <ListItemLink to="/main/storyedit" primary="Story 보관소" icon={<DriveFileRenameOutlineRoundedIcon />} />
+          <ListItemLink to="/main/charbox" primary="캐릭터 보관소" icon={<Face5Icon />} />
+          <ListItemLink to="/main/ideabox" primary="아이디어 보관소" icon={<BatchPredictionIcon />} />
+          <ListItemLink to="/main/studio" primary="스튜디오 설정" icon={<SettingsRoundedIcon />} />
+        </List>
+        <Divider />
+        <List aria-label="main mailbox folders">
+          <ListItemLink to="/main/findteam" primary="팀 찾기" icon={<SailingRoundedIcon />} />
+        </List>
+        <Divider />
+        <List aria-label="main mailbox folders">
+          <ListItemLink to="/main/profile" primary="사용자명" />
+        </List>
+      </ThemeProvider>
     </Box>
-    );
+  );
 
-
-
-
-    return(
-    
-        <>
-
-        {(['left'] as const).map((anchor) => (
-        
+  return (
+    <>
+      {(['left'] as const).map((anchor) => (
         <React.Fragment key={anchor}>
-          <Button onClick={toggleDrawer(anchor, true)}>{anchor}</Button>
+          <MuiButton
+            onClick={toggleDrawer(anchor, true)}
+            sx={{
+              border: '1px solid #D9D9D9',
+              padding: '10px',
+              borderRadius: '0px 16px 16px 0px',
+            }}
+          >
+            <img src={Logo} width={30} alt="Logo" />
+          </MuiButton>
 
-          <Button></Button>
           <Drawer
+            elevation={0}
             anchor={anchor}
             open={state[anchor]}
             onClose={toggleDrawer(anchor, false)}
+            hideBackdrop={true}
+            ModalProps={{
+              keepMounted: true, // 컴포넌트를 계속 마운트 상태로 유지
+            }}
+            PaperProps={{
+              style: { pointerEvents: 'auto' } // 내부 요소 클릭 허용
+            }}
           >
             {list(anchor)}
           </Drawer>
         </React.Fragment>
       ))}
-
-
-
-
-
-
-        </>
-    )
-
+    </>
+  );
 }

@@ -1,4 +1,4 @@
-import styled from "styled-components"
+
 import { Tag } from "../components/Tag"
 
 const MyCharPage = () => {
