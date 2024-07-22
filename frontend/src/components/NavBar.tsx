@@ -1,187 +1,287 @@
-import * as React from 'react';
-import { Link as RouterLink, LinkProps as RouterLinkProps } from 'react-router-dom';
-import { Box, Drawer, Button as MuiButton, List, Divider, ListItem, ListItemIcon, ListItemText, IconButton } from '@mui/material';
-import { ThemeProvider, createTheme } from '@mui/material/styles';
-import Logo from '../assets/logo.png';
+import * as React from "react";
 import {
-  FolderOpenRoundedIcon, AddReactionRoundedIcon, LightbulbIcon, MediationRoundedIcon,
-  DriveFileRenameOutlineRoundedIcon, Face5Icon, BatchPredictionIcon, SettingsRoundedIcon,
-  SailingRoundedIcon, ArrowBackIosNewRoundedIcon
-} from './Icons';
-import { styled } from '@mui/system'
+  Outlet,
+  Link as RouterLink} from "react-router-dom";
+import { styled,  useTheme,  Theme,  CSSObject } from "@mui/material/styles";
+import {
+  FolderOpenRoundedIcon,
+  AddReactionRoundedIcon,
+  LightbulbIcon,
+  MediationRoundedIcon,
+  DriveFileRenameOutlineRoundedIcon,
+  Face5Icon,
+  BatchPredictionIcon,
+  SettingsRoundedIcon,
+  SailingRoundedIcon,
+  AccountCircleIcon
+} from "./Icons";
 
-type Anchor = 'left';
+import {
+  Box,
+  List,
+  Divider,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  IconButton,
+  ListItemButton,
+} from "@mui/material";
 
-interface ListItemLinkProps {
-  icon?: React.ReactElement;
-  primary: string;
-  to: string;
-  textSize?: string;
-}
+import MuiDrawer from "@mui/material/Drawer";
+import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import Logo from "../assets/logo.png";
 
-const StyledHomeDiv = styled('div')`
-  display : flex;
-  align-items: center;
-  color : black;
+
+// 코드 작성 영역 ---------------------------------------------------------------------
+const drawerWidth = 220;
+
+const StyledLink = styled(RouterLink)`
+  color: black;
   text-decoration: none;
-  justify-content: space-between;
-`
+  width: 100%;
+`;
 
-const theme = createTheme({
-  components: {
-    MuiListItem: {
-      styleOverrides: {
-        root: {
-          '&:hover': {
-            backgroundColor: '#f5f5f5',
-          },
-        },
-      },
-    },
-    MuiListItemIcon: {
-      styleOverrides: {
-        root: {
-          minWidth: '30px',
-          marginLeft: '3px',
-          '& .MuiSvgIcon-root': {
-            fontSize: '16px',
-          },
-        },
-      },
-    },
-    MuiListItemText: {
-      styleOverrides: {
-        root: {
-          fontSize: '10px',
-          color: 'black',
-          marginLeft: '16px',
-        },
-      },
-    },
+const openedMixin = (theme: Theme): CSSObject => ({
+  width: drawerWidth,
+  transition: theme.transitions.create("width", {
+    easing: theme.transitions.easing.sharp,
+    duration: theme.transitions.duration.enteringScreen,
+  }),
+  overflowX: "hidden",
+});
+
+
+const closedMixin = (theme: Theme): CSSObject => ({
+  transition: theme.transitions.create("width", {
+    easing: theme.transitions.easing.sharp,
+    duration: theme.transitions.duration.leavingScreen,
+  }),
+  overflowX: "hidden",
+  width: `calc(${theme.spacing(6)} + 1px)`,
+  [theme.breakpoints.up("sm")]: {
+    width: `calc(${theme.spacing(7)} + 1px)`,
   },
 });
 
-const Link = React.forwardRef<HTMLAnchorElement, RouterLinkProps>(function Link(itemProps, ref) {
-  return <RouterLink ref={ref} {...itemProps} role={undefined} />;
-});
+//Drawer 메인 헤더
+const DrawerHeader = styled("div")(({ theme }) => ({
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  padding: theme.spacing(0, 1),
+  // necessary for content to be below app bar
+  ...theme.mixins.toolbar,
+}));
 
-function ListItemLink(props: ListItemLinkProps) {
-  const { icon, primary, to, textSize } = props;
 
-  return (
-    <li>
-      <ListItem component={Link} to={to}>
-        {icon ? <ListItemIcon>{icon}</ListItemIcon> : null}
-        <ListItemText
-          primary={primary}
-          sx={{
-            fontFamily: 'Inter',
-            color: 'black',
-            marginLeft: icon ? '0px' : '0px',
-            fontSize: textSize || 'inherit',
-          }}
-        />
-      </ListItem>
-    </li>
-  );
-}
 
-interface NavBarProps {
-  onToggle: (open: boolean) => void;
-}
 
-export default function NavBar({ onToggle }: NavBarProps) {
-  const [state, setState] = React.useState({
-    left: false,
-  });
 
-  const toggleDrawer = (anchor: Anchor, open: boolean) => (event: React.KeyboardEvent | React.MouseEvent) => {
-    if (event.type === 'keydown' && ((event as React.KeyboardEvent).key === 'Tab' || (event as React.KeyboardEvent).key === 'Shift')) {
-      return;
-    }
+//Drawer 설정
+const Drawer = styled(MuiDrawer, {
+  shouldForwardProp: (prop) => prop !== "open",
+})(({ theme, open }) => ({
+  width: drawerWidth,
+  flexShrink: 0,
+  whiteSpace: "nowrap",
+  boxSizing: "border-box",
+  ...(open && {
+    ...openedMixin(theme),
+    "& .MuiDrawer-paper": openedMixin(theme),
+  }),
+  ...(!open && {
+    ...closedMixin(theme),
+    "& .MuiDrawer-paper": closedMixin(theme),
+  }),
+}));
 
-    setState({ ...state, [anchor]: open });
-    onToggle(open); // Update the width based on the drawer state
+
+
+//실제 렌더링 관련 영역
+export default function NavBar() {
+  const theme = useTheme();
+  const [open, setOpen] = React.useState(false);
+
+
+  const toggleDrawer = () => {
+    setOpen(!open);
   };
 
-  // 네브바 목록
-  const list = (anchor: Anchor) => (
-    <Box
-      sx={{ width: 250, color: 'inherit' }}
-      role="presentation"
-    >
-      <ThemeProvider theme={theme}>
+
+
+  const handleDrawerOpen = () => {
+    setOpen(true);
+  };
+
+  const handleDrawerClose = () => {
+    setOpen(false);
+  };
+
+  //렌더링 영역
+  return (
+    //상단 푸른색 툴바 영역
+    <Box sx={{ display: "flex" }}>
+      {/* 간격 설정용 */}
+      {/* <CssBaseline /> */}
+
+      {/* duffuTdmfEo  */}
+      <Drawer variant="permanent" open={open}>
+        <DrawerHeader>
+        <StyledLink to="/">  
+            <ListItem disablePadding>
+                <ListItemButton>
+                  <ListItemIcon>
+                  <img src={Logo} width={30} alt="Logo" />
+                  </ListItemIcon>
+                  <ListItemText 
+                      primary="StoryBoat" 
+                      sx={{
+                        fontFamily: 'Inter',
+                        fontSize: '24px',
+                        fontStyle: 'italic',
+                        fontWeight: 900, 
+                        lineHeight: '36px', 
+                      }}/>
+                </ListItemButton>
+              </ListItem>
+      
+   
+          </StyledLink>
+          <IconButton onClick={toggleDrawer}>
+          {open ? <ChevronLeftIcon  /> : <ChevronRightIcon />}
+        </IconButton>
+        
+        </DrawerHeader>
+
+        <Divider /> {/* 나만의 공간 */}
+       
         <List>
-          <StyledHomeDiv>
-            <RouterLink to={'/'} style={{ display: 'flex', alignItems: 'center', color: 'black', textDecoration: 'none' }}>
-              <img src={Logo} width={30} alt="Logo" />
-              <span>StoryBoat</span>
-            </RouterLink>
-            <IconButton onClick={toggleDrawer(anchor, false)}>
-              <ArrowBackIosNewRoundedIcon />
-            </IconButton>
-          </StyledHomeDiv>
+        <StyledLink to="/main/mystory">  
+            <ListItem disablePadding>
+                <ListItemButton>
+                  <ListItemIcon>
+                    <FolderOpenRoundedIcon />
+                  </ListItemIcon>
+                  <ListItemText primary="나만의 스토리" />
+                </ListItemButton>
+              </ListItem>
+          </StyledLink>
+          <StyledLink to="/main/mychar">  
+            <ListItem disablePadding>
+                <ListItemButton>
+                  <ListItemIcon>
+                    <AddReactionRoundedIcon/>
+                  </ListItemIcon>
+                  <ListItemText primary="나만의 캐릭터" />
+                </ListItemButton>
+              </ListItem>
+          </StyledLink>
+          <StyledLink to="/main/myidea">  
+            <ListItem disablePadding>
+                <ListItemButton>
+                  <ListItemIcon>
+                  <LightbulbIcon />
+                  </ListItemIcon>
+                  <ListItemText primary="나만의 아이디어" />
+                </ListItemButton>
+              </ListItem>
+          </StyledLink>  
         </List>
-        <Divider />
+
+        <Divider /> {/* 팀공간 */}
+       
         <List>
-          <ListItemText primary="개인 보관함" sx={{ color: 'black', marginLeft: '16px', fontSize: '10px' }} />
-          <ListItemLink to="/main/mystory" primary="나만의 스토리" icon={<FolderOpenRoundedIcon />} />
-          <ListItemLink to="/main/mychar" primary="나만의 캐릭터" icon={<AddReactionRoundedIcon />} />
-          <ListItemLink to="/main/myidea" primary="나만의 아이디어" icon={<LightbulbIcon />} />
+        <StyledLink to="/main/storybox">  
+            <ListItem disablePadding>
+                <ListItemButton>
+                  <ListItemIcon>
+                      <MediationRoundedIcon />
+                  </ListItemIcon>
+                  <ListItemText primary="Story Box" />
+                </ListItemButton>
+              </ListItem>
+          </StyledLink>
+
+          <StyledLink to="/main/storyedit">  
+            <ListItem disablePadding>
+                <ListItemButton>
+                  <ListItemIcon>
+                    <DriveFileRenameOutlineRoundedIcon />
+                  </ListItemIcon>
+                  <ListItemText primary="Story 보관소" />
+                </ListItemButton>
+              </ListItem>
+          </StyledLink>
+
+          <StyledLink to="/main/charbox">  
+            <ListItem disablePadding>
+                <ListItemButton>
+                  <ListItemIcon>
+                    <Face5Icon />
+                  </ListItemIcon>
+                  <ListItemText primary="캐릭터 보관소" />
+                </ListItemButton>
+              </ListItem>
+          </StyledLink>
+          <StyledLink to="/main/ideabox">  
+            <ListItem disablePadding>
+                <ListItemButton>
+                  <ListItemIcon>
+                  <BatchPredictionIcon />
+                  </ListItemIcon>
+                  <ListItemText primary="아이디어 보관소" />
+                </ListItemButton>
+              </ListItem>
+          </StyledLink>
+          <StyledLink to="/main/studio">  
+            <ListItem disablePadding>
+                <ListItemButton>
+                  <ListItemIcon>
+                  <SettingsRoundedIcon />
+                  </ListItemIcon>
+                  <ListItemText primary="스튜디오 설정" />
+                </ListItemButton>
+              </ListItem>
+          </StyledLink>
         </List>
         <Divider />
-        <List aria-label="main mailbox folders">
-          <ListItemText primary="스튜디오 보관함" sx={{ color: 'black', marginLeft: '16px', fontSize: '12px' }} />
-          <ListItemLink to="/main/storybox" primary="Story Box" icon={<MediationRoundedIcon />} />
-          <ListItemLink to="/main/storyedit" primary="Story 보관소" icon={<DriveFileRenameOutlineRoundedIcon />} />
-          <ListItemLink to="/main/charbox" primary="캐릭터 보관소" icon={<Face5Icon />} />
-          <ListItemLink to="/main/ideabox" primary="아이디어 보관소" icon={<BatchPredictionIcon />} />
-          <ListItemLink to="/main/studio" primary="스튜디오 설정" icon={<SettingsRoundedIcon />} />
+        <List>{/* 팀찾기 */}
+        <StyledLink to="/main/findteam">  
+            <ListItem disablePadding>
+                <ListItemButton>
+                  <ListItemIcon>
+                  <SailingRoundedIcon />
+                  </ListItemIcon>
+                  <ListItemText primary="팀 찾기" />
+                </ListItemButton>
+              </ListItem>
+          </StyledLink>
         </List>
         <Divider />
-        <List aria-label="main mailbox folders">
-          <ListItemLink to="/main/findteam" primary="팀 찾기" icon={<SailingRoundedIcon />} />
-        </List>
+            <ListItem sx={{ height :'auto'}}/>
+       
+
+
         <Divider />
-        <List aria-label="main mailbox folders">
-          <ListItemLink to="/main/profile" primary="사용자명" />
-        </List>
-      </ThemeProvider>
+
+        <StyledLink to="/main/profile">  
+            <ListItem disablePadding>
+                <ListItemButton>
+                  <ListItemIcon>
+                  <AccountCircleIcon />
+                  </ListItemIcon>
+                  <ListItemText primary="내 정보" />
+                </ListItemButton>
+              </ListItem>
+          </StyledLink>
+      </Drawer>
+
+      {/* 작성 공간 */}
+      <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+        <Outlet />
+      </Box>
     </Box>
   );
-
-  return (
-    <>
-      {(['left'] as const).map((anchor) => (
-        <React.Fragment key={anchor}>
-          <MuiButton
-            onClick={toggleDrawer(anchor, true)}
-            sx={{
-              border: '1px solid #D9D9D9',
-              padding: '10px',
-              borderRadius: '0px 16px 16px 0px',
-            }}
-          >
-            <img src={Logo} width={30} alt="Logo" />
-          </MuiButton>
-
-          <Drawer
-            elevation={0}
-            anchor={anchor}
-            open={state[anchor]}
-            onClose={toggleDrawer(anchor, false)}
-            hideBackdrop={true}
-            ModalProps={{
-              keepMounted: true, // 컴포넌트를 계속 마운트 상태로 유지
-            }}
-            PaperProps={{
-              style: { pointerEvents: 'auto' } // 내부 요소 클릭 허용
-            }}
-          >
-            {list(anchor)}
-          </Drawer>
-        </React.Fragment>
-      ))}
-    </>
-  );
 }
+                                                                                                                                                                               
