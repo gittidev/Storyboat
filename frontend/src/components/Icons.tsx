@@ -26,6 +26,9 @@ import ArrowBackIosNewRoundedIcon from '@mui/icons-material/ArrowBackIosNewRound
 import MicIcon from '@mui/icons-material/Mic';
 import MicOffIcon from '@mui/icons-material/MicOff';
 import TipsAndUpdatesIcon from '@mui/icons-material/TipsAndUpdates';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+
+
 
 export {
     FolderOpenRoundedIcon,//나만의 스토리
@@ -38,7 +41,10 @@ export {
     
     SettingsRoundedIcon, //설정 아이콘
     SailingRoundedIcon, //팀원 모집
-    
+    AccountCircleIcon, //프로필
+
+
+
     PlaylistAddRoundedIcon, //문서 plus
     AddCircleOutlineRoundedIcon, //동그라미 plus
     NoteAddRoundedIcon, //문서 plus2
@@ -46,6 +52,8 @@ export {
     SwitchAccessShortcutAddRoundedIcon, //버전 변경용
     DeleteForeverRoundedIcon, //삭제하기 + 쓰레기통 그림
     ClearRoundedIcon, //삭제하기
+
+
 
     PersonRemoveRoundedIcon, //멤버 삭제
     ArrowBackIosNewRoundedIcon, //네브바 접기
