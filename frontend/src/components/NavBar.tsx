@@ -42,6 +42,11 @@ const StyledLink = styled(RouterLink)`
   width: 100%;
 `;
 
+const StyledBox = styled(Box)`
+  width : 100%;
+  height : 100%
+`;
+
 const openedMixin = (theme: Theme): CSSObject => ({
   width: drawerWidth,
   transition: theme.transitions.create("width", {
@@ -121,7 +126,7 @@ export default function NavBar() {
   //렌더링 영역
   return (
     //상단 푸른색 툴바 영역
-    <Box sx={{ display: "flex" }}>
+    <Box sx={{ display: "flex" , margin:'0px'}}>
       {/* 간격 설정용 */}
       {/* <CssBaseline /> */}
 
@@ -129,10 +134,10 @@ export default function NavBar() {
       <Drawer variant="permanent" open={open}>
         <DrawerHeader>
         <StyledLink to="/">  
-            <ListItem disablePadding>
+            <ListItem disablePadding >
                 <ListItemButton>
                   <ListItemIcon>
-                  <img src={Logo} width={30} alt="Logo" />
+                  <img src={Logo} width={25} alt="Logo" />
                   </ListItemIcon>
                   <ListItemText 
                       primary="StoryBoat" 
@@ -260,9 +265,6 @@ export default function NavBar() {
         </List>
         <Divider />
             <ListItem sx={{ height :'auto'}}/>
-       
-
-
         <Divider />
 
         <StyledLink to="/main/profile">  
@@ -276,11 +278,7 @@ export default function NavBar() {
               </ListItem>
           </StyledLink>
       </Drawer>
-
-      {/* 작성 공간 */}
-      <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-        <Outlet />
-      </Box>
+      
     </Box>
   );
 }

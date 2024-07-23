@@ -1,11 +1,20 @@
-import styled from "styled-components"
+import { Box } from "@mui/material"
+import SubTopBar from "../components/SubTopBar"
+import TabBar from "../components/TabBar"
+
 
 const StudioPage = () => {
     return (
-        <>
-        스튜디오 설정 페이지
+        <Box>
+            <SubTopBar/>
+            <TabBar/>
+            <Box>
+            스튜디오 설정 페이지
+            </Box>
+            
+        </Box>
         
-        </>
+        
     )
 
 
