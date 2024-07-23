@@ -14,8 +14,7 @@ const StyledSubBar = styled(Box)`
 const SubTopBar = () => {
   return (
     <StyledSubBar sx={{ m: 0 }} >
-      
-    
+      유동적 공간
     </StyledSubBar>
   )
 

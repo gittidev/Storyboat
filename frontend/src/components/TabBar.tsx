@@ -2,76 +2,60 @@ import * as React from 'react';
 import Box from '@mui/material/Box';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
-import { Outlet } from 'react-router-dom';
-
-function samePageLinkNavigation(
-  event: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
-) {
-  if (
-    event.defaultPrevented ||
-    event.button !== 0 || // ignore everything but left-click
-    event.metaKey ||
-    event.ctrlKey ||
-    event.altKey ||
-    event.shiftKey
-  ) {
-    return false;
-  }
-  return true;
-}
+import { Outlet, Link, useLocation } from 'react-router-dom';
+import { blue } from '@mui/material/colors';
 
 interface LinkTabProps {
-  label?: string;
-  href?: string;
-  selected?: boolean;
+  label: string;
+  path: string;
 }
 
 function LinkTab(props: LinkTabProps) {
   return (
     <Tab
-      component="a"
-      onClick={(event: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
-        // Routing libraries handle this, you can remove the onClick handle when using them.
-        if (samePageLinkNavigation(event)) {
-          event.preventDefault();
-        }
-      }}
-      aria-current={props.selected && 'page'}
-      {...props}
+      component={Link}
+      to={props.path}
+      label={props.label}
+      sx={{backgroundColor: 'blue', color : 'white' }}
     />
   );
 }
 
 export default function TabBar() {
+  const location = useLocation();
   const [value, setValue] = React.useState(0);
 
-  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
-    // event.type can be equal to focus with selectionFollowsFocus.
-    if (
-      event.type !== 'click' ||
-      (event.type === 'click' &&
-        samePageLinkNavigation(
-          event as React.MouseEvent<HTMLAnchorElement, MouseEvent>,
-        ))
-    ) {
-      setValue(newValue);
+  React.useEffect(() => {
+    switch (location.pathname) {
+      case '/main/studio/studioSettings':
+        setValue(0);
+        break;
+      case '/main/studio/subscription':
+        setValue(1);
+        break;
+      case '/main/studio/teamsetting':
+        setValue(2);
+        break;
+      default:
+        setValue(0);
     }
+  }, [location.pathname]);
+
+  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+    setValue(newValue);
   };
 
-  
   return (
-    <Box sx={{ width: '100%' }}>
+    <Box sx={{ width: '100%', display:'flex' }}>
       <Tabs
         value={value}
         onChange={handleChange}
         aria-label="nav tabs example"
-        role="navigation"
-      >
-        <LinkTab label="스튜디오 설정" href="/drafts" />
-        <LinkTab label="요금제&플랜" href="/trash" />
-        <LinkTab label="팀관리" href="/spam" />
+        role="navigation">
+        <LinkTab label="스튜디오 설정" path="/main/studio/studioSettings" />
+        <LinkTab label="요금제&플랜" path="/main/studio/subscription" />
+        <LinkTab label="팀 관리" path="/main/studio/teamsetting" />
       </Tabs>
-        <Outlet/>
     </Box>
   );
 }

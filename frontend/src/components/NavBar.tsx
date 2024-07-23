@@ -1,7 +1,5 @@
 import * as React from "react";
-import {
-  Outlet,
-  Link as RouterLink} from "react-router-dom";
+import { Link as RouterLink } from "react-router-dom";
 import { styled,  useTheme,  Theme,  CSSObject } from "@mui/material/styles";
 import {
   FolderOpenRoundedIcon,
@@ -150,8 +148,6 @@ export default function NavBar() {
                       }}/>
                 </ListItemButton>
               </ListItem>
-      
-   
           </StyledLink>
           <IconButton onClick={toggleDrawer}>
           {open ? <ChevronLeftIcon  /> : <ChevronRightIcon />}
@@ -160,7 +156,6 @@ export default function NavBar() {
         </DrawerHeader>
 
         <Divider /> {/* 나만의 공간 */}
-       
         <List>
         <StyledLink to="/main/mystory">  
             <ListItem disablePadding>
