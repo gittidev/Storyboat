@@ -7,7 +7,7 @@ import { Outlet } from "react-router-dom"
 const StudioPage = () => {
     return (
         <>
-            <SubTopBar/>
+            <SubTopBar title={'스튜디오 페이지'}/>
             <TabBar/>
             <Box>
             <Outlet/>

@@ -16,7 +16,7 @@ function LinkTab(props: LinkTabProps) {
       component={Link}
       to={props.path}
       label={props.label}
-      sx={{backgroundColor: 'blue', color : 'white' }}
+      sx={{backgroundColor: 'blue', color : 'white' , borderRadius: '10px',}}
     />
   );
 }

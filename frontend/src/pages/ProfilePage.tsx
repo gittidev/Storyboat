@@ -1,14 +1,17 @@
-import LoginPage from "./LoginPage"
-// import { BrowserRouter, Routes, Route } from "react-router-dom"
-
+import SubTopBar from "../components/SubTopBar"
+import TabBar from "../components/TabBar"
 import ProfileForm from "../components/ProfileCom/ProfileForm"
 import Profile from "../components/ProfileCom/Profile"
 
 const ProfilePage = () => {
     return (
         <>
-        프로필 페이지
-        {/* <LoginPage/>  */}
+        <SubTopBar title={'프로필 페이지'}/>
+        <>
+        <TabBar/>
+        </>
+        
+        
         <ProfileForm/>
         <Profile/>
         </>
