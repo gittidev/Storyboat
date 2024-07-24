@@ -25,11 +25,11 @@ const ProfileForm: React.FC = () => {
         {errors.penName && <span className="error">필명이 필요합니다.</span>}
       </div>
 
-      <div className="form-group">
+      {/* <div className="form-group">
         <label htmlFor="profilePicture">프로필 사진</label>
         <input type="file" id="profilePicture" {...register('profilePicture', { required: true })} />
         {errors.profilePicture && <span className="error">프로필 사진이 필요합니다.</span>}
-      </div>
+      </div> */}
 
       <div className="form-group">
         <label htmlFor="preferredGenres">선호 장르</label>
