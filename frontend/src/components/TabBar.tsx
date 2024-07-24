@@ -1,61 +1,82 @@
 import * as React from 'react';
-import Box from '@mui/material/Box';
+import { useTheme } from '@mui/material/styles';
+import AppBar from '@mui/material/AppBar';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
-import { Outlet, Link, useLocation } from 'react-router-dom';
-import { blue } from '@mui/material/colors';
+import Box from '@mui/material/Box';
 
-interface LinkTabProps {
-  label: string;
-  path: string;
+interface TabPanelProps {
+  children?: React.ReactNode;
+  dir?: string;
+  index: number;
+  value: number;
 }
 
-function LinkTab(props: LinkTabProps) {
+function TabPanel(props: TabPanelProps) {
+  const { children, value, index, dir, ...other } = props;
+
   return (
-    <Tab
-      component={Link}
-      to={props.path}
-      label={props.label}
-      sx={{backgroundColor: 'blue', color : 'white' , borderRadius: '10px',}}
-    />
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`full-width-tabpanel-${index}`}
+      aria-labelledby={`full-width-tab-${index}`}
+      dir={dir}
+      {...other}
+    >
+      {value === index && (
+        <Box sx={{ p: 3 }}>
+          {children}
+        </Box>
+      )}
+    </div>
   );
 }
 
-export default function TabBar() {
-  const location = useLocation();
-  const [value, setValue] = React.useState(0);
+function a11yProps(index: number) {
+  return {
+    id: `full-width-tab-${index}`,
+    'aria-controls': `full-width-tabpanel-${index}`,
+  };
+}
 
-  React.useEffect(() => {
-    switch (location.pathname) {
-      case '/main/studio/studioSettings':
-        setValue(0);
-        break;
-      case '/main/studio/subscription':
-        setValue(1);
-        break;
-      case '/main/studio/teamsetting':
-        setValue(2);
-        break;
-      default:
-        setValue(0);
-    }
-  }, [location.pathname]);
+interface TabBarTestProps {
+  labels?: string[];
+  childrenComponents?: React.ReactNode[];
+}
+
+const TabBar: React.FC<TabBarTestProps> = ({ labels = [], childrenComponents = [] }) => {
+  const theme = useTheme();
+  const [value, setValue] = React.useState(0);
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
 
   return (
-    <Box sx={{ width: '100%', display:'flex' }}>
-      <Tabs
-        value={value}
-        onChange={handleChange}
-        aria-label="nav tabs example"
-        role="navigation">
-        <LinkTab label="스튜디오 설정" path="/main/studio/studioSettings" />
-        <LinkTab label="요금제&플랜" path="/main/studio/subscription" />
-        <LinkTab label="팀 관리" path="/main/studio/teamsetting" />
-      </Tabs>
+    <Box sx={{ bgcolor: 'background.paper', width: 500 }}>
+      <AppBar position="static">
+        <Tabs
+          value={value}
+          onChange={handleChange}
+          indicatorColor="primary"
+          textColor="inherit"
+          variant="fullWidth"
+          aria-label="full width tabs example"
+        >
+          {labels.map((label, index) => (
+            <Tab key={index} label={label} {...a11yProps(index)} />
+          ))}
+        </Tabs>
+      </AppBar>
+    
+      {labels.map((label, index) => (
+        <TabPanel key={index} value={value} index={index} dir={theme.direction}>
+          {childrenComponents[index]}
+        </TabPanel>
+      ))}
     </Box>
   );
 }
+
+export default TabBar;

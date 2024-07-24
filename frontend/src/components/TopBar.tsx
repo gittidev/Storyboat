@@ -4,7 +4,7 @@ import { Box } from "@mui/material"
 
 const StyledTopBar = styled(Box)`
     width : 100%;
-    height : 40px;
+    height : 20px;
     margin : 0px;
 `
 
@@ -13,7 +13,7 @@ const TopBar = ()=> {
         <>
         <StyledTopBar>
 
-        사이즈 규격을 위한 빈공간입니다.
+        사이즈 규격을 위한 빈공간
         </StyledTopBar>
         </>
     )
