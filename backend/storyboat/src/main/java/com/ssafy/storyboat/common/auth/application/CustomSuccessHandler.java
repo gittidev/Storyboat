@@ -2,53 +2,60 @@ package com.ssafy.storyboat.common.auth.application;
 
 import com.ssafy.storyboat.common.auth.util.JWTUtil;
 import com.ssafy.storyboat.common.dto.CustomOAuth2User;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.security.core.GrantedAuthority;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
-import java.util.Collection;
-import java.util.Iterator;
+import java.io.IOException;
 
 @Component
+@RequiredArgsConstructor
+@Slf4j
+
 public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     private final JWTUtil jwtUtil;
 
-    public CustomSuccessHandler(JWTUtil jwtUtil) {
-
-        this.jwtUtil = jwtUtil;
-    }
-
     @Override
-    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
+                                        Authentication authentication) throws IOException, ServletException {
 
-        //OAuth2User
+        log.info("onAuthenticationSuccess");
+
+        // OAuth2User
         CustomOAuth2User customUserDetails = (CustomOAuth2User) authentication.getPrincipal();
 
         String username = customUserDetails.getUsername();
+        String role = customUserDetails.getAttribute("role");
 
-        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-        Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
-        GrantedAuthority auth = iterator.next();
-        String role = auth.getAuthority();
+        log.info("username={} role={}", username, role);
+        // Refresh Token 생성
+        String refreshToken = jwtUtil.createJwt("refresh", username, role, 7 * 24 * 60 * 60 * 1000L); // 7일 유효
 
-        String token = jwtUtil.createJwt(username, role, 60*60*60L);
+        log.info("Refresh Token: {}", refreshToken);
 
-        response.addCookie(createCookie("Authorization", token));
+        // Access Token과 Refresh Token을 쿠키에 추가
+        response.addCookie(createCookie("RefreshToken", refreshToken));
+
+        // 성공 후 리디렉션
         response.sendRedirect("http://localhost:3000/");
     }
 
     private Cookie createCookie(String key, String value) {
-
         Cookie cookie = new Cookie(key, value);
-        cookie.setMaxAge(60*60*60);
-        //cookie.setSecure(true);
+        cookie.setMaxAge(60 * 60 * 60); // 쿠키의 유효 기간 (60시간)
         cookie.setPath("/");
         cookie.setHttpOnly(true);
-
+        // 쿠키를 보안적으로 안전하게 설정하려면 SSL이 활성화된 경우에만 사용해야 함
+        //cookie.setSecure(true);
         return cookie;
     }
+
 }

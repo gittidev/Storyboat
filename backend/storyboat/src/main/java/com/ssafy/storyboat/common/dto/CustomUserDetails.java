@@ -1,73 +1,56 @@
 package com.ssafy.storyboat.common.dto;
 
-import com.example.springjwt.entity.UserEntity;
-import com.ssafy.storyboat.common.entity.OAuth2UserEntity;
+
+import com.ssafy.storyboat.domain.user.entity.User;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 public class CustomUserDetails implements UserDetails {
 
-    private final OAuth2UserEntity userEntity;
+    private final User user;
 
-    public CustomUserDetails(OAuth2UserEntity userEntity) {
-
-        this.userEntity = userEntity;
+    public CustomUserDetails(User user) {
+        this.user = user;
     }
-
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-
-        Collection<GrantedAuthority> collection = new ArrayList<>();
-
-        collection.add(new GrantedAuthority() {
-
-            @Override
-            public String getAuthority() {
-
-                return userEntity.getRole();
-            }
-        });
-
-        return collection;
+        // 권한 설정
+        return List.of(new SimpleGrantedAuthority("ROLE_USER"));
     }
 
     @Override
     public String getPassword() {
-
-        return userEntity.getPassword();
+        return null; // 사용자 비밀번호
     }
 
     @Override
     public String getUsername() {
-
-        return userEntity.getUsername();
+        return user.getProviderId() + " " + user.getProvider(); // 사용자 이름
     }
 
     @Override
     public boolean isAccountNonExpired() {
-
-        return true;
+        return true; // 계정 만료 여부
     }
 
     @Override
     public boolean isAccountNonLocked() {
-
-        return true;
+        return true; // 계정 잠금 여부
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-
-        return true;
+        return true; // 자격 증명 만료 여부
     }
 
     @Override
     public boolean isEnabled() {
-
-        return true;
+        return true; // 계정 활성화 여부
     }
 }
