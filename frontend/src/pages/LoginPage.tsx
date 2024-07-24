@@ -2,6 +2,7 @@ import styled from "styled-components"
 
 import KakaoLoginButton from "../components/Login/KakaoLoginButton"
 import GoogleLoginButton from "../components/Login/GoogleLoginButton"
+import NaverLoginButton from "../components/Login/NaverLoginButton"
 
 const LoginPage = () => {
     return (
@@ -10,6 +11,8 @@ const LoginPage = () => {
         <KakaoLoginButton/>
         <br />
         <GoogleLoginButton/>
+        <br />
+        <NaverLoginButton/>
 
         </>
     )

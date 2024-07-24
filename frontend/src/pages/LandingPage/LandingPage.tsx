@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion, Variants } from 'framer-motion';
 import './LandingPage.css';
+import { Link, Link as RouterLink } from "react-router-dom";
 
 const layerVariants: Variants = {
     hover: (i: number) => ({
@@ -16,6 +17,7 @@ const layerVariants: Variants = {
     const layers = [1, 2, 3, 4, 5];
 
     return (
+        <>
         <div className="container">
         {layers.map((_, i) => (
             <motion.div
@@ -28,6 +30,9 @@ const layerVariants: Variants = {
             />
         ))}
         </div>
+        <Link to="/login">시작하기</Link>
+        <Link to="/main">메인으로</Link>
+        </>
     );
     };
 
