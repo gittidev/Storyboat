@@ -29,6 +29,7 @@ import MuiDrawer from "@mui/material/Drawer";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import Logo from "../assets/logo.png";
+import LongMenu from "./LongMenu";
 
 
 // 코드 작성 영역 ---------------------------------------------------------------------
@@ -76,8 +77,6 @@ const DrawerHeader = styled("div")(({ theme }) => ({
   // necessary for content to be below app bar
   ...theme.mixins.toolbar,
 }));
-
-
 
 
 
@@ -154,7 +153,11 @@ export default function NavBar() {
         </IconButton>
         
         </DrawerHeader>
-
+        <Divider /> 
+                      <div style={{height:'200px'}}>
+                      여기에 스튜디오 생성 컴포넌트 넣어주세요
+                      </div>
+    
         <Divider /> {/* 나만의 공간 */}
         <List>
         <StyledLink to="/main/mystory">  
@@ -178,7 +181,7 @@ export default function NavBar() {
               </ListItem>
           </StyledLink>
           <StyledLink to="/main/myidea">  
-            <ListItem disablePadding>
+            <ListItem disablePadding sx={{m:0}}>
                 <ListItemButton>
                   <ListItemIcon>
                   <LightbulbIcon />
@@ -259,7 +262,7 @@ export default function NavBar() {
           </StyledLink>
         </List>
         <Divider />
-            <ListItem sx={{ height :'auto'}}/>
+            <ListItem sx={{ height :'120px'}}/>
         <Divider />
 
         <StyledLink to="/main/profile">  
@@ -269,6 +272,7 @@ export default function NavBar() {
                   <AccountCircleIcon />
                   </ListItemIcon>
                   <ListItemText primary="내 정보" />
+                  <LongMenu/>
                 </ListItemButton>
               </ListItem>
           </StyledLink>

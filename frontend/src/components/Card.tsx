@@ -1,17 +1,17 @@
-import styled from "styled-components";
+import { styled } from "@mui/system";
 
-export const Card = styled.div`
+export const Card = styled('div')`
 border-radius : 6px;
-border : 1px solid rgb(1, 186, 138);
-width: 327px;
-height: 129px;
+border : 1px solid rgb(98, 201, 219);
+width: 300px;
+height: 500px;
 flex-shrink: 0;
 fill: #FFF;
 
 filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25));
 `
 
-export const EachTag = styled.span`
+export const EachTag = styled('span')`
 width : 50px;
 border : 1px solid black;
 border-radius : 10px;

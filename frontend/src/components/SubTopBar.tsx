@@ -10,9 +10,8 @@ interface SubTopBarProps {
 
 const StyledSubBar = styled(Box)`
     width : 100%;
-    height : 40px;
-    padding : 0px;
-    border-bottom : 1px solid #D1D5DB;
+    height : 50px;
+    padding :5px 10px 10px 10px;
     font-size:30px;
 
 `

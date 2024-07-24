@@ -1,7 +1,10 @@
+import PlanList from "./PlanList"
+
 const SubscriptionPlan = () =>{
+
     return (
-        <div>
-            구독제 플랜 페이지
+        <div style={{display:"flex"}}>
+            <PlanList/>
         </div>
     )
 }
