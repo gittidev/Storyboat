@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { Profile } from '../components/ProfileCom/ProfileData'
+import { Profile } from '../components/Profile/ProfileData'
 
 // API URL 설정
 const API_URL = 'http://localhost:8080/profile';
