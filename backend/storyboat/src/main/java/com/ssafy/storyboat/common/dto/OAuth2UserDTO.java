@@ -5,12 +5,10 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-@Builder
-@Getter
-@Setter
-@ToString
+@Getter @Setter
 public class OAuth2UserDTO {
     private String role;
     private String name;
     private String username;
 }
+

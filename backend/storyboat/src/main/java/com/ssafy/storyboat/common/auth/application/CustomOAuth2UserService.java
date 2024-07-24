@@ -30,8 +30,8 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
+
         OAuth2User oAuth2User = super.loadUser(userRequest);
-        log.info(oAuth2User.toString());
 
         OAuth2Response oAuth2Response = null;
         String registrationId = userRequest.getClientRegistration().getRegistrationId();
@@ -66,12 +66,11 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             log.info(queriedUser.toString());
 
             // 로그인 로직 (사용자 정보 처리 등)
-            entityManager.getTransaction().commit();  // 트랜잭션 커밋
-            OAuth2UserDTO userDTO = OAuth2UserDTO.builder()
-                    .username(providerId + " " + provider)
-                    .name(name)
-                    .role("ROLE_USER")
-                    .build();
+            OAuth2UserDTO userDTO = new OAuth2UserDTO();
+            userDTO.setName(name);
+            userDTO.setUsername(providerId + " " + provider);
+            userDTO.setRole("ROLE_USER");
+
             log.info("로그인={}", userDTO.toString());
 
             return new CustomOAuth2User(userDTO);
@@ -104,11 +103,10 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
                 entityManager.getTransaction().commit();  // 트랜잭션 커밋
 
-                OAuth2UserDTO userDTO = OAuth2UserDTO.builder()
-                        .username(providerId + " " + provider)
-                        .name(name)
-                        .role("ROLE_USER")
-                        .build();
+                OAuth2UserDTO userDTO = new OAuth2UserDTO();
+                userDTO.setName(name);
+                userDTO.setUsername(providerId + " " + provider);
+                userDTO.setRole("ROLE_USER");
 
                 log.info("회원가입={}", userDTO.toString());
 

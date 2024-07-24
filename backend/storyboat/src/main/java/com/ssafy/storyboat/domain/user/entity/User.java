@@ -3,12 +3,16 @@ package com.ssafy.storyboat.domain.user.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(name = "user")
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Getter
+@ToString
 public class User {
 
     @Id
@@ -30,5 +34,9 @@ public class User {
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private Profile profile;
     // User <-> Profile 까지만 매핑되어 있음
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    List<RefreshToken> refreshTokens = new ArrayList<>();
+
 
 }
