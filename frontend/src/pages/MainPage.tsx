@@ -23,6 +23,7 @@ const MainPage = () => {
           </Box>
         
         </StyledBox>
+      
       </Box>
     </>
   );

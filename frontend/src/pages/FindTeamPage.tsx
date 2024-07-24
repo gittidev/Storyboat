@@ -5,7 +5,8 @@ import { Tag } from "../components/Tag"
 import { SearchBar } from "../components/SearchBar"
 import Button from "../components/Button"
 import BasicCard from "../components/Card"
-import FindTeam from "../components/FindTeam"
+import FindTeamForm from "../components/FindTeamForm"
+import FindTeamBox from '../components/FindTeamBox'
 
 
 // interface CardProps {
@@ -20,18 +21,8 @@ const FindTeamPage:React.FC = () => {
         <Tag/>
         <SearchBar/>
         <Button/>
-        <button>글 작성</button>
-        <h2>팀찾기</h2>
-        <BasicCard 
-        />
-        <button
-        onClick={()=>{
-            setVisible(!visible)
-        }}
-        >
-            {visible ? "작성하기" : "보이기"}
-        </button>
-        {visible && <FindTeam/>}
+        <FindTeamBox/>
+
         </>
     )
 
