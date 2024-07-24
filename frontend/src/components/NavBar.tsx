@@ -1,7 +1,5 @@
 import * as React from "react";
-import {
-  Outlet,
-  Link as RouterLink} from "react-router-dom";
+import { Link as RouterLink } from "react-router-dom";
 import { styled,  useTheme,  Theme,  CSSObject } from "@mui/material/styles";
 import {
   FolderOpenRoundedIcon,
@@ -40,6 +38,11 @@ const StyledLink = styled(RouterLink)`
   color: black;
   text-decoration: none;
   width: 100%;
+`;
+
+const StyledBox = styled(Box)`
+  width : 100%;
+  height : 100%
 `;
 
 const openedMixin = (theme: Theme): CSSObject => ({
@@ -121,7 +124,7 @@ export default function NavBar() {
   //렌더링 영역
   return (
     //상단 푸른색 툴바 영역
-    <Box sx={{ display: "flex" }}>
+    <Box sx={{ display: "flex" , margin:'0px'}}>
       {/* 간격 설정용 */}
       {/* <CssBaseline /> */}
 
@@ -129,10 +132,10 @@ export default function NavBar() {
       <Drawer variant="permanent" open={open}>
         <DrawerHeader>
         <StyledLink to="/">  
-            <ListItem disablePadding>
+            <ListItem disablePadding >
                 <ListItemButton>
                   <ListItemIcon>
-                  <img src={Logo} width={30} alt="Logo" />
+                  <img src={Logo} width={25} alt="Logo" />
                   </ListItemIcon>
                   <ListItemText 
                       primary="StoryBoat" 
@@ -145,8 +148,6 @@ export default function NavBar() {
                       }}/>
                 </ListItemButton>
               </ListItem>
-      
-   
           </StyledLink>
           <IconButton onClick={toggleDrawer}>
           {open ? <ChevronLeftIcon  /> : <ChevronRightIcon />}
@@ -155,7 +156,6 @@ export default function NavBar() {
         </DrawerHeader>
 
         <Divider /> {/* 나만의 공간 */}
-       
         <List>
         <StyledLink to="/main/mystory">  
             <ListItem disablePadding>
@@ -260,9 +260,6 @@ export default function NavBar() {
         </List>
         <Divider />
             <ListItem sx={{ height :'auto'}}/>
-       
-
-
         <Divider />
 
         <StyledLink to="/main/profile">  
@@ -276,11 +273,7 @@ export default function NavBar() {
               </ListItem>
           </StyledLink>
       </Drawer>
-
-      {/* 작성 공간 */}
-      <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-        <Outlet />
-      </Box>
+      
     </Box>
   );
 }

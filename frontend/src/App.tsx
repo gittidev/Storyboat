@@ -19,6 +19,10 @@ import StudioPage from './pages/StudioPage';
 import FindTeamPage from './pages/FindTeamPage';
 import ProfilePage from './pages/ProfilePage';
 
+import StudioSetting from "./components/Studio/StudioSetting";
+import SubscriptionPlan from "./components/Studio/SubscriptionPlan";
+import TeamSetting from "./components/Studio/TeamSetting";
+
 function App() {
   const isAuthenticated = true;
 
@@ -36,7 +40,11 @@ function App() {
             <Route path="charbox" element={<CharBoxPage />} />
             <Route path="ideabox" element={<IdeaBoxPage />} />
             <Route path="findteam" element={<FindTeamPage />} />
-            <Route path="studio" element={<StudioPage />} />
+            <Route path="studio" element={<StudioPage />}>
+              <Route path="studioSettings" element={<StudioSetting/>}/>
+              <Route path="subscription" element={<SubscriptionPlan/>}/>
+              <Route path="teamsetting" element={<TeamSetting/>}/>
+            </Route>
             <Route path="profile" element={<ProfilePage />} />
           </Route>
         </Route>

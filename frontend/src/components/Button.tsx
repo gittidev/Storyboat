@@ -1,10 +1,12 @@
-// import React from 'react'
+import { Button as MuiButton } from "@mui/material"
+
+
 
 const Button = () => {
     
     return (
         <>
-        <button>버튼</button>
+        <MuiButton variant="contained" >버튼</MuiButton>
         </>
     )
 }
