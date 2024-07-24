@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import { fetchProfile } from '../../apis/profileApi';
 import { dummyProfile} from './ProfileData'
-import type { Profile } from './ProfileData';
+// import type { Profile } from './ProfileData';   
 
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -10,6 +10,12 @@ import Modal from '@mui/material/Modal';
 import ProfileForm from './ProfileForm';
 import './Profile.css';
 
+interface Profile  {
+  penName: string;
+  profilePicture: File;
+  preferredGenres: string;
+  additionalInfo: string;
+}
 
 const style = {
   position: 'absolute' as 'absolute',
@@ -58,7 +64,8 @@ export default function BasicModal() {
             key={index}
             penName = {profile.penName}
             // email = {profile.email}
-            preferredGenres = {profile.tags}
+            profilePicture = {profile.profilePicture}
+            preferredGenres = {profile.preferredGenres}
             additionalInfo = {profile.additionalInfo}
           />
         ))}
@@ -70,16 +77,55 @@ export default function BasicModal() {
 
 interface ProfileProps {
   penName : string;
-  email : string;
+  profilePicture: File | null;
   preferredGenres : string;
   additionalInfo : string;
 }
 
-const CharBox: React.FC<ProfileProps> = ({ penName, email, preferredGenres, additionalInfo }) => {
+const FileUploadComponent: React.FC = () => {
+  const [profilePicture, setProfilePicture] = useState<File | null>(null);
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files[0]) {
+      setProfilePicture(event.target.files[0]);
+    }
+  };
+
+  return (
+    <div className="form-group">
+      <label htmlFor="profilePicture">프로필 사진</label>
+      <input 
+        type="file" 
+        id="profilePicture" 
+        onChange={handleFileChange}
+        style={{ display: 'block', width: '100%', padding: '0.5rem', boxSizing: 'border-box' }}
+      />
+      {profilePicture && (
+        <div>
+          <p>Selected file: {profilePicture.name}</p>
+          <img 
+            src={URL.createObjectURL(profilePicture)} 
+            alt="Profile Preview" 
+            style={{ maxWidth: '100%', height: 'auto', marginTop: '1rem' }}
+          />
+        </div>
+      )}
+    </div>
+  );
+};
+
+// export default FileUploadComponent;
+
+const Profile: React.FC<ProfileProps> = ({ penName,profilePicture, preferredGenres, additionalInfo }) => {
   return (
     <div style={{ border: '1px solid #ddd', padding: '1rem', marginTop: '1rem' }}>
       <h2>{penName}</h2>
-      <p><strong>email:</strong> {email}</p>
+      <p><strong>profilePicture:</strong> </p>
+      <img 
+            src={URL.createObjectURL(profilePicture)} 
+            alt="Profile Preview" 
+            style={{ maxWidth: '100%', height: 'auto', marginTop: '1rem' }}
+          />
       <p><strong>선호장르:</strong> {preferredGenres}</p>
       <p><strong>추가정보:</strong> {additionalInfo}</p>
     </div>

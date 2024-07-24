@@ -22,6 +22,7 @@ import ProfilePage from './pages/ProfilePage';
 import StudioSetting from "./components/Studio/StudioSetting";
 import SubscriptionPlan from "./components/Studio/SubscriptionPlan";
 import TeamSetting from "./components/Studio/TeamSetting";
+import LoginPage from "./pages/LoginPage";
 
 function App() {
   const isAuthenticated = true;
@@ -30,6 +31,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<LandingPage />} />
+        <Route path="/login" element={<LoginPage />} />
         <Route element={<ProtectedRoute isAuthentication={isAuthenticated} redirectPath="/" />}>
           <Route path="/main" element={<MainPage />}>
             <Route path="mystory" element={<MyStoryPage />} />

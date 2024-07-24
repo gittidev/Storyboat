@@ -20,6 +20,7 @@ const MainPage = () => {
           <TopBar/>
           <Outlet/>
         </StyledBox>
+      
       </Box>
     </>
   );
