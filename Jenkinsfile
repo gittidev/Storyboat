@@ -1,3 +1,5 @@
+gi
+
 agent any
 environment {
     DOCKERHUB_CREDENTIALS = credentials('docker-hub-credentials')
@@ -19,6 +21,7 @@ stages {
         }
     }
     stage('Build Backend Docker Image') {
+        when {
             changeset "**/backend/**"  // 백엔드 코드가 변경된 경우
         }
         steps {
