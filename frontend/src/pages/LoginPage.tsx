@@ -1,10 +1,19 @@
-import styled from "styled-components"
+// import styled from "styled-components"
+
+import KakaoLoginButton from "../components/Login/KakaoLoginButton"
+import GoogleLoginButton from "../components/Login/GoogleLoginButton"
+import NaverLoginButton from "../components/Login/NaverLoginButton"
 
 const LoginPage = () => {
     return (
         <>
-        로그인 페이지zz
-        
+        <h1>Login</h1>
+        <KakaoLoginButton/>
+        <br />
+        <GoogleLoginButton/>
+        <br />
+        <NaverLoginButton/>
+
         </>
     )
 
