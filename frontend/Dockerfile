@@ -1,17 +1,27 @@
-# Docker Image 빌드시 Java 기본환경 설정
-FROM node:17
+# Step 1: Build Stage
+# Node.js 기반의 이미지를 사용
+FROM node:20
 
-# /app 으로 작업 디렉토리 지정
+# 작업 디렉토리 설정
 WORKDIR /app
 
-# jar파일을 복사해서 app.jar로 생성
-COPY . .
-
+# 의존성 파일을 복사하고 설치
+COPY frontend/package*.json ./
 RUN npm install
+
+# 소스 코드 복사 및 빌드
+COPY frontend/ ./
 RUN npm run build
 
-# 컨테이너 외부 통신시 8080포트로 설정
-EXPOSE 80
+# Step 2: Production Stage
+# Nginx를 사용하여 정적 파일을 서빙
+FROM nginx:alpine
 
-# java -jar app.jar 컨테이너 시작시 명령어 실행
-ENTRYPOINT ["npm", "run", "serve"]
+# Nginx의 기본 HTML 디렉토리에 빌드된 파일 복사
+COPY --from=build /app/build /usr/share/nginx/html
+
+# Nginx가 사용하는 포트 노출
+EXPOSE 3000
+
+# Nginx 실행
+CMD ["nginx", "-g", "daemon off;"]
