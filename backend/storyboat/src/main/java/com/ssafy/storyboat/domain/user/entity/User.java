@@ -12,7 +12,6 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @Getter
-@ToString
 public class User {
 
     @Id
