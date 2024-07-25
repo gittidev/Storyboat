@@ -1,4 +1,4 @@
-import styled from "styled-components"
+// import styled from "styled-components"
 
 import KakaoLoginButton from "../components/Login/KakaoLoginButton"
 import GoogleLoginButton from "../components/Login/GoogleLoginButton"

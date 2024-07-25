@@ -1,7 +1,7 @@
-import LoginPage from "./LoginPage"
+// import LoginPage from "./LoginPage"
 // import { BrowserRouter, Routes, Route } from "react-router-dom"
 
-import ProfileForm from "../components/Profile/ProfileForm"
+// import ProfileForm from "../components/Profile/ProfileForm"
 import Profile from "../components/Profile/Profile"
 
 const ProfilePage = () => {

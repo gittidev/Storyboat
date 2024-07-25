@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion, Variants } from 'framer-motion';
 import './LandingPage.css';
-import { Link, Link as RouterLink } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const layerVariants: Variants = {
     hover: (i: number) => ({

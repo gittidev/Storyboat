@@ -1,8 +1,8 @@
 import React from "react"
 
 interface SearchBarProps {
-    value : string;
-    onChange : (event : React.ChangeEvent<HTMLInputElement>) => void 
+    value? : string;
+    onChange? : (event : React.ChangeEvent<HTMLInputElement>) => void 
 }
 
 export function SearchBar({value, onChange} : SearchBarProps){

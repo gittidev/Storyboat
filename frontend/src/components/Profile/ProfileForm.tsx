@@ -1,32 +1,41 @@
 import React, { useState } from 'react';
-import { useForm, SubmitHandler } from 'react-hook-form';
+import { Profile } from './ProfileData';
+// import { useForm, SubmitHandler } from 'react-hook-form';
 import './ProfileForm.css';
 
+// interface ProfileFormProps {
+//   onSave : (profile : Profile) => void;
+// }
+
 interface ProfileFormProps {
-  onSave : (profile : Profile) => void;
+  onSave: (profile: Profile) => void;
+  onClose: () => void;
 }
 
-interface Profile  {
-  penName: string;
-  profilePicture: FileList;
-  preferredGenres: string;
-  additionalInfo: string;
-}
+// interface Profile  {
+//   penName: string;
+//   profilePicture: FileList;
+//   preferredGenres: string;
+//   additionalInfo: string;
+// }
 
 const ProfileForm: React.FC<ProfileFormProps> = ({onSave}) => {
   const [penName, setpenName] = useState<string>('');
-  const [profilePicture, setprofilePicture] = useState<File | null>(null);
-  const [preferredGenres, setpreferredGenres] = useState<string>('');
-  const [additionalInfo, setadditionalInfo] = useState<string>('');
+  const [email, setEmail] = useState<string>('');
+  const [profilePicture, setProfilePicture] = useState<string | null>(null);
+  const [preferredGenres, setPreferredGenres] = useState<string[]>([]);
+  const [additionalInfo, setAdditionalInfo] = useState<string>('');
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-    const profile: Profile = { penName, profilePicture, preferredGenres, additionalInfo };
+    // const profile: Profile = { penName, profilePicture, preferredGenres, additionalInfo };
+    const profile: Profile = {  penName, email, profilePicture, preferredGenres, additionalInfo };
     onSave(profile);
     setpenName('');
-    setprofilePicture(null);
-    setpreferredGenres('');
-    setadditionalInfo('');
+    setEmail('');
+    setProfilePicture(null);
+    setPreferredGenres([]);
+    setAdditionalInfo('');
   };
 
   // const { register, handleSubmit, formState: { errors } } = useForm<ProfileFormValues>();
@@ -56,7 +65,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({onSave}) => {
         id="profilePicture" 
         onChange={(e) => {
           if (e.target.files && e.target.files[0]) {
-            setprofilePicture(e.target.files[0]);
+            // setprofilePicture(e.target.files[0]);
           }
         }}
         style={{ display: 'block', width: '100%', padding: '0.5rem', boxSizing: 'border-box', height: '100px' }}
@@ -70,7 +79,8 @@ const ProfileForm: React.FC<ProfileFormProps> = ({onSave}) => {
         type="text" 
         id = 'preferredGenres'
         value = {preferredGenres}
-        onChange={(e) => setpreferredGenres(e.target.value)}
+        // onChange={(e) => setPreferredGenres(e.target.value)}
+        onChange={(e) => setPreferredGenres(e.target.value.split(',').map(genre => genre.trim()))}
         style={{ display: 'block', width: '100%', padding: '0.5rem', boxSizing: 'border-box', height: '100px' }}
         />
         {/* {errors.preferredGenres && <span className="error">선호 장르가 필요합니다.</span>} */}
@@ -81,7 +91,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({onSave}) => {
         <textarea 
         id="additionalInfo" 
         value = {additionalInfo}
-        onChange={(e) => setadditionalInfo(e.target.value)}
+        onChange={(e) => setAdditionalInfo(e.target.value)}
         style={{ display: 'block', width: '100%', padding: '0.5rem', boxSizing: 'border-box', height: '100px' }}
         />
       </div>

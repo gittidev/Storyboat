@@ -3,25 +3,25 @@ import { Box } from "@mui/material"
 import TeamTable from "./TeamTable";
 
 
-interface Member {
-    id: number;
-    name: string;
-}
+// interface Member {
+//     id: number;
+//     name: string;
+// }
 
 
 //더미
-const members: Member[] = [
-    { id: 1, name: 'Alice' },
-    { id: 2, name: 'Bob' },
-    { id: 3, name: 'Charlie' },
-    { id: 4, name: 'David' },
-    { id: 5, name: 'Eve' },
-    { id: 6, name: 'Frank' },
-    { id: 7, name: 'Grace' },
-    { id: 8, name: 'Hannah' },
-    { id: 9, name: 'Ivy' },
-    { id: 10, name: 'Jack' }
-];
+// const members: Member[] = [
+//     { id: 1, name: 'Alice' },
+//     { id: 2, name: 'Bob' },
+//     { id: 3, name: 'Charlie' },
+//     { id: 4, name: 'David' },
+//     { id: 5, name: 'Eve' },
+//     { id: 6, name: 'Frank' },
+//     { id: 7, name: 'Grace' },
+//     { id: 8, name: 'Hannah' },
+//     { id: 9, name: 'Ivy' },
+//     { id: 10, name: 'Jack' }
+// ];
 
 
 const TeamSetting = () =>{

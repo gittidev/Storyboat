@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Tag } from './Tag'
+// import { Tag } from './Tag'
 
 interface FindTeamProps {
     onSave : (findteam : Findteam) => void;
@@ -8,22 +8,24 @@ interface FindTeamProps {
 interface Findteam {
     title : string;
     content : string;
-    tags : string[];
+    // tags : string[];
 }
 
 const FindTeamForm:React.FC<FindTeamProps> = ({onSave}) => {
 
     const [ title, setTitle ] = useState("")
     const [ content, setContent ] = useState("")
-    const [ tags, setTags ] = useState("")
+    // const [ tags, setTags ] = useState("")
 
     const handleSubmit = (event: React.FormEvent) => {
         event.preventDefault();
-        const findteam: Findteam = { title,content,tags };
+        // const findteam: Findteam = { title,content,tags };
+        const findteam: Findteam = { title,content };
         onSave(findteam);
         setTitle('');
         setContent('');
-        setTags('');
+        // setTags('');
+
       };
 
   return (
@@ -56,8 +58,8 @@ const FindTeamForm:React.FC<FindTeamProps> = ({onSave}) => {
         <label>
           특징
           <input
-            value={tags}
-            onChange={(e) => setTags(e.target.value)}
+            // value={tags}
+            // onChange={(e) => setTags(e.target.value)}
             style={{ display: 'block', width: '100%', padding: '0.5rem', boxSizing: 'border-box', height: '100px' }}
             required
           />

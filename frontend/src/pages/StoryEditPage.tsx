@@ -26,6 +26,7 @@ const StoryEditPage: React.FC = () => {
   // 페이지 변경 핸들러
   const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
     setPage(value);
+    console.log(event)
   };
 
   return (

@@ -1,24 +1,26 @@
-import React, {useEffect, useState} from 'react';
-import { fetchProfile } from '../../apis/profileApi';
-import { dummyProfile} from './ProfileData'
-// import type { Profile } from './ProfileData';   
+// import { fetchProfile } from '../../apis/profileApi';
+// import React, { useState } from 'react';
+import React from 'react';
+// import { dummyProfile} from './ProfileData'
+import type { Profile } from './ProfileData';   
 
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
+// import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import ProfileForm from './ProfileForm';
 import './Profile.css';
 
-interface Profile  {
-  penName: string;
-  profilePicture: File;
-  preferredGenres: string;
-  additionalInfo: string;
-}
+// interface Profile  {
+//   penName: string;
+//   profilePicture: File;
+//   preferredGenres: string;
+//   additionalInfo: string;
+// }
+
 
 const style = {
-  position: 'absolute' as 'absolute',
+  position: 'absolute',
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
@@ -53,6 +55,7 @@ export default function BasicModal() {
         aria-describedby="modal-modal-description"
       >
         <Box sx={style}>
+          {/* <ProfileForm onSave={handleSave} onClose={handleClose} />원본임 */}
           <ProfileForm onSave={handleSave} onClose={handleClose} />
         </Box>
       </Modal>
@@ -75,54 +78,66 @@ export default function BasicModal() {
   );
 }
 
+// interface ProfileProps {
+//   penName : string;
+//   profilePicture: File | null;
+//   preferredGenres : string[];
+//   additionalInfo : string;
+// }
+
 interface ProfileProps {
+
   penName : string;
-  profilePicture: File | null;
-  preferredGenres : string;
+  profilePicture: string | null;
+  preferredGenres : string[];
   additionalInfo : string;
 }
 
-const FileUploadComponent: React.FC = () => {
-  const [profilePicture, setProfilePicture] = useState<File | null>(null);
+// const FileUploadComponent: React.FC = () => {
+//   const [profilePicture, setProfilePicture] = useState<File | null>(null);
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files && event.target.files[0]) {
-      setProfilePicture(event.target.files[0]);
-    }
-  };
+//   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+//     if (event.target.files && event.target.files[0]) {
+//       setProfilePicture(event.target.files[0]);
+//     }
+//   };
 
-  return (
-    <div className="form-group">
-      <label htmlFor="profilePicture">프로필 사진</label>
-      <input 
-        type="file" 
-        id="profilePicture" 
-        onChange={handleFileChange}
-        style={{ display: 'block', width: '100%', padding: '0.5rem', boxSizing: 'border-box' }}
-      />
-      {profilePicture && (
-        <div>
-          <p>Selected file: {profilePicture.name}</p>
-          <img 
-            src={URL.createObjectURL(profilePicture)} 
-            alt="Profile Preview" 
-            style={{ maxWidth: '100%', height: 'auto', marginTop: '1rem' }}
-          />
-        </div>
-      )}
-    </div>
-  );
-};
+//   return (
+//     <div className="form-group">
+//       <label htmlFor="profilePicture">프로필 사진</label>
+//       <input 
+//         type="file" 
+//         id="profilePicture" 
+//         onChange={handleFileChange}
+//         style={{ display: 'block', width: '100%', padding: '0.5rem', boxSizing: 'border-box' }}
+//       />
+//       {profilePicture && (
+//         <div>
+//           <p>Selected file: {profilePicture.name}</p>
+//           <img 
+//             src={URL.createObjectURL(profilePicture)} 
+//             alt="Profile Preview" 
+//             style={{ maxWidth: '100%', height: 'auto', marginTop: '1rem' }}
+//           />
+//         </div>
+//       )}
+//     </div>
+//   );
+// };
 
 // export default FileUploadComponent;
 
-const Profile: React.FC<ProfileProps> = ({ penName,profilePicture, preferredGenres, additionalInfo }) => {
+
+//이게 기존 코드임
+// const Profile: React.FC<ProfileProps> = ({ penName,profilePicture, preferredGenres, additionalInfo }) => {
+const Profile: React.FC<ProfileProps> = ({ penName, preferredGenres, additionalInfo }) => {
   return (
     <div style={{ border: '1px solid #ddd', padding: '1rem', marginTop: '1rem' }}>
       <h2>{penName}</h2>
       <p><strong>profilePicture:</strong> </p>
       <img 
-            src={URL.createObjectURL(profilePicture)} 
+            // src={URL.createObjectURL(profilePicture)} 
+            src={''} 
             alt="Profile Preview" 
             style={{ maxWidth: '100%', height: 'auto', marginTop: '1rem' }}
           />

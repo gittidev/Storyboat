@@ -1,6 +1,7 @@
 import * as React from "react";
 import { Link as RouterLink } from "react-router-dom";
-import { styled,  useTheme,  Theme,  CSSObject } from "@mui/material/styles";
+// import { styled,  useTheme,  Theme,  CSSObject } from "@mui/material/styles";
+import { styled,  Theme,  CSSObject } from "@mui/material/styles";
 import {
   FolderOpenRoundedIcon,
   AddReactionRoundedIcon,
@@ -41,10 +42,6 @@ const StyledLink = styled(RouterLink)`
   width: 100%;
 `;
 
-const StyledBox = styled(Box)`
-  width : 100%;
-  height : 100%
-`;
 
 const openedMixin = (theme: Theme): CSSObject => ({
   width: drawerWidth,
@@ -102,7 +99,6 @@ const Drawer = styled(MuiDrawer, {
 
 //실제 렌더링 관련 영역
 export default function NavBar() {
-  const theme = useTheme();
   const [open, setOpen] = React.useState(false);
 
 
@@ -111,14 +107,6 @@ export default function NavBar() {
   };
 
 
-
-  const handleDrawerOpen = () => {
-    setOpen(true);
-  };
-
-  const handleDrawerClose = () => {
-    setOpen(false);
-  };
 
   //렌더링 영역
   return (

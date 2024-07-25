@@ -51,6 +51,7 @@ const TabBar: React.FC<TabBarTestProps> = ({ labels = [], childrenComponents = [
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
+    console.log(event)
   };
 
   return (
@@ -70,11 +71,19 @@ const TabBar: React.FC<TabBarTestProps> = ({ labels = [], childrenComponents = [
         </Tabs>
       </AppBar>
     
-      {labels.map((label, index) => (
+      {/* {labels.map((label, index) => (
         <TabPanel key={index} value={value} index={index} dir={theme.direction}>
           {childrenComponents[index]}
         </TabPanel>
-      ))}
+      ))} */}
+
+    {labels.map((label, index) => (
+      <TabPanel key={index} value={value} index={index} dir={theme.direction}>
+        {childrenComponents[index]}
+        {label}
+      </TabPanel>
+    ))}
+
     </Box>
   );
 }

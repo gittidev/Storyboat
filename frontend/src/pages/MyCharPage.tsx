@@ -1,5 +1,5 @@
 
-import { Tag } from "../components/Tag"
+import Tag  from "../components/Tag"
 
 const MyCharPage = () => {
     return (

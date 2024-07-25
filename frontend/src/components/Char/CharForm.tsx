@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 
 interface CharacterFormProps {
   onSave: (character: Character) => void;
+  // 수정함
+  onClose: () => void;
 }
 
 interface Character {

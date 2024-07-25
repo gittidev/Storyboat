@@ -1,15 +1,22 @@
+// export interface Profile {
+//     email: string;
+//     penName: string;
+//     profilePicture: string;
+//     preferredGenres: string[];
+//     additionalInfo: string;
+//   }
 export interface Profile {
-    email: string;
-    penName: string;
-    profilePicture: string;
-    preferredGenres: string[];
-    additionalInfo: string;
-  }
+  penName: string;
+  email: string;
+  profilePicture: string | null; // URL을 저장하도록 수정
+  preferredGenres: string[];
+  additionalInfo: string;
+}
   
 export const dummyProfile: Profile = {
-    email: 'example@example.com',
-    penName: '보람',
-    profilePicture: 'https://via.placeholder.com/150',
-    preferredGenres: ['Fantasy', 'Science Fiction', 'Mystery'],
-    additionalInfo: 'This is some additional information about the user.',
+  penName: 'John Doe',
+  email: 'john.doe@example.com',
+  profilePicture: 'https://via.placeholder.com/150', // URL을 저장
+  preferredGenres: ['Fantasy', 'Science Fiction'],
+  additionalInfo: 'Some additional information about John Doe.'
 };
