@@ -50,6 +50,7 @@ stages {
         }
         steps {
             dir('frontend') {
+                sh 'docker build -t siokim002/jenkins_frontend:${env.BUILD_ID} .'
             }
         }
     }
