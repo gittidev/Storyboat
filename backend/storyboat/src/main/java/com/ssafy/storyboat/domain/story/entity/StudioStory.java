@@ -17,6 +17,7 @@ public class StudioStory {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "studio_story_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)

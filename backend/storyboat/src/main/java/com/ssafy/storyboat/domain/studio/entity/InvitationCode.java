@@ -19,6 +19,7 @@ public class InvitationCode {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "invitation_code_id")
     private Long id;
 
     @OneToOne
