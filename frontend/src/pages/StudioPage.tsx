@@ -1,10 +1,25 @@
-import styled from "styled-components"
+import { Box } from "@mui/material"
+import SubTopBar from "../components/SubTopBar"
+import TabBar from "../components/TabBar"
+import { Outlet } from "react-router-dom"
+import StudioSetting from "../components/Studio/StudioSetting"
+import SubscriptionPlan from "../components/Studio/SubscriptionPlan"
+import TeamSetting from "../components/Studio/TeamSetting"
 
 const StudioPage = () => {
+    const labels = ['일반 설정', '요금제 & 플랜', '팀 관리']
+    const childrenComponents = [<StudioSetting/>, <SubscriptionPlan/>, <TeamSetting/>]
+
     return (
-        <>
-        스튜디오 설정 페이지
-        
+        <> 
+   
+           
+                <SubTopBar title={'스튜디오 페이지'}/>
+                <TabBar labels={labels} childrenComponents={childrenComponents}/>
+                <Box>
+                <Outlet/>
+                </Box>  
+          
         </>
     )
 
