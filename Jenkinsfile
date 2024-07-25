@@ -31,6 +31,7 @@ stages {
     stage('Push Backend Docker Image') {
         when {
             changeset "**/backend/**"  // 백엔드 코드가 변경된 경우
+        }
         steps {
             script {
                 sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
@@ -49,6 +50,7 @@ stages {
         }
     }
     stage('Build Frontend Docker Image') {
+        when {
             changeset "**/frontend/**"  // 프론트엔드 코드가 변경된 경우
         }
         steps {
