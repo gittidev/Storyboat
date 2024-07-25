@@ -49,7 +49,7 @@ public class SecurityConfig {
 
                 // 권한 설정
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/login", "/", "/join", "/oauth2/**").permitAll()
+                        .requestMatchers("/login", "/", "/oauth2/authorization/**").permitAll()
                         .requestMatchers("/reissue").permitAll()
                         .anyRequest().authenticated()
                 )

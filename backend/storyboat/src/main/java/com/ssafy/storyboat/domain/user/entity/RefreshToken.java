@@ -9,7 +9,6 @@ import lombok.*;
 @AllArgsConstructor
 @Getter
 @Builder
-//@ToString
 public class RefreshToken {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,7 +16,7 @@ public class RefreshToken {
     private Long id;
 
     // 즉시 로딩
-    @ManyToOne//(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
     private User user;
 

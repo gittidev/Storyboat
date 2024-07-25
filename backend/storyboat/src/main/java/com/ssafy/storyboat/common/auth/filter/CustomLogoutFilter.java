@@ -17,9 +17,11 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.filter.GenericFilterBean;
 
 import java.io.IOException;
+import java.util.Iterator;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -38,7 +40,7 @@ public class CustomLogoutFilter extends GenericFilterBean {
 
         // path and method verify
         String requestUri = request.getRequestURI();
-        if (!requestUri.matches("^/logout$")) {
+        if (!requestUri.matches("/logout")) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -102,18 +104,7 @@ public class CustomLogoutFilter extends GenericFilterBean {
             boolean tokenFound = false;
 
             // RefreshToken을 삭제
-            for (RefreshToken token : queriedUser.getRefreshTokens()) {
-                log.info("Comparing token: {}", token.getRefreshToken());
-                if (token.getRefreshToken().equals(refresh)) {
-                    tokenFound = true;
-                    log.info("Deleting RefreshToken");
-                    entityManager.remove(token);
-                    break;
-                } else if (jwtUtil.isExpired(token.getRefreshToken())) {
-                    log.info("Removing expired RefreshToken");
-                    entityManager.remove(token);
-                }
-            }
+            tokenFound = removeExpiredOrMatchingTokens(queriedUser, refresh);
 
             if (!tokenFound) {
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
@@ -152,5 +143,31 @@ public class CustomLogoutFilter extends GenericFilterBean {
         cookie.setHttpOnly(true);
         response.addCookie(cookie);
         response.setStatus(HttpServletResponse.SC_OK);
+    }
+
+    //@Transactional
+    public boolean removeExpiredOrMatchingTokens(User queriedUser, String refresh) {
+        Iterator<RefreshToken> iterator = queriedUser.getRefreshTokens().iterator();
+
+        boolean result = false;
+
+        while (iterator.hasNext()) {
+            RefreshToken token = iterator.next();
+            log.info("Comparing token: {}", token.getRefreshToken());
+
+            if (token.getRefreshToken().equals(refresh)) {
+                log.info("Deleting RefreshToken");
+                log.info("tokenID: {}, token: {}, user: {}", token.getId(), token.getRefreshToken(), token.getUser());
+
+                iterator.remove(); // 부모 엔티티의 컬렉션에서 제거
+                result = true;
+            } else if (jwtUtil.isExpired(token.getRefreshToken())) {
+                log.info("Removing expired RefreshToken");
+                iterator.remove(); // 부모 엔티티의 컬렉션에서 제거
+            }
+        }
+        return result;
+        // entityManager.remove(token); 호출할 필요 없음
+        // 부모 엔티티의 컬렉션에서 제거하면 orphanRemoval=true 설정에 의해 자식 엔티티가 자동으로 삭제됨
     }
 }

@@ -88,11 +88,11 @@ public class ReissueController {
 
                     // make new JWT
                     String newAccess = jwtUtil.createJwt("access", username, role, 600000L);
-                    String newRefresh = jwtUtil.createJwt("refresh", username, role, 24 * 60 * 60 * 1000L);
+                    //String newRefresh = jwtUtil.createJwt("refresh", username, role, 24 * 60 * 60 * 1000L);
 
                     // response
                     response.addHeader("Authorization", "Bearer " + newAccess);
-                    response.addCookie(createCookie("refresh", newRefresh));
+                    //response.addCookie(createCookie("refresh", newRefresh));
 
                     return new ResponseEntity<>(HttpStatus.OK);
                 } else if (jwtUtil.isExpired(token.getRefreshToken())) {
