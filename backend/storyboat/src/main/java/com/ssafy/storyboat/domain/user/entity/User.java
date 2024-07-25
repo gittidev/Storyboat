@@ -1,5 +1,6 @@
 package com.ssafy.storyboat.domain.user.entity;
 
+import com.ssafy.storyboat.domain.studio.entity.StudioUser;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -37,5 +38,6 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     List<RefreshToken> refreshTokens = new ArrayList<>();
 
-
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    List<StudioUser> studioUsers = new ArrayList<>();
 }
