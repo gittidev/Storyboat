@@ -1,16 +1,16 @@
 # Step 1: Build Stage
 # Node.js 기반의 이미지를 사용
-FROM node:20
+FROM node:20 AS build
 
 # 작업 디렉토리 설정
 WORKDIR /app
 
 # 의존성 파일을 복사하고 설치
-COPY frontend/package*.json ./
+COPY package*.json ./
 RUN npm install
 
 # 소스 코드 복사 및 빌드
-COPY frontend/ ./
+COPY . .
 RUN npm run build
 
 # Step 2: Production Stage
@@ -18,10 +18,11 @@ RUN npm run build
 FROM nginx:alpine
 
 # Nginx의 기본 HTML 디렉토리에 빌드된 파일 복사
-COPY --from=build /app/build /usr/share/nginx/html
+COPY --from=build /app/dist /usr/share/nginx/html
 
 # Nginx가 사용하는 포트 노출
 EXPOSE 3000
 
 # Nginx 실행
 CMD ["nginx", "-g", "daemon off;"]
+
