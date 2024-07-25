@@ -3,12 +3,11 @@ pipeline {
     
     environment {
         DOCKERHUB_CREDENTIALS = credentials('docker-hub-credentials')
-        DEPLOYMENT_SERVER_SSH = credentials('deployment-server-ssh')
     }
     stages {
         stage('Checkout') {
             steps {
-                git url: 'https://lab.ssafy.com/s11-webmobile1-sub2/S11P12C107.git', branch: 'dev', credentialsId: 'gitlab'
+                git url: 'https://lab.ssafy.com/s11-webmobile1-sub2/S11P12C107.git', branch: 'test-dev', credentialsId: 'gitlab'
             }
         }
         stage('Build Backend') {
@@ -16,8 +15,10 @@ pipeline {
                 changeset "**/backend/**"  // 백엔드 코드가 변경된 경우
             }
             steps {
-                sh 'chmod +x ./gradlew'
-                sh './gradlew clean build'
+                dir('backend') {
+                    sh 'chmod +x ./gradlew'
+                    sh './gradlew clean build'
+                }
             }
         }
         stage('Build Backend Docker Image') {
@@ -25,7 +26,9 @@ pipeline {
                 changeset "**/backend/**"  // 백엔드 코드가 변경된 경우
             }
             steps {
-                sh 'docker build -t siokim002/jenkins_backend:${env.BUILD_ID} .'
+                dir('backend') {
+                    sh 'docker build -t siokim002/jenkins_backend .'
+                }
             }
         }
         stage('Push Backend Docker Image') {
@@ -35,7 +38,8 @@ pipeline {
             steps {
                 script {
                     sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
-                    sh 'docker push siokim002/jenkins_backend:${env.BUILD_ID}'
+                    sh 'docker push siokim002/jenkins_backend'
+                    sh 'ssh deployuser@i11c107.p.ssafy.io "bash /home/deployuser/deploy_back.sh"'
                 }
             }
         }
@@ -55,7 +59,7 @@ pipeline {
             }
             steps {
                 dir('frontend') {
-                    sh 'docker build -t siokim002/jenkins_frontend:${env.BUILD_ID} .'
+                    sh 'docker build -t siokim002/jenkins_frontend .'
                 }
             }
         }
@@ -66,15 +70,8 @@ pipeline {
             steps {
                 script {
                     sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
-                    sh 'docker push siokim002/jenkins_frontend:${env.BUILD_ID}'
-                }
-            }
-        }
-        stage('Deploy to Deployment Server') {
-            steps {
-                sshagent(['deployment-server-ssh']) {
-                    sh 'ssh -o StrictHostKeyChecking=no deployuser@i11c107.p.ssafy.io "bash -s" < deploy_back.sh'
-                    sh 'ssh -o StrictHostKeyChecking=no deployuser@i11c107.p.ssafy.io "bash -s" < deploy_front.sh'
+                    sh 'docker push siokim002/jenkins_frontend'
+                    sh 'ssh deployuser@i11c107.p.ssafy.io "bash /home/deployuser/deploy_front.sh"'
                 }
             }
         }
