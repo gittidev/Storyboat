@@ -1,4 +1,4 @@
-package com.ssafy.storyboat.common.dto;
+package com.ssafy.storyboat.common.auth.dto;
 
 public interface OAuth2Response {
     //제공자 (Ex. naver, google, ...)

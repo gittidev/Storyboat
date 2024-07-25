@@ -1,4 +1,4 @@
-package com.ssafy.storyboat.common.dto;
+package com.ssafy.storyboat.common.auth.dto;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -40,4 +40,6 @@ public class CustomOAuth2User implements OAuth2User {
     public String getUsername() {
         return userDTO.getUsername();
     }
+
+    public boolean getJoinStatus() {return userDTO.getJoinStatus();}
 }

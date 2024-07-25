@@ -1,7 +1,7 @@
 package com.ssafy.storyboat.common.auth.filter;
 
 import com.ssafy.storyboat.common.auth.util.JWTUtil;
-import com.ssafy.storyboat.common.dto.CustomUserDetails;
+import com.ssafy.storyboat.common.auth.dto.CustomUserDetails;
 import com.ssafy.storyboat.domain.user.entity.User;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

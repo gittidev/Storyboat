@@ -1,7 +1,7 @@
 package com.ssafy.storyboat.common.auth.application;
 
 import com.ssafy.storyboat.common.auth.util.JWTUtil;
-import com.ssafy.storyboat.common.dto.CustomOAuth2User;
+import com.ssafy.storyboat.common.auth.dto.CustomOAuth2User;
 import com.ssafy.storyboat.domain.user.entity.RefreshToken;
 import com.ssafy.storyboat.domain.user.entity.User;
 import jakarta.persistence.EntityManager;
@@ -48,7 +48,13 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         response.addCookie(createCookie("refresh", refreshToken));
 
         // 성공 후 리디렉션
-        response.sendRedirect("http://localhost:8080/main");
+        if (customUserDetails.getJoinStatus()) {
+            // 회원 가입시 보낼 경로
+            response.sendRedirect("http://localhost:3000/main");
+        } else {
+            // 로그인 시 보낼 경로
+            response.sendRedirect("http://localhost:3000/main");
+        }
     }
 
     private void saveRefreshToken(String userName, String refreshToken) {

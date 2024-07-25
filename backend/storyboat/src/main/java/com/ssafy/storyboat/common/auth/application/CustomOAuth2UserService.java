@@ -1,6 +1,6 @@
 package com.ssafy.storyboat.common.auth.application;
 
-import com.ssafy.storyboat.common.dto.*;
+import com.ssafy.storyboat.common.auth.dto.*;
 import com.ssafy.storyboat.domain.user.entity.Profile;
 import com.ssafy.storyboat.domain.user.entity.User;
 import jakarta.persistence.EntityManager;
@@ -70,7 +70,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             userDTO.setName(name);
             userDTO.setUsername(providerId + " " + provider);
             userDTO.setRole("ROLE_USER");
-
+            userDTO.setJoinStatus(false);
             log.info("로그인={}", userDTO.toString());
 
             return new CustomOAuth2User(userDTO);
@@ -106,6 +106,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                 OAuth2UserDTO userDTO = new OAuth2UserDTO();
                 userDTO.setName(name);
                 userDTO.setUsername(providerId + " " + provider);
+                userDTO.setJoinStatus(true);
                 userDTO.setRole("ROLE_USER");
 
                 log.info("회원가입={}", userDTO.toString());

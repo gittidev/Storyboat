@@ -1,4 +1,4 @@
-package com.ssafy.storyboat.common.dto;
+package com.ssafy.storyboat.common.auth.dto;
 
 
 import com.ssafy.storyboat.domain.user.entity.User;

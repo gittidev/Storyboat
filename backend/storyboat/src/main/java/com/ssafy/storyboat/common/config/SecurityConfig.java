@@ -1,4 +1,4 @@
-package com.ssafy.storyboat.config;
+package com.ssafy.storyboat.common.config;
 
 import com.ssafy.storyboat.common.auth.application.CustomFailureHandler;
 import com.ssafy.storyboat.common.auth.application.CustomOAuth2UserService;
