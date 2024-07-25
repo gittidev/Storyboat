@@ -7,6 +7,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(name = "studio_story")
 @NoArgsConstructor
@@ -25,4 +28,7 @@ public class StudioStory {
     private Studio studio;
 
     private String title;
+
+    @OneToMany(mappedBy = "studioStory", cascade = CascadeType.ALL, orphanRemoval = true)
+    List<StoryLog> storyLogs;
 }
