@@ -1,18 +1,13 @@
 import { styled } from '@mui/system';
+import CustomButton from '../components/CustomButton';
+import SubTopBar from '../components/SubTopBar';
 
-const StyledDiv = styled('div')`
-    color: darkslategray;
-    background-color: aliceblue;
-    padding: 8px;
-    border-radius: 4px;
-`;
 
 const StoryBoxPage = () => {
     return (
     <>
-        <StyledDiv>
-            
-        </StyledDiv>
+    <SubTopBar title={'StoryBox'}/>
+    <CustomButton/>
     </>
     );
 };

@@ -8,7 +8,7 @@ interface ButtonProps {
     bgcolor? : string;
 }
 
-const Button: React.FC<ButtonProps> = (props) => {
+const CustomButton: React.FC<ButtonProps> = (props) => {
     const { content, action, onClick, type, bgcolor } = props;
    
     const StyledButton = styled('button')`
@@ -27,4 +27,4 @@ const Button: React.FC<ButtonProps> = (props) => {
     );
 };
 
-export default Button;
+export default CustomButton;

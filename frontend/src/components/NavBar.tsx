@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Link as RouterLink } from "react-router-dom";
-// import { styled,  useTheme,  Theme,  CSSObject } from "@mui/material/styles";
+import "../assets/stylesheets/custom-scrollbar.css"
 import { styled,  Theme,  CSSObject } from "@mui/material/styles";
 import {
   FolderOpenRoundedIcon,
@@ -111,7 +111,7 @@ export default function NavBar() {
   //렌더링 영역
   return (
     //상단 푸른색 툴바 영역
-    <Box sx={{ display: "flex" , margin:'0px'}}>
+    <Box sx={{ display: "flex" , margin:'0px'}} >
       {/* 간격 설정용 */}
       {/* <CssBaseline /> */}
 

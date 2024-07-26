@@ -9,6 +9,7 @@ import LandingPage from "./pages/LandingPage/LandingPage";
 import LoadingPage from "./pages/LoadingPage";
 
 //네브바 하위 라우팅 페이지
+import RecentPage from './pages/RecentPage';
 import MyStoryPage from './pages/MyStoryPage';
 import MyCharPage from './pages/MyCharPage';
 import MyIdeaPage from './pages/MyIdeaPage';
@@ -36,9 +37,10 @@ function App() {
         <Route path="login" element={<LoginPage />} />
         <Route element={<ProtectedRoute isAuthentication={isAuthenticated} redirectPath="/" />}>
           <Route path="/main" element={<MainPage />}>
+            <Route path="recent" element={<RecentPage />} />
             <Route path="mystory" element={<MyStoryPage />} />
             <Route path="mychar" element={<MyCharPage />}/>
-            <Route path="/main/AIPaintingPage" element={<AIPaintingPage />} />
+            <Route path="AIPaintingPage" element={<AIPaintingPage />} />
             <Route path="myidea" element={<MyIdeaPage />} />
             <Route path="storybox" element={<StoryBoxPage />} />
             <Route path="storyedit" element={<StoryEditPage />} />
@@ -46,9 +48,9 @@ function App() {
             <Route path="ideabox" element={<IdeaBoxPage />} />
             <Route path="findteam" element={<FindTeamPage />} />
             <Route path="studio" element={<StudioPage />}>
-              <Route path="studioSettings" element={<StudioSetting />} />
+              {/* <Route path="studioSettings" element={<StudioSetting />} />
               <Route path="subscription" element={<SubscriptionPlan />} />
-              <Route path="teamsetting" element={<TeamSetting />} />
+              <Route path="teamsetting" element={<TeamSetting />} /> */}
             </Route>
             <Route path="profile" element={<ProfilePage />} />
           </Route>

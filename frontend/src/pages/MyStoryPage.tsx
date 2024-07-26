@@ -1,9 +1,9 @@
-
+import SubTopBar from "../components/SubTopBar"
 
 const MyStoryPage = () => {
     return (
         <>
-        내 스토리 보관함 페이지
+        <SubTopBar title={'내 Story 보관함'}/>
         
         </>
     )

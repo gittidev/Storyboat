@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import Button from '../Button';
+import Button from '../CustomButton';
 import StudioDelete from './StudioDelete';
 
 interface StudioFormProps {

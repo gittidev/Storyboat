@@ -1,10 +1,9 @@
-
+import SubTopBar from "../components/SubTopBar"
 
 const MyIdeaPage = () => {
     return (
         <>
-        
-        내 아이디어 보관함 페이지
+        <SubTopBar title={'내 아이디어 보관함'}/>
         </>
     )
 

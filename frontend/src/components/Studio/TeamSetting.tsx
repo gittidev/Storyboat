@@ -1,4 +1,4 @@
-import Button from "../Button"
+import Button from "../CustomButton"
 import { Box } from "@mui/material"
 import TeamTable from "./TeamTable";
 

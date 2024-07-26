@@ -5,7 +5,7 @@ import React from "react"
 // import { Tag }  from "../components/Tag"
 import Tag  from "../components/Tag"
 import { SearchBar } from "../components/SearchBar"
-import Button from "../components/Button"
+import Button from "../components/CustomButton"
 // import BasicCard from "../components/Card"
 // import FindTeamForm from "../components/FindTeamForm"
 import FindTeamBox from '../components/FindTeamBox'
