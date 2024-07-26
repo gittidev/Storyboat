@@ -1,12 +1,13 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-// import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import CharForm from './CharForm';
+// import { Character } from './CharForm';
 
 const style = {
   position: 'absolute', 
+  top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
   width: 400,
@@ -16,24 +17,16 @@ const style = {
   p: 4,
 };
 
-//build용 임시..인터페이스
-interface Character {
-  name : string
-  tags : string
-  features :  string 
-}
-
-
 
 
 export default function BasicModal() {
   const [open, setOpen] = React.useState(false);
-  const [characters, setCharacters] = React.useState<Character[]>([]);
+  const [characters, setCharacters] = React.useState<CharBoxProps[]>([]);
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
-  const handleSave = (character: Character) => {
+  const handleSave = (character: CharBoxProps) => {
     console.log('Character saved:', character);
     setCharacters((prevCharacters) => [...prevCharacters, character]);
     // Handle character save logic here
@@ -76,7 +69,7 @@ interface CharBoxProps {
   features: string;
 }
 
-const CharBox: React.FC<CharBoxProps> = ({ name, tags, features }) => {
+export const CharBox: React.FC<CharBoxProps> = ({ name, tags, features }) => {
   return (
     <div style={{ border: '1px solid #ddd', padding: '1rem', marginTop: '1rem' }}>
       <h2>{name}</h2>

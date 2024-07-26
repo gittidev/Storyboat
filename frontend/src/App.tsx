@@ -1,3 +1,4 @@
+import React from 'react';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import ProtectedRoute from "./ProtecedRoute";
 
@@ -18,11 +19,12 @@ import IdeaBoxPage from './pages/IdeaBoxPage';
 import StudioPage from './pages/StudioPage';
 import FindTeamPage from './pages/FindTeamPage';
 import ProfilePage from './pages/ProfilePage';
+import AIPaintingPage from './pages/AIPaintingPage';
+import LoginPage from './pages/LoginPage';
 
 import StudioSetting from "./components/Studio/StudioSetting";
 import SubscriptionPlan from "./components/Studio/SubscriptionPlan";
 import TeamSetting from "./components/Studio/TeamSetting";
-import LoginPage from "./pages/LoginPage";
 
 function App() {
   const isAuthenticated = true;
@@ -31,11 +33,12 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<LandingPage />} />
-        <Route path="/login" element={<LoginPage />} />
+        <Route path="login" element={<LoginPage />} />
         <Route element={<ProtectedRoute isAuthentication={isAuthenticated} redirectPath="/" />}>
           <Route path="/main" element={<MainPage />}>
             <Route path="mystory" element={<MyStoryPage />} />
-            <Route path="mychar" element={<MyCharPage />} />
+            <Route path="mychar" element={<MyCharPage />}/>
+            <Route path="/main/AIPaintingPage" element={<AIPaintingPage />} />
             <Route path="myidea" element={<MyIdeaPage />} />
             <Route path="storybox" element={<StoryBoxPage />} />
             <Route path="storyedit" element={<StoryEditPage />} />
@@ -43,12 +46,13 @@ function App() {
             <Route path="ideabox" element={<IdeaBoxPage />} />
             <Route path="findteam" element={<FindTeamPage />} />
             <Route path="studio" element={<StudioPage />}>
-              <Route path="studioSettings" element={<StudioSetting/>}/>
-              <Route path="subscription" element={<SubscriptionPlan/>}/>
-              <Route path="teamsetting" element={<TeamSetting/>}/>
+              <Route path="studioSettings" element={<StudioSetting />} />
+              <Route path="subscription" element={<SubscriptionPlan />} />
+              <Route path="teamsetting" element={<TeamSetting />} />
             </Route>
             <Route path="profile" element={<ProfilePage />} />
           </Route>
+
         </Route>
         <Route path="/loading" element={<LoadingPage />} />
       </Routes>
