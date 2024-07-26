@@ -26,6 +26,10 @@ const GoogleLoginButton: React.FC = () => {
     window.location.href = 'http://localhost:8080/oauth2/authorization/google';
   };
 
+  
+
+  console.log(document.cookie)
+
   return (
     <button onClick={handleLogin}>
         구글로 로그인

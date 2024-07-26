@@ -1,39 +1,38 @@
-// import * as React from 'react';
-// import Box from '@mui/material/Box';
-// import Button from '@mui/material/Button';
-// import Typography from '@mui/material/Typography';
-// import Modal from '@mui/material/Modal';
-// import FindTeamForm from './FindTeamForm';
+import * as React from 'react';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Modal from '@mui/material/Modal';
+import FindTeamForm from './FindTeamForm';
 
-// const style = {
-//   position: 'absolute',
-//   top: '50%',
-//   left: '50%',
-//   transform: 'translate(-50%, -50%)',
-//   width: 400,
-//   bgcolor: 'background.paper',
-//   border: '2px solid #000',
-//   boxShadow: 24,
-//   p: 4,
-// };
+const style = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 400,
+  bgcolor: 'background.paper',
+  border: '2px solid #000',
+  boxShadow: 24,
+  p: 4,
+};
 
 export default function BasicModal() {
-  // const [open, setOpen] = React.useState(false);
-  // const [findteams, setFindteams] = React.useState<Findteam[]>([]);
+  const [open, setOpen] = React.useState(false);
+  const [findteams, setFindteams] = React.useState<FindteamBoxProps[]>([]);
 
-  // const handleOpen = () => setOpen(true);
-  // const handleClose = () => setOpen(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
 
-  // const handleSave = (findteam: Findteam) => {
-  //   console.log('Findteam saved:', findteam);
-  //   setFindteams((prevFindteam) => [...prevFindteam, findteam]);
-  //   // Handle character save logic here
-  //   handleClose();
-  // };
+  const handleSave = (findteam: FindteamBoxProps) => {
+    console.log('Findteam saved:', findteam);
+    setFindteams((prevFindteam) => [...prevFindteam, findteam]);
+    // Handle character save logic here
+    handleClose();
+  };
 
   return (
     <div>
-      {/* <Button onClick={handleOpen}>팀 찾기</Button>
+      <Button onClick={handleOpen}>팀 찾기</Button>
       <Modal
         open={open}
         onClose={handleClose}
@@ -41,21 +40,20 @@ export default function BasicModal() {
         aria-describedby="modal-modal-description"
       >
         <Box sx={style}>
-          <FindTeamForm onSave={handleSave} onClose={handleClose} />
+          <FindTeamForm onSave={handleSave}  />
         </Box>
       </Modal>
-      <div> */}
+      <div>
         <h3>팀 찾기</h3>
-        {/* <p>{Character}</p> */}
-        {/* {findteams.map((findteam, index) => (
+        {findteams.map((findteam, index) => (
            <FindteamBox
              key={index}
             title={findteam.title}
             content={findteam.content}
             tags={findteam.tags}
            />
-        ))}  */}
-      {/* </div> */}
+        ))}  
+      </div>
 
     </div>
   );

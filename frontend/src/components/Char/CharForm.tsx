@@ -6,7 +6,7 @@ interface CharacterFormProps {
   onClose: () => void;
 }
 
-interface Character {
+export interface Character {
   name: string;
   tags: string;
   features: string;
