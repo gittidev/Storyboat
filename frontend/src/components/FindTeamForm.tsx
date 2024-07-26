@@ -5,7 +5,7 @@ interface FindTeamProps {
     onSave : (findteam : Findteam) => void;
 }
 
-interface Findteam {
+export interface Findteam {
     title : string;
     content : string;
     // tags : string[];

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Outlet, BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import ProtectedRoute from "./ProtecedRoute";
 
 //랜딩 페이지, 메인페이지(navbar+각 하위 페이지)
