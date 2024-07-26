@@ -17,6 +17,7 @@ public class ProfileTag {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "profile_tag_id")
     private Long id;
 
     @ManyToOne
