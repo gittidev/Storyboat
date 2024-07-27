@@ -18,14 +18,11 @@ const MainPage = () => {
   return (
     <>
       <Box sx={{ display: "flex" , margin:'0px'}}>
-      
         <NavBar/>
 
         <StyledBox sx={{ flexGrow: 1, p: 3 }}>
           <TopBar/>
-          <Box sx={{ border : '1px solid #D1D5DB', borderRadius : '5px', padding:'5px'}}>
           <Outlet/>
-          </Box>
         
         </StyledBox>
       

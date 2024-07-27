@@ -1,4 +1,4 @@
-import Button from "../CustomButton"
+import CustomButton from "../CustomButton"
 
 const StudioDelete = ()=>{
 
@@ -15,9 +15,9 @@ const StudioDelete = ()=>{
     </p>
     </div>
    
-    <Button content="삭제하기" bgcolor="red">
+    <CustomButton content="삭제하기" bgcolor="orange" hoverBgColor="red">
 
-    </Button>
+    </CustomButton>
     </>
 
     )

@@ -4,7 +4,7 @@ import { Box } from "@mui/material"
 
 const StyledTopBar = styled(Box)`
     width : 100%;
-    height : 40px;
+    height : 20px;
     margin : 0px;
 `
 

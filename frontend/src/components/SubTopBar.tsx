@@ -1,7 +1,5 @@
 import { styled } from '@mui/system'; 
 import { Box, Typography } from "@mui/material"
-// import Button from './Button';
-// import { SearchBar } from './SearchBar';
 
 
 interface SubTopBarProps {
@@ -18,10 +16,10 @@ const StyledSubBar = styled(Box)`
 const SubTopBar = (props: SubTopBarProps) => {
   return (
     <StyledSubBar>
-      <Typography variant="h4" component="span">
+      <Typography variant="h5" component="span">
         {props.title}
       </Typography>
-      <Typography variant="body1" component="span" sx={{ color: 'gray', marginLeft: 1 }}>
+      <Typography variant="body2" component="span" sx={{ color: 'gray', marginLeft: 1 }}>
         {props.content}
       </Typography>
     </StyledSubBar>

@@ -200,7 +200,7 @@ export default function NavBar() {
                   <ListItemIcon>
                     <DriveFileRenameOutlineRoundedIcon />
                   </ListItemIcon>
-                  <ListItemText primary="Story 보관소" />
+                  <ListItemText primary="Story 편집하기" />
                 </ListItemButton>
               </ListItem>
           </StyledLink>

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Container, List, ListItem, ListItemText, Pagination, Typography, Box, Divider } from '@mui/material';
+import {List, ListItem, ListItemText, Pagination, Box, Divider } from '@mui/material';
 import dayjs from 'dayjs'; // 날짜 포맷을 위한 라이브러리
 import SubTopBar from '../components/SubTopBar';
 import CustomButton from '../components/CustomButton';
@@ -35,9 +35,17 @@ const StoryEditPage: React.FC = () => {
 
   return (
     <>
-   
-      <SubTopBar title={'스튜디오 스토리'}/>
-            <CustomButton content='+ 생성하기' bgcolor="lightgreen" hoverBgColor="green"/>
+      <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%", padding: "10px" }}>
+      <Box sx={{ flexGrow: 1}}>
+          <SubTopBar title={"스튜디오's STORY 편집하기"} content='작성된 story의 메인플롯을 집필해보세요'/>
+          </Box>
+          <Box sx={{ flexShrink: 0 }}>
+          <CustomButton content='+ 생성하기' bgcolor="lightgreen" hoverBgColor="green"/>
+      </Box>
+      </Box>
+
+
+      {/* 스토리 보관함 스토리 리스트  */}
       <List>
         {currentItems.map((item, index) => (
           <React.Fragment key={item.id}>
@@ -68,5 +76,7 @@ const StoryEditPage: React.FC = () => {
       </>
   );
 };
+
+
 
 export default StoryEditPage;

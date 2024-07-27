@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { useTheme } from '@mui/material/styles';
-import AppBar from '@mui/material/AppBar';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
+import Paper from '@mui/material/Paper';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -54,23 +54,37 @@ const TabBar: React.FC<TabBarTestProps> = ({ labels, childrenComponents }) => {
   };
 
   return (
-    <Box sx={{ bgcolor: 'background.paper', width: '100%' }}>
-      <AppBar position="static" sx={{ borderTopLeftRadius: '16px', borderTopRightRadius: '16px' }}>
+    <Box sx={{ width: '100%' }}>
+      <Paper elevation={1} sx={{ borderRadius: '16px', p: 1, bgcolor: 'grey.300' }}>
         <Tabs
           value={value}
           onChange={handleChange}
-          indicatorColor="primary"
-          textColor="inherit"
           variant="fullWidth"
-          aria-label="full width tabs example"
-          sx={{ borderTopLeftRadius: '16px', borderTopRightRadius: '16px' }}
+          aria-label="tabs example"
+          sx={{ 
+            '& .MuiTabs-indicator': { display: 'none' }
+          }}
         >
           {labels.map((label, index) => (
-            <Tab key={index} label={label} {...a11yProps(index)} />
+            <Tab
+              key={index}
+              label={label}
+              {...a11yProps(index)}
+              sx={{
+                borderRadius: '12px',
+                bgcolor: value === index ? 'white' : 'grey.300',
+                color: value === index ? 'black' : 'grey.600',
+                fontWeight: value === index ? 'bold' : 'normal',
+                '&:hover': {
+                  bgcolor: value === index ? 'white' : 'grey.400',
+                },
+                mx: 0.5 // Margin X to add space between tabs
+              }}
+            />
           ))}
         </Tabs>
-      </AppBar>
-    
+      </Paper>
+      
       {labels.map((_, index) => (
         <TabPanel key={index} value={value} index={index} dir={theme.direction}>
           {childrenComponents[index]}
