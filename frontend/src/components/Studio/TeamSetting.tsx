@@ -31,9 +31,7 @@ const TeamSetting = () =>{
         <>
         <div style={{ width : '100%' }}>
 
-      
         <Box>
-            팀관리페이지
             <h1>팀원 초대하기</h1>
             <p>이메일을 작성 후 발송합니다. 메일의 수락하기를 통해 팀에 참여할수 있습니다.</p>
             <form action="">

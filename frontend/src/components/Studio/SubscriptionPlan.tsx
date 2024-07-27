@@ -1,11 +1,13 @@
 import PlanList from "./PlanList"
+import { Container } from "@mui/material"
+
 
 const SubscriptionPlan = () =>{
 
     return (
-        <div style={{display:"flex"}}>
+        <Container style={{display:"flex"}}>
             <PlanList/>
-        </div>
+        </Container>
     )
 }
 

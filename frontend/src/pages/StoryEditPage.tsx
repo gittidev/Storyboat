@@ -2,6 +2,10 @@ import React, { useState } from 'react';
 import { Container, List, ListItem, ListItemText, Pagination, Typography, Box, Divider } from '@mui/material';
 import dayjs from 'dayjs'; // 날짜 포맷을 위한 라이브러리
 import SubTopBar from '../components/SubTopBar';
+import CustomButton from '../components/CustomButton';
+
+
+
 // 더미 데이터 생성
 const generateDummyData = (num: number) => {
   return Array.from({ length: num }, (_, index) => ({
@@ -33,6 +37,7 @@ const StoryEditPage: React.FC = () => {
     <>
    
       <SubTopBar title={'스튜디오 스토리'}/>
+            <CustomButton content='+ 생성하기' bgcolor="lightgreen" hoverBgColor="green"/>
       <List>
         {currentItems.map((item, index) => (
           <React.Fragment key={item.id}>

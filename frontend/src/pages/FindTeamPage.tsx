@@ -1,28 +1,18 @@
 import React from "react"
-// import React, {useState} from "react"
-
-// import styled from "styled-components"
-// import { Tag }  from "../components/Tag"
 import Tag  from "../components/Tag"
 import { SearchBar } from "../components/SearchBar"
-import Button from "../components/CustomButton"
-// import BasicCard from "../components/Card"
-// import FindTeamForm from "../components/FindTeamForm"
 import FindTeamBox from '../components/FindTeamBox'
-
-
-// interface CardProps {
-//     tags :
-// }
+import CustomButton from "../components/CustomButton"
+import SubTopBar from "../components/SubTopBar"
 
 const FindTeamPage:React.FC = () => {
-    // const [visible,setVisible] = useState(false)
 
     return (
         <>
+        <SubTopBar title='항해하기' content="다른 스튜디오 및 글쓰기를 탐색할수 있는 공간입니다."/>
         <Tag/>
         <SearchBar/>
-        <Button/>
+        <CustomButton content='+ 생성하기' bgcolor="lightgreen" hoverBgColor="green"/>
         <FindTeamBox/>
 
         </>

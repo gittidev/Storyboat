@@ -41,22 +41,21 @@ function a11yProps(index: number) {
 }
 
 interface TabBarTestProps {
-  labels?: string[];
-  childrenComponents?: React.ReactNode[];
+  labels: string[];
+  childrenComponents: React.ReactNode[];
 }
 
-const TabBar: React.FC<TabBarTestProps> = ({ labels = [], childrenComponents = [] }) => {
+const TabBar: React.FC<TabBarTestProps> = ({ labels, childrenComponents }) => {
   const theme = useTheme();
   const [value, setValue] = React.useState(0);
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
-    console.log(event)
   };
 
   return (
-    <Box sx={{ bgcolor: 'background.paper', width: 500 }}>
-      <AppBar position="static">
+    <Box sx={{ bgcolor: 'background.paper', width: '100%' }}>
+      <AppBar position="static" sx={{ borderTopLeftRadius: '16px', borderTopRightRadius: '16px' }}>
         <Tabs
           value={value}
           onChange={handleChange}
@@ -64,6 +63,7 @@ const TabBar: React.FC<TabBarTestProps> = ({ labels = [], childrenComponents = [
           textColor="inherit"
           variant="fullWidth"
           aria-label="full width tabs example"
+          sx={{ borderTopLeftRadius: '16px', borderTopRightRadius: '16px' }}
         >
           {labels.map((label, index) => (
             <Tab key={index} label={label} {...a11yProps(index)} />
@@ -71,19 +71,11 @@ const TabBar: React.FC<TabBarTestProps> = ({ labels = [], childrenComponents = [
         </Tabs>
       </AppBar>
     
-      {/* {labels.map((label, index) => (
+      {labels.map((_, index) => (
         <TabPanel key={index} value={value} index={index} dir={theme.direction}>
           {childrenComponents[index]}
         </TabPanel>
-      ))} */}
-
-    {labels.map((label, index) => (
-      <TabPanel key={index} value={value} index={index} dir={theme.direction}>
-        {childrenComponents[index]}
-        {label}
-      </TabPanel>
-    ))}
-
+      ))}
     </Box>
   );
 }
