@@ -13,7 +13,7 @@ const StyledSubBar = styled(Box)`
   display: flex;
   flex-direction: row;
   align-items: center;
-  padding: 0 16px;
+  padding: 0px;
   box-sizing: border-box;
 
   @media (max-width: 600px) {

@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
-import { Box, Typography } from '@mui/material';
+import { Box } from '@mui/material';
 import SubTopBar from '../components/SubTopBar';
 import CustomButton from '../components/CustomButton';
 import CustomModal from '../components/CustomModal';
 import useModal from '../hooks/useModal';
 import MyStoryForm, { MyStory } from '../components/Mystory/MyStoryForm';
 import { BorderBox } from '../components/BorderBox';
+import CustomCard from '../components/CustomCard'; // Importing the CustomCard component
 
 export interface MyStoryBoxProps extends MyStory {
-  id: number;
+  story_id: number;
   lastCollectedBy: string;
   lastDateEdited: string;
 }
@@ -16,21 +17,28 @@ export interface MyStoryBoxProps extends MyStory {
 // Dummy data
 const initialStories: MyStoryBoxProps[] = [
   {
-    id: 1,
+    story_id: 1,
     title: 'The Great Adventure',
     description: 'A thrilling journey through unknown lands.',
     lastCollectedBy: 'Alice',
     lastDateEdited: '2023-07-20',
   },
   {
-    id: 2,
+    story_id: 2,
     title: 'Mystery of the Lost City',
     description: 'An intriguing tale of a lost civilization.',
     lastCollectedBy: 'Bob',
     lastDateEdited: '2023-07-18',
   },
   {
-    id: 3,
+    story_id: 3,
+    title: 'Sci-Fi Extravaganza',
+    description: 'A futuristic story of space exploration.',
+    lastCollectedBy: 'Charlie',
+    lastDateEdited: '2023-07-15',
+  },
+  {
+    story_id: 4,
     title: 'Sci-Fi Extravaganza',
     description: 'A futuristic story of space exploration.',
     lastCollectedBy: 'Charlie',
@@ -45,7 +53,7 @@ const MyStoryPage: React.FC = () => {
   const handleSave = (newStory: MyStory) => {
     const newStoryWithId: MyStoryBoxProps = {
       ...newStory,
-      id: mystory.length + 1,
+      story_id: mystory.length + 1,
       lastCollectedBy: 'Default Collector', // Replace with actual user logic if needed
       lastDateEdited: new Date().toISOString().split('T')[0], // Current date in YYYY-MM-DD format
     };
@@ -73,14 +81,17 @@ const MyStoryPage: React.FC = () => {
 
       {/* 내용 들어갈 부분 */}
       <BorderBox>
-        {mystory.map((story) => (
-          <Box key={story.id} sx={{ mb: 2, p: 2, border: '1px solid grey', borderRadius: '8px' }}>
-            <Typography variant="h6">{story.title}</Typography>
-            <Typography variant="body1">{story.description}</Typography>
-            <Typography variant="body2" color="textSecondary">Last Collected By: {story.lastCollectedBy}</Typography>
-            <Typography variant="body2" color="textSecondary">Last Date Edited: {story.lastDateEdited}</Typography>
-          </Box>
-        ))}
+        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+          {mystory.map((story) => (
+            <CustomCard
+              key={story.story_id}
+              title={story.title}
+              content={story.description}
+              lastCollectedBy={story.lastCollectedBy}
+              lastDateEdited={story.lastDateEdited}
+            />
+          ))}
+        </Box>
       </BorderBox>
     </>
   );

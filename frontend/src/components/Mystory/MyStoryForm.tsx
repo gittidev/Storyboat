@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import CustomButton from '../CustomButton';
+import TextField from '@mui/material/TextField';
 
 interface MyStoryFormProps {
   onSave: (mystory: MyStory) => void;
@@ -26,30 +28,26 @@ const MyStoryForm: React.FC<MyStoryFormProps> = ({ onSave, onClose }) => {
   return (
     <form onSubmit={handleSubmit} style={{ maxWidth: '400px', margin: '0 auto' }}>
       <div style={{ marginBottom: '1rem' }}>
-        <label>
-          이름
-          <input
-            type="text"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            style={{ display: 'block', width: '100%', padding: '0.5rem', boxSizing: 'border-box' }}
-            required
-          />
-        </label>
+        <TextField
+          fullWidth
+          required
+          value={title}
+          label="제목"
+          onChange={(e) => setTitle(e.target.value)}
+        />
       </div>
       <div style={{ marginBottom: '1rem' }}>
-        <label>
-          요약
-          <input
-            type="text"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            style={{ display: 'block', width: '100%', padding: '0.5rem', boxSizing: 'border-box' }}
-            required
-          />
-        </label>
+        <TextField
+          fullWidth
+          required
+          value={description}
+          label="개요"
+          placeholder="개요를 입력하세요"
+          onChange={(e) => setDescription(e.target.value)}
+          multiline
+        />
       </div>
-      <button type="submit" style={{ padding: '0.5rem 1rem' }}>저장하기</button>
+      <CustomButton type="submit" content='저장하기' bgcolor='green' width='100%'/>
     </form>
   );
 };

@@ -93,7 +93,7 @@ const Drawer = styled(MuiDrawer, {
 
 
 //프로필 longMenu용 옵션
-const menuOptions = ['로그아웃'];
+const menuOptions = ['logout'];
 
 
 //실제 렌더링 navbar 영역
@@ -130,8 +130,6 @@ export default function NavBar() {
                 {open ? <ChevronLeftIcon  /> : <ChevronRightIcon />}
               </IconButton>
               </ListItem>
-
-        
 
         <Divider /> 
 
@@ -264,4 +262,4 @@ export default function NavBar() {
     </Box>
   );
 }
-                                                                                                                                                                               
+                                                                                                                                                                              

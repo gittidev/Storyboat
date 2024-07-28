@@ -1,3 +1,4 @@
+import React from 'react';
 import { Card, CardContent, Typography, List, ListItem, ListItemText, Box } from '@mui/material';
 import CustomButton from '../CustomButton';
 
@@ -7,7 +8,6 @@ interface Plan {
   storage: string;
   duration: string;
   features: string[];
-  path?: string;
 }
 
 const plans: Plan[] = [
@@ -56,19 +56,18 @@ const plans: Plan[] = [
 ];
 
 const PlanCard = ({ plan, content }: { plan: Plan, content: string }) => (
-  <Card sx={{ marginBottom: 1, flex: '1 0 30%', marginRight: 1 }}>
+  <Card sx={{ marginBottom: 2, flex: '1 1 30%', margin: 1, minWidth: '280px' }}>
     <CardContent>
-      <div style={{display:'flex'}}>
-      <Typography variant="h5" component="div">
-        {plan.name}
-        
-      </Typography>
-      <CustomButton content={content} hoverBgColor="red" bgcolor='pink.300'/>
-      </div>
-      <Typography variant="h6" component="div">
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Typography variant="h5" component="div">
+          {plan.name}
+        </Typography>
+        <CustomButton content={content} hoverBgColor="red" bgcolor='pink.300'/>
+      </Box>
+      <Typography variant="h6" component="div" sx={{ marginTop: 1 }}>
         {plan.price}
       </Typography>
-      <Typography variant="body2" color="text.secondary">
+      <Typography variant="body2" color="text.secondary" sx={{ marginTop: 1 }}>
         {plan.storage} storage
       </Typography>
       <Typography variant="body2" color="text.secondary">
@@ -76,19 +75,17 @@ const PlanCard = ({ plan, content }: { plan: Plan, content: string }) => (
       </Typography>
       <List>
         {plan.features.map((feature, index) => (
-          <ListItem key={index} sx={{ marginRight: 1 }}>
+          <ListItem key={index} sx={{ padding: 0 }}>
             <ListItemText primary={feature} />
           </ListItem>
         ))}
       </List>
-      
-      
     </CardContent>
   </Card>
 );
 
 const PlanList = () => (
-  <Box sx={{ width:'100%', display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+  <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 2 }}>
     {plans.map((plan, index) => (
       <PlanCard key={index} plan={plan} content='구독하기'/>
     ))}

@@ -1,27 +1,37 @@
 import { styled } from "@mui/system";
-import { Card } from "@mui/material";
+import { Card, CardContent, Typography } from "@mui/material";
 
-const StyledCard = styled(Card)`
+interface CustomCardProps {
+  story_id?: number;
+  note_id?: number;
+  title?: string;
+  content?: string;
+  onclick? : ()=> void;
+  lastCollectedBy?: string;
+  lastDateEdited?: string;
+}
+
+const StyledCard = styled(Card)<CustomCardProps>`
   width: 300px;
-  height: 300px;
-`
+  height: 100px;
+  border-radius: 10px;
+  border :  1px solid #D1D5DB;
+  margin:5px;
+`;
 
-
-export const EachTag = styled('span')`
-width : 50px;
-border : 1px solid black;
-border-radius : 10px;
-`
-
-const CustomCard = () => {
-
+const CustomCard: React.FC<CustomCardProps> = ({ title, content }) => {
   return (
-    <>
     <StyledCard>
-      카드 영역
+      <CardContent>
+        <Typography variant="h5" component="div">
+          {title || 'Default Title'}
+        </Typography>
+        <Typography variant="body2" color="textSecondary">
+          {content || 'Default content goes here.'}
+        </Typography>
+      </CardContent>
     </StyledCard>
-    </>
   );
 }
 
-export default CustomCard
+export default CustomCard;
