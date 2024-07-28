@@ -1,5 +1,6 @@
 package com.ssafy.storyboat.domain.user.application;
 
+import com.ssafy.storyboat.domain.user.dto.FetchSingleProfileDto;
 import com.ssafy.storyboat.domain.user.dto.FetchSingleUserDTO;
 import com.ssafy.storyboat.domain.user.entity.Profile;
 import com.ssafy.storyboat.domain.user.entity.User;
@@ -43,5 +44,17 @@ public class UserService {
             log.info("PenName not found: {}", penName);
             return false;
         }
+    }
+
+    @Transactional(readOnly = true)
+    public FetchSingleProfileDto fetchSingleProfile(String providerId, String provider) {
+        log.info("provider = " + provider + " providerId = " + providerId);
+        User user = userRepository.findByProviderIdAndProvider(providerId, provider);
+        Profile profile = profileRepository.findByUser(user);
+
+        FetchSingleProfileDto fetchSingleProfileDto = new FetchSingleProfileDto();
+        fetchSingleProfileDto.setPenName(profile.getPenName());
+
+        return fetchSingleProfileDto;
     }
 }

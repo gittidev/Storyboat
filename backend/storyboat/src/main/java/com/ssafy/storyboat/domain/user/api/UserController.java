@@ -5,6 +5,7 @@ import com.ssafy.storyboat.common.auth.dto.GoogleResponse;
 import com.ssafy.storyboat.common.auth.dto.NaverResponse;
 import com.ssafy.storyboat.common.auth.util.JWTUtil;
 import com.ssafy.storyboat.domain.user.application.UserService;
+import com.ssafy.storyboat.domain.user.dto.FetchSingleProfileDto;
 import com.ssafy.storyboat.domain.user.dto.FetchSingleUserDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -22,14 +23,9 @@ public class UserController {
 
     @GetMapping
     public ResponseEntity<ApiResponse<FetchSingleUserDTO>> getUser(@RequestHeader("Authorization") String token) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        //Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        // JWT 토큰에서 "Bearer " 부분 제거
-        String jwtToken = token.substring(7);
-
-        // JWTUtil을 사용하여 토큰의 정보 가져오기
-        String username = jwtUtil.getUsername(jwtToken);
-        String[] providers = username.split(" ");
+        String[] providers = getProviders(token);
 
         FetchSingleUserDTO fetchSingleUserDTO = userService.fetchSingleUser(providers[0], providers[1]);
 
@@ -41,6 +37,26 @@ public class UserController {
         Boolean result = userService.searchPenName(penName);
         return ResponseEntity.ok(ApiResponse.success(result, "Search User Success"));
     }
+
+    @GetMapping("/profile")
+    public ResponseEntity<ApiResponse<FetchSingleProfileDto>> getUserProfile(@RequestHeader("Authorization") String token) {
+
+        String[] providers = getProviders(token);
+        FetchSingleProfileDto fetchSingleProfileDto = userService.fetchSingleProfile(providers[0], providers[1]);
+
+        return ResponseEntity.ok(ApiResponse.success(fetchSingleProfileDto, "Fetch Profile Success"));
+    }
+
+    private String[] getProviders(String token) {
+        // JWT 토큰에서 "Bearer " 부분 제거
+        String jwtToken = token.substring(7);
+
+        // JWTUtil을 사용하여 토큰의 정보 가져오기
+        String username = jwtUtil.getUsername(jwtToken);
+        return username.split(" ");
+    }
+
+
 
 
 }
