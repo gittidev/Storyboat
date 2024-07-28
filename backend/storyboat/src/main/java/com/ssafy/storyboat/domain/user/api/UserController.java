@@ -10,10 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -37,6 +34,12 @@ public class UserController {
         FetchSingleUserDTO fetchSingleUserDTO = userService.fetchSingleUser(providers[0], providers[1]);
 
         return ResponseEntity.ok(ApiResponse.success(fetchSingleUserDTO, "Fetch User Success"));
+    }
+
+    @GetMapping("/pen-name/{penName}")
+    public ResponseEntity<ApiResponse<Boolean>> getUserByPenName(@PathVariable String penName) {
+        Boolean result = userService.searchPenName(penName);
+        return ResponseEntity.ok(ApiResponse.success(result, "Search User Success"));
     }
 
 

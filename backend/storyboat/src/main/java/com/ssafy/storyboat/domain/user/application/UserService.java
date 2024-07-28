@@ -6,7 +6,7 @@ import com.ssafy.storyboat.domain.user.entity.User;
 import com.ssafy.storyboat.domain.user.repository.ProfileRepository;
 import com.ssafy.storyboat.domain.user.repository.RefreshTokenRepository;
 import com.ssafy.storyboat.domain.user.repository.UserRepository;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -31,5 +31,17 @@ public class UserService {
 
         return new FetchSingleUserDTO(user.getUserId(), profile.getPenName());
     }
-    
+
+    @Transactional(readOnly = true)
+    public boolean searchPenName(String penName) {
+        log.info("Searching for penName: {}", penName);
+        Profile profile = profileRepository.findByPenName(penName);
+        if (profile != null) {
+            log.info("Found penName: {}", profile.getPenName());
+            return true;
+        } else {
+            log.info("PenName not found: {}", penName);
+            return false;
+        }
+    }
 }

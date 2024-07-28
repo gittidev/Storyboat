@@ -6,5 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ProfileRepository extends JpaRepository<Profile, Long> {
     Profile findByUser(User user);
-    Profile findBypenName(String penName);
+    Profile findByPenName(String penName);
 }
