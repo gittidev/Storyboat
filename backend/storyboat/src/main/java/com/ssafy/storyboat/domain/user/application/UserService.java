@@ -1,7 +1,10 @@
 package com.ssafy.storyboat.domain.user.application;
 
-import com.ssafy.storyboat.domain.user.dto.FetchSingleProfileDto;
-import com.ssafy.storyboat.domain.user.dto.FetchSingleUserDTO;
+import com.ssafy.storyboat.domain.tag.entity.ProfileTag;
+import com.ssafy.storyboat.domain.tag.repository.ProfileTagRepository;
+import com.ssafy.storyboat.domain.user.dto.SingleProfileResponseDTO;
+import com.ssafy.storyboat.domain.user.dto.FetchSingleUserResponseDTO;
+import com.ssafy.storyboat.domain.user.dto.UpdateProfileRequestDTO;
 import com.ssafy.storyboat.domain.user.entity.Profile;
 import com.ssafy.storyboat.domain.user.entity.User;
 import com.ssafy.storyboat.domain.user.repository.ProfileRepository;
@@ -12,6 +15,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -21,16 +26,16 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final ProfileRepository profileRepository;
-    private final RefreshTokenRepository refreshTokenRepository;
+    private final ProfileTagRepository profileTagRepository;
 
     @Transactional
-    public FetchSingleUserDTO fetchSingleUser(String providerId, String provider) {
+    public FetchSingleUserResponseDTO fetchSingleUser(String providerId, String provider) {
 
         log.info("provider = " + provider + " providerId = " + providerId);
         User user = userRepository.findByProviderIdAndProvider(providerId, provider);
         Profile profile = profileRepository.findByUser(user);
 
-        return new FetchSingleUserDTO(user.getUserId(), profile.getPenName());
+        return new FetchSingleUserResponseDTO(user.getUserId(), profile.getPenName());
     }
 
     @Transactional(readOnly = true)
@@ -47,14 +52,50 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public FetchSingleProfileDto fetchSingleProfile(String providerId, String provider) {
-        log.info("provider = " + provider + " providerId = " + providerId);
+    public SingleProfileResponseDTO fetchSingleProfile(String providerId, String provider) {
+        //log.info("provider = " + provider + " providerId = " + providerId);
         User user = userRepository.findByProviderIdAndProvider(providerId, provider);
         Profile profile = profileRepository.findByUser(user);
 
-        FetchSingleProfileDto fetchSingleProfileDto = new FetchSingleProfileDto();
-        fetchSingleProfileDto.setPenName(profile.getPenName());
+        SingleProfileResponseDTO singleProfileResponseDto = new SingleProfileResponseDTO();
+        singleProfileResponseDto.setPenName(profile.getPenName());
 
-        return fetchSingleProfileDto;
+        return singleProfileResponseDto;
+    }
+
+    @Transactional
+    public boolean updateUserProfile(String providerId, String provider, UpdateProfileRequestDTO updateProfileRequestDTO) {
+
+        User user = userRepository.findByProviderIdAndProvider(providerId, provider);
+        Profile profile = profileRepository.findByUser(user);
+        // 1. 해당 유저의 PenName 이 변경됬는지 확인
+        if (!profile.getPenName().equals(updateProfileRequestDTO.getPenName())) {
+            // 1.5 . 변경됬다면 PenName 이 중복되는지 확인 -> 중복시 false
+            if (profileRepository.findByPenName(updateProfileRequestDTO.getPenName()) != null) {
+                return false;
+            }
+        }
+        // 2. 기존 Tag 모두 삭제
+        profileTagRepository.deleteByProfileId(profile.getProfileId());
+
+        // 3. 새로운 태그 추가
+        List<ProfileTag> tagList = new ArrayList<>();
+        for (ProfileTag profileTag : profile.getProfileTags()) {
+            Optional<ProfileTag> optionalTag = profileTagRepository.findById(profileTag.getId());
+            optionalTag.ifPresent(tagList::add); // 값이 존재할 때만 리스트에 추가
+        }
+
+        // 4. 태그들 조회해 생성할 Profile Entity 와 연관관계 맺기!
+        Profile updatedProfile = Profile.builder()
+                .user(user)
+                .profileId(profile.getProfileId())
+                .penName(updateProfileRequestDTO.getPenName())
+                .introduction(updateProfileRequestDTO.getIntroduction())
+                .imageUrl(updateProfileRequestDTO.getImageUrl())
+                .profileTags(tagList)
+                .build();
+
+        profileRepository.save(updatedProfile);
+        return true;
     }
 }

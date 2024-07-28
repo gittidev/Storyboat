@@ -8,7 +8,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class FetchSingleProfileDto {
+public class SingleProfileResponseDTO {
     private String penName;
     private String introduction;
     private String imageUrl;
