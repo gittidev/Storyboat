@@ -2,9 +2,11 @@ import CustomButton from "../components/CustomButton"
 import SubTopBar from "../components/SubTopBar"
 import { Box } from "@mui/material"
 import useModal from "../hooks/useModal"
+import { BorderBox } from "../components/BorderBox"
+
 
 const IdeaBoxPage = () => {
-  const { open, handleOpen, handleClose } = useModal();
+  const { handleOpen } = useModal();
 
 
 
@@ -19,6 +21,11 @@ const IdeaBoxPage = () => {
         <CustomButton content='+ 생성하기' bgcolor="lightgreen" hoverBgColor="green" onClick={handleOpen} />
       </Box>
       </Box>
+      {/* 화면에 들어갈 내역 */}
+      <BorderBox>
+        
+      </BorderBox>
+
     </>
   )
 }

@@ -1,6 +1,8 @@
 import CustomButton from '../components/CustomButton';
 import SubTopBar from '../components/SubTopBar';
 import { Box } from '@mui/material';
+import { BorderBox } from '../components/BorderBox';
+
 
 const StoryBoxPage = () => {
     return (
@@ -13,6 +15,12 @@ const StoryBoxPage = () => {
                 <CustomButton content='+ 생성하기' bgcolor="lightgreen" hoverBgColor="green"/>
             </Box>
         </Box>
+
+        {/* 내용 들어갈 부분 */}
+        <BorderBox>
+
+            
+        </BorderBox>
     </>
     );
 };

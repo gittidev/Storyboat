@@ -1,14 +1,7 @@
-// import React from 'react';
 import Paper from '@mui/material/Paper';
-import { Table as MuiTable } from '@mui/material';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
+import { Table as MuiTable, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
 import LongMenu from '../LongMenu'; // LongMenu 컴포넌트 임포트
-import "../../assets/stylesheets/custom-scrollbar.css"
-
+import "../../assets/stylesheets/custom-scrollbar.css";
 
 interface Column {
   id: 'name' | 'role' | 'date' | 'invitation' | 'setting';
@@ -56,9 +49,13 @@ const rows = [
 ];
 
 export default function TeamTable() {
+  const handleOptionClick = (option: string) => {
+    console.log('Option clicked:', option);
+  };
+
   return (
     <>
-      <Paper sx={{ width: '100%', overflow: 'hidden' }} >
+      <Paper sx={{ width: '100%', overflow: 'hidden' }}>
         <TableContainer sx={{ maxHeight: 440 }} className='custom-scrollbar'>
           <MuiTable stickyHeader aria-label="sticky table">
             <TableHead>
@@ -81,8 +78,9 @@ export default function TeamTable() {
                     {columns.map((column) => {
                       const value = row[column.id as keyof Data];
                       return (
+                        // 권한 여부에 따라 다르게 랜더링 해주기 (추가작업)
                         <TableCell key={column.id} align={column.align}>
-                          {column.id === 'setting' ? <LongMenu /> : (
+                          {column.id === 'setting' ? <LongMenu options={['수락하기', '거절하기', '팀에서 제거하기']} onClick={handleOptionClick} /> : (
                             column.format && typeof value === 'number'
                               ? column.format(value)
                               : value

@@ -1,20 +1,33 @@
 import React from "react"
-import Tag  from "../components/Tag"
 import { SearchBar } from "../components/SearchBar"
-import FindTeamBox from '../components/FindTeamBox'
+import FindTeamBox from '../components/FindTeam/FindTeamBox'
 import CustomButton from "../components/CustomButton"
 import SubTopBar from "../components/SubTopBar"
+import { BorderBox } from "../components/BorderBox"
+import { Box } from "@mui/material"
+// import useModal from "../hooks/useModal"
 
 const FindTeamPage:React.FC = () => {
+    // const { open, handleOpen, handleClose } = useModal();
 
     return (
         <>
-        <SubTopBar title='항해하기' content="다른 스튜디오 및 글쓰기를 탐색할수 있는 공간입니다."/>
-        <Tag/>
-        <SearchBar/>
-        <CustomButton content='+ 생성하기' bgcolor="lightgreen" hoverBgColor="green"/>
-        <FindTeamBox/>
 
+
+        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%", padding: "10px" }}>
+            <Box sx={{ flexGrow: 1 }}>
+            <SubTopBar title='항해하기' content="현재 팀원을 모집중인 스튜디오를 찾아보세요."/>
+            </Box>
+            <Box sx={{ flexShrink: 0 }}>
+            <CustomButton content='+ 팀원 모집하기' bgcolor="lightgreen" hoverBgColor="green" />
+            </Box>
+            </Box>
+
+            {/* 화면에 들어갈 내역 */}
+            <BorderBox>
+            <FindTeamBox/>
+                <SearchBar/>
+            </BorderBox>
         </>
     )
 

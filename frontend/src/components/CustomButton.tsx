@@ -8,14 +8,19 @@ interface ButtonProps {
   type?: "button" | "submit" | "reset";
   bgcolor?: string;
   hoverBgColor?: string;
+  width? :string;
+  height? : string; 
 }
 
-const StyledButton = styled('button')`
-  background-color: ${(props: ButtonProps) => props.bgcolor || 'black'};
+const StyledButton = styled('button')<ButtonProps>`
+  background-color: ${(props) => props.bgcolor || 'black'};
   color: white;
   border: none;
   border-radius: 5px;
   padding: 10px 20px;
+  width: ${(props) => props.width || 'auto'};
+  height: ${(props) => props.height || 'auto'};
+  min-height: 32px;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
@@ -23,7 +28,7 @@ const StyledButton = styled('button')`
   white-space: nowrap;
   writing-mode: horizontal-tb; /* 텍스트를 가로로 표시 */
   :hover {
-    background-color: ${(props: ButtonProps) => props.hoverBgColor || 'darkgray'};
+    background-color: ${(props) => props.hoverBgColor || 'darkgray'};
   }
 `;
 

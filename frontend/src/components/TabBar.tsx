@@ -49,19 +49,20 @@ const TabBar: React.FC<TabBarTestProps> = ({ labels, childrenComponents }) => {
   const theme = useTheme();
   const [value, setValue] = React.useState(0);
 
-  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+  const handleChange = (_: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
 
   return (
     <Box sx={{ width: '100%' }}>
-      <Paper elevation={1} sx={{ borderRadius: '16px', p: 1, bgcolor: 'grey.300' }}>
+      <Paper elevation={0} sx={{ borderRadius: '10px', p: 1, bgcolor: 'grey.300' }}>
         <Tabs
           value={value}
           onChange={handleChange}
           variant="fullWidth"
           aria-label="tabs example"
           sx={{ 
+            minHeight: '30px',
             '& .MuiTabs-indicator': { display: 'none' }
           }}
         >
@@ -71,7 +72,9 @@ const TabBar: React.FC<TabBarTestProps> = ({ labels, childrenComponents }) => {
               label={label}
               {...a11yProps(index)}
               sx={{
-                borderRadius: '12px',
+                minHeight: '32px',
+                p: '10px 12px',  // Adjust padding to reduce vertical height
+                borderRadius: '10px',
                 bgcolor: value === index ? 'white' : 'grey.300',
                 color: value === index ? 'black' : 'grey.600',
                 fontWeight: value === index ? 'bold' : 'normal',

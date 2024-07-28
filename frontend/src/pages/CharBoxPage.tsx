@@ -6,6 +6,7 @@ import { CharBox, CharBoxProps } from '../components/Char/CharBox';
 import CustomModal from '../components/CustomModal'; // 추가된 부분
 import CharForm from '../components/Char/CharForm'; // 추가된 부분
 import useModal from '../hooks/useModal';
+import { BorderBox } from '../components/BorderBox';
 
 const CharBoxPage = () => {
   const { open, handleOpen, handleClose } = useModal();
@@ -32,18 +33,22 @@ const CharBoxPage = () => {
         <CharForm onSave={handleSave} onClose={handleClose} />
       </CustomModal>
 
-      <Box sx={{ border : '1px solid #D1D5DB', borderRadius : '5px', padding:'5px', minHeight:'75vh'}}>
-      <Box sx={{ display: "flex", alignItems: "center", width: "100%", padding: "10px" }}>
-        {characters.map((character, index) => (
-          <CharBox
-            key={index}
-            name={character.name}
-            tags={character.tags}
-            features={character.features}
-          />
-        ))}
-      </Box>
-      </Box>
+      {/* 화면에 들어갈 내역 */}
+      <BorderBox>
+        <Box sx={{ display: "flex", alignItems: "center", width: "100%", padding: "10px" }}>
+          {characters.map((character, index) => (
+            <CharBox
+              key={index}
+              name={character.name}
+              tags={character.tags}
+              features={character.features}
+            />
+          ))}
+        </Box>
+      </BorderBox>
+
+
+
 
     </>
   );

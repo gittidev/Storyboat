@@ -56,14 +56,15 @@ const plans: Plan[] = [
 ];
 
 const PlanCard = ({ plan, content }: { plan: Plan, content: string }) => (
-  <Card sx={{ marginBottom: 2, flex: '1 0 30%', marginRight: 2 }}>
+  <Card sx={{ marginBottom: 1, flex: '1 0 30%', marginRight: 1 }}>
     <CardContent>
+      <div style={{display:'flex'}}>
       <Typography variant="h5" component="div">
         {plan.name}
         
       </Typography>
-      <CustomButton content={content} hoverBgColor="red"/>
-      
+      <CustomButton content={content} hoverBgColor="red" bgcolor='pink.300'/>
+      </div>
       <Typography variant="h6" component="div">
         {plan.price}
       </Typography>
@@ -87,10 +88,9 @@ const PlanCard = ({ plan, content }: { plan: Plan, content: string }) => (
 );
 
 const PlanList = () => (
-  <Box sx={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+  <Box sx={{ width:'100%', display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
     {plans.map((plan, index) => (
       <PlanCard key={index} plan={plan} content='구독하기'/>
-
     ))}
   </Box>
 );

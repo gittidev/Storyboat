@@ -7,21 +7,20 @@ interface MyStoryFormProps {
 
 export interface MyStory {
   title: string;
-  content: string;
-
+  description: string;
 }
 
-const MyStoryForm: React.FC<MyStoryFormProps> = ({ onSave }) => {
+const MyStoryForm: React.FC<MyStoryFormProps> = ({ onSave, onClose }) => {
   const [title, setTitle] = useState<string>('');
-  const [content, setContent] = useState<string>('');
+  const [description, setDescription] = useState<string>('');
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-    const mystory: MyStory = { title, content};
+    const mystory: MyStory = { title, description };
     onSave(mystory);
     setTitle('');
-    setContent('');
-
+    setDescription('');
+    onClose();
   };
 
   return (
@@ -43,14 +42,13 @@ const MyStoryForm: React.FC<MyStoryFormProps> = ({ onSave }) => {
           요약
           <input
             type="text"
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
             style={{ display: 'block', width: '100%', padding: '0.5rem', boxSizing: 'border-box' }}
             required
           />
         </label>
       </div>
-
       <button type="submit" style={{ padding: '0.5rem 1rem' }}>저장하기</button>
     </form>
   );
