@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Link as RouterLink } from "react-router-dom";
-// import { styled,  useTheme,  Theme,  CSSObject } from "@mui/material/styles";
+import "../assets/stylesheets/custom-scrollbar.css"
 import { styled,  Theme,  CSSObject } from "@mui/material/styles";
 import {
   FolderOpenRoundedIcon,
@@ -24,6 +24,7 @@ import {
   ListItemText,
   IconButton,
   ListItemButton,
+  Typography
 } from "@mui/material";
 
 import MuiDrawer from "@mui/material/Drawer";
@@ -32,6 +33,13 @@ import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import Logo from "../assets/logo.png";
 import LongMenu from "./LongMenu";
 
+import SelectStudio from "./SelectStudio";
+import { handleMenuClick } from "../utils/menuUtils";
+import CustomButton from "./CustomButton";
+
+
+
+
 
 // 코드 작성 영역 ---------------------------------------------------------------------
 const drawerWidth = 220;
@@ -39,7 +47,6 @@ const drawerWidth = 220;
 const StyledLink = styled(RouterLink)`
   color: black;
   text-decoration: none;
-  width: 100%;
 `;
 
 
@@ -65,17 +72,6 @@ const closedMixin = (theme: Theme): CSSObject => ({
   },
 });
 
-//Drawer 메인 헤더
-const DrawerHeader = styled("div")(({ theme }) => ({
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  padding: theme.spacing(0, 1),
-  // necessary for content to be below app bar
-  ...theme.mixins.toolbar,
-}));
-
-
 
 //Drawer 설정
 const Drawer = styled(MuiDrawer, {
@@ -96,10 +92,13 @@ const Drawer = styled(MuiDrawer, {
 }));
 
 
+//프로필 longMenu용 옵션
+const menuOptions = ['logout'];
 
-//실제 렌더링 관련 영역
+
+//실제 렌더링 navbar 영역
 export default function NavBar() {
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = React.useState(true);
 
 
   const toggleDrawer = () => {
@@ -107,50 +106,45 @@ export default function NavBar() {
   };
 
 
-
   //렌더링 영역
   return (
     //상단 푸른색 툴바 영역
-    <Box sx={{ display: "flex" , margin:'0px'}}>
-      {/* 간격 설정용 */}
-      {/* <CssBaseline /> */}
+    <Box sx={{ display: "flex" , margin:'0px'}} >
 
       {/* duffuTdmfEo  */}
       <Drawer variant="permanent" open={open}>
-        <DrawerHeader>
-        <StyledLink to="/">  
+
             <ListItem disablePadding >
-                <ListItemButton>
+                <ListItemButton sx={{p : '3px 16px' }}> 
+                <StyledLink to="/">  
                   <ListItemIcon>
-                  <img src={Logo} width={25} alt="Logo" />
+                  <img src={Logo} width={35} alt="Logo" />
                   </ListItemIcon>
-                  <ListItemText 
-                      primary="StoryBoat" 
-                      sx={{
-                        fontFamily: 'Inter',
-                        fontSize: '24px',
-                        fontStyle: 'italic',
-                        fontWeight: 900, 
-                        lineHeight: '36px', 
-                      }}/>
+                </StyledLink>
+
+              <Typography variant="h5" component={'span'} fontFamily={'Arial'} fontWeight={'bold'} >
+                    StoryBoat
+              </Typography> 
                 </ListItemButton>
+                <IconButton onClick={toggleDrawer}>
+                {open ? <ChevronLeftIcon  /> : <ChevronRightIcon />}
+              </IconButton>
               </ListItem>
-          </StyledLink>
-          <IconButton onClick={toggleDrawer}>
-          {open ? <ChevronLeftIcon  /> : <ChevronRightIcon />}
-        </IconButton>
-        
-        </DrawerHeader>
+
         <Divider /> 
-                      <div style={{height:'200px'}}>
-                      여기에 스튜디오 생성 컴포넌트 넣어주세요
-                      </div>
+
+        {/* 참여중인 스튜디오 고르기 */}
+        <div style={{display : 'flex' , flexDirection : 'column', alignItems:'center', marginTop :'10px'}}>
+        <CustomButton content="스튜디오 생성하기" bgcolor="green" width="200px"/>
+        <SelectStudio/>
+        </div>
+
     
         <Divider /> {/* 나만의 공간 */}
         <List>
-        <StyledLink to="/main/mystory">  
+        <StyledLink to="/storyboat/mystory">  
             <ListItem disablePadding>
-                <ListItemButton>
+                <ListItemButton sx={{p : '3px 16px' }}>
                   <ListItemIcon>
                     <FolderOpenRoundedIcon />
                   </ListItemIcon>
@@ -158,9 +152,9 @@ export default function NavBar() {
                 </ListItemButton>
               </ListItem>
           </StyledLink>
-          <StyledLink to="/main/mychar">  
+          <StyledLink to="/storyboat/mychar">  
             <ListItem disablePadding>
-                <ListItemButton>
+                <ListItemButton  sx={{p : '3px 16px' }}>
                   <ListItemIcon>
                     <AddReactionRoundedIcon/>
                   </ListItemIcon>
@@ -168,9 +162,9 @@ export default function NavBar() {
                 </ListItemButton>
               </ListItem>
           </StyledLink>
-          <StyledLink to="/main/myidea">  
+          <StyledLink to="/storyboat/myidea">  
             <ListItem disablePadding sx={{m:0}}>
-                <ListItemButton>
+                <ListItemButton  sx={{p : '3px 16px' }}>
                   <ListItemIcon>
                   <LightbulbIcon />
                   </ListItemIcon>
@@ -181,11 +175,10 @@ export default function NavBar() {
         </List>
 
         <Divider /> {/* 팀공간 */}
-       
         <List>
-        <StyledLink to="/main/storybox">  
+        <StyledLink to="/storyboat/storybox">  
             <ListItem disablePadding>
-                <ListItemButton>
+                <ListItemButton sx={{p : '3px 16px' }}>
                   <ListItemIcon>
                       <MediationRoundedIcon />
                   </ListItemIcon>
@@ -194,20 +187,20 @@ export default function NavBar() {
               </ListItem>
           </StyledLink>
 
-          <StyledLink to="/main/storyedit">  
+          <StyledLink to="/storyboat/storyedit">  
             <ListItem disablePadding>
-                <ListItemButton>
+                <ListItemButton sx={{p : '3px 16px' }}>
                   <ListItemIcon>
                     <DriveFileRenameOutlineRoundedIcon />
                   </ListItemIcon>
-                  <ListItemText primary="Story 보관소" />
+                  <ListItemText primary="Story 편집하기" />
                 </ListItemButton>
               </ListItem>
           </StyledLink>
 
-          <StyledLink to="/main/charbox">  
+          <StyledLink to="/storyboat/charbox">  
             <ListItem disablePadding>
-                <ListItemButton>
+                <ListItemButton sx={{p : '3px 16px' }}>
                   <ListItemIcon>
                     <Face5Icon />
                   </ListItemIcon>
@@ -215,9 +208,9 @@ export default function NavBar() {
                 </ListItemButton>
               </ListItem>
           </StyledLink>
-          <StyledLink to="/main/ideabox">  
+          <StyledLink to="/storyboat/ideabox">  
             <ListItem disablePadding>
-                <ListItemButton>
+                <ListItemButton sx={{p : '3px 16px' }}>
                   <ListItemIcon>
                   <BatchPredictionIcon />
                   </ListItemIcon>
@@ -225,12 +218,12 @@ export default function NavBar() {
                 </ListItemButton>
               </ListItem>
           </StyledLink>
-          <StyledLink to="/main/studio">  
+          <StyledLink to="/storyboat/studio">  
             <ListItem disablePadding>
-                <ListItemButton>
+                <ListItemButton sx={{p : '3px 16px' }}>
                   <ListItemIcon>
                   <SettingsRoundedIcon />
-                  </ListItemIcon>
+                  </ListItemIcon >
                   <ListItemText primary="스튜디오 설정" />
                 </ListItemButton>
               </ListItem>
@@ -238,9 +231,9 @@ export default function NavBar() {
         </List>
         <Divider />
         <List>{/* 팀찾기 */}
-        <StyledLink to="/main/findteam">  
+        <StyledLink to="/storyboat/findteam">  
             <ListItem disablePadding>
-                <ListItemButton>
+                <ListItemButton sx={{p : '3px 16px' }}>
                   <ListItemIcon>
                   <SailingRoundedIcon />
                   </ListItemIcon>
@@ -250,17 +243,17 @@ export default function NavBar() {
           </StyledLink>
         </List>
         <Divider />
-            <ListItem sx={{ height :'120px'}}/>
+            <ListItem sx={{ height :'200px'}}/>
         <Divider />
 
-        <StyledLink to="/main/profile">  
+        <StyledLink to="/storyboat/profile">  
             <ListItem disablePadding>
-                <ListItemButton>
+                <ListItemButton sx={{p : '3px 16px' }}>
                   <ListItemIcon>
                   <AccountCircleIcon />
                   </ListItemIcon>
                   <ListItemText primary="내 정보" />
-                  <LongMenu/>
+                  <LongMenu options={menuOptions} onClick={handleMenuClick} />
                 </ListItemButton>
               </ListItem>
           </StyledLink>
@@ -269,4 +262,4 @@ export default function NavBar() {
     </Box>
   );
 }
-                                                                                                                                                                               
+                                                                                                                                                                              
