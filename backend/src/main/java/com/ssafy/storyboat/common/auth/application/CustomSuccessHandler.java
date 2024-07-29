@@ -50,10 +50,10 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         // 성공 후 리디렉션
         if (customUserDetails.getJoinStatus()) {
             // 회원 가입시 보낼 경로
-            response.sendRedirect("http://localhost:3000/main");
+            response.sendRedirect("https://i11c107.p.ssafy.io/storyboat");
         } else {
             // 로그인 시 보낼 경로
-            response.sendRedirect("http://localhost:3000/main");
+            response.sendRedirect("https://i11c107.p.ssafy.io/storyboat");
         }
     }
 
