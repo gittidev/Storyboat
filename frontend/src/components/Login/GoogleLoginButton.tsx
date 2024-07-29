@@ -1,4 +1,5 @@
 import React from 'react';
+// import { OAuthUrl } from '../../apis/auth';
 // import { getGoogleAuthToken } from '../../apis/auth'
 
 // const GoogleLoginButton: React.FC = () => {
@@ -21,9 +22,13 @@ import React from 'react';
 
 // export default GoogleLoginButton;
 
+
+
+
 const GoogleLoginButton: React.FC = () => {
   const handleLogin = () => {
-    window.location.href = 'http://localhost:8080/oauth2/authorization/google';
+    window.location.href = 'https://i11c107.p.ssafy.io/api/oauth2/authorization/google';
+    // window.location.href = `${import.meta.env.VITE_API_BASE_URL}/api/oauth2/authorization/google`;
   };
 
   

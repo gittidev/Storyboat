@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { useTheme } from '@mui/material/styles';
-import AppBar from '@mui/material/AppBar';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
+import Paper from '@mui/material/Paper';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -41,49 +41,58 @@ function a11yProps(index: number) {
 }
 
 interface TabBarTestProps {
-  labels?: string[];
-  childrenComponents?: React.ReactNode[];
+  labels: string[];
+  childrenComponents: React.ReactNode[];
 }
 
-const TabBar: React.FC<TabBarTestProps> = ({ labels = [], childrenComponents = [] }) => {
+const TabBar: React.FC<TabBarTestProps> = ({ labels, childrenComponents }) => {
   const theme = useTheme();
   const [value, setValue] = React.useState(0);
 
-  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+  const handleChange = (_: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
-    console.log(event)
   };
 
   return (
-    <Box sx={{ bgcolor: 'background.paper', width: 500 }}>
-      <AppBar position="static">
+    <Box sx={{ width: '100%' }}>
+      <Paper elevation={0} sx={{ borderRadius: '10px', p: 1, bgcolor: 'grey.300' }}>
         <Tabs
           value={value}
           onChange={handleChange}
-          indicatorColor="primary"
-          textColor="inherit"
           variant="fullWidth"
-          aria-label="full width tabs example"
+          aria-label="tabs example"
+          sx={{ 
+            minHeight: '30px',
+            '& .MuiTabs-indicator': { display: 'none' }
+          }}
         >
           {labels.map((label, index) => (
-            <Tab key={index} label={label} {...a11yProps(index)} />
+            <Tab
+              key={index}
+              label={label}
+              {...a11yProps(index)}
+              sx={{
+                minHeight: '32px',
+                p: '10px 12px',  // Adjust padding to reduce vertical height
+                borderRadius: '10px',
+                bgcolor: value === index ? 'white' : 'grey.300',
+                color: value === index ? 'black' : 'grey.600',
+                fontWeight: value === index ? 'bold' : 'normal',
+                '&:hover': {
+                  bgcolor: value === index ? 'white' : 'grey.400',
+                },
+                mx: 0.5 // Margin X to add space between tabs
+              }}
+            />
           ))}
         </Tabs>
-      </AppBar>
-    
-      {/* {labels.map((label, index) => (
+      </Paper>
+      
+      {labels.map((_, index) => (
         <TabPanel key={index} value={value} index={index} dir={theme.direction}>
           {childrenComponents[index]}
         </TabPanel>
-      ))} */}
-
-    {labels.map((label, index) => (
-      <TabPanel key={index} value={value} index={index} dir={theme.direction}>
-        {childrenComponents[index]}
-        {label}
-      </TabPanel>
-    ))}
-
+      ))}
     </Box>
   );
 }

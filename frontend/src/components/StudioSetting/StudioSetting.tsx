@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import Button from '../Button';
+import CustomButton from '../Commons/CustomButton';
 import StudioDelete from './StudioDelete';
+
 
 interface StudioFormProps {
   onSave?: (studio: Studio) => void;
@@ -29,7 +30,7 @@ const StudioSetting: React.FC<StudioFormProps> = ({ onSave }) => {
 
   return (
     <>
-      <form onSubmit={handleSubmit} style={{ maxWidth: '400px', margin: '0 auto' }}>
+      <form onSubmit={handleSubmit} style={{ maxWidth: '400px', marginBottom: '30px' }}>
         <div style={{ marginBottom: '1rem' }}>
           <label>
             Studio 이름
@@ -54,7 +55,7 @@ const StudioSetting: React.FC<StudioFormProps> = ({ onSave }) => {
             />
           </label>
         </div>
-        <Button type="submit" content="저장하기" />
+        <CustomButton type="submit" content="저장하기" bgcolor='lightgreen' hoverBgColor='green'/>
       </form>
 
       <StudioDelete />
