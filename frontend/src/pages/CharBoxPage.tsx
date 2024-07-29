@@ -1,12 +1,12 @@
 import { Box } from '@mui/material';
-import CustomButton from '../components/CustomButton';
-import SubTopBar from '../components/SubTopBar';
+import CustomButton from '../components/Commons/CustomButton';
+import SubTopBar from '../components/Commons/SubTopBar';
 import { useState } from 'react';
 import { CharBox, CharBoxProps } from '../components/Char/CharBox';
-import CustomModal from '../components/CustomModal'; // 추가된 부분
+import CustomModal from '../components/Commons/CustomModal'; // 추가된 부분
 import CharForm from '../components/Char/CharForm'; // 추가된 부분
 import useModal from '../hooks/useModal';
-import { BorderBox } from '../components/BorderBox';
+import { BorderBox } from '../components/Commons/BorderBox';
 
 const CharBoxPage = () => {
   const { open, handleOpen, handleClose } = useModal();

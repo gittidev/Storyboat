@@ -1,9 +1,9 @@
 import React from "react"
-import { SearchBar } from "../components/SearchBar"
+import { SearchBar } from "../components/Commons/SearchBar"
 import FindTeamBox from '../components/FindTeam/FindTeamBox'
-import CustomButton from "../components/CustomButton"
-import SubTopBar from "../components/SubTopBar"
-import { BorderBox } from "../components/BorderBox"
+import CustomButton from "../components/Commons/CustomButton"
+import SubTopBar from "../components/Commons/SubTopBar"
+import { BorderBox } from "../components/Commons/BorderBox"
 import { Box } from "@mui/material"
 // import useModal from "../hooks/useModal"
 

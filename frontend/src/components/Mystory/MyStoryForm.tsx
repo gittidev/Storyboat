@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import CustomButton from '../CustomButton';
+import CustomButton from '../Commons/CustomButton';
 import TextField from '@mui/material/TextField';
 
 interface MyStoryFormProps {

@@ -1,6 +1,6 @@
 import React from 'react';
 import { useRecoilValue } from 'recoil';
-import { selectedStudioState } from '../../stores/studioatom';
+import { selectedStudioState } from '../../stores/studioAtom';
 import { Box, Typography } from '@mui/material';
 
 const StudioInfo: React.FC = () => {

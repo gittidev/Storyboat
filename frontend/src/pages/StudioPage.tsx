@@ -1,11 +1,11 @@
-import SubTopBar from "../components/SubTopBar"
-import TabBar from "../components/TabBar"
-import StudioSetting from "../components/Studio/StudioSetting"
-import SubscriptionPlan from "../components/Studio/SubscriptionPlan"
-import TeamSetting from "../components/Studio/TeamSetting"
+import SubTopBar from "../components/Commons/SubTopBar"
+import TabBar from "../components/Commons/TabBar"
+import StudioSetting from "../components/StudioSetting/StudioSetting"
+import SubscriptionPlan from "../components/StudioSetting/SubscriptionPlan"
+import TeamSetting from "../components/StudioSetting/TeamSetting"
 import { Container } from "@mui/material"
 import { styled } from "@mui/system"
-import { BorderBox } from "../components/BorderBox"
+import { BorderBox } from "../components/Commons/BorderBox"
 import { Box } from "@mui/material"
 
 const StyledContainer = styled(Container)`
