@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/user")
+@RequestMapping("/users")
 public class UserController {
 
     private final UserService userService;
@@ -27,19 +27,19 @@ public class UserController {
         return ResponseEntity.ok(ApiResponse.success(userFindResponse, "Fetch User Success"));
     }
 
-    @GetMapping("/pen-name/{penName}")
+    @GetMapping("/pen-names/{penName}")
     public ResponseEntity<ApiResponse<Boolean>> getUserByPenName(@PathVariable String penName) {
         Boolean result = userService.searchPenName(penName);
         return ResponseEntity.ok(ApiResponse.success(result, "Search User Success"));
     }
 
-    @GetMapping("/profile")
+    @GetMapping("/profiles")
     public ResponseEntity<ApiResponse<ProfileFindResponse>> getUserProfile(@AuthenticationPrincipal CustomUserDetails userDetails) {
         ProfileFindResponse profileFindResponse = userService.fetchSingleProfile(userDetails.getProviderId(), userDetails.getProvider());
         return ResponseEntity.ok(ApiResponse.success(profileFindResponse, "Fetch Profile Success"));
     }
 
-    @PostMapping("/profile")
+    @PostMapping("/profiles")
     public ResponseEntity<ApiResponse<ProfileUpdateRequest>> updateUserProfile(@RequestBody ProfileUpdateRequest profileUpdateRequest, @AuthenticationPrincipal CustomUserDetails userDetails) {
 
         boolean success = userService.updateUserProfile(userDetails.getProviderId(), userDetails.getProvider(), profileUpdateRequest);
@@ -49,6 +49,12 @@ public class UserController {
         } else {
             return ResponseEntity.status(409).body(ApiResponse.error("Failed to update profile"));
         }
+    }
+
+    @DeleteMapping
+    public ResponseEntity<ApiResponse<Void>> deleteUser(@AuthenticationPrincipal CustomUserDetails userDetails) {
+
+        return ResponseEntity.ok(ApiResponse.success("User deleted successfully"));
     }
 
 
