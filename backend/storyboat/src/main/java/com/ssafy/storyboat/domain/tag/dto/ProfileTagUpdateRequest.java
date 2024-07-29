@@ -1,5 +1,5 @@
 package com.ssafy.storyboat.domain.tag.dto;
 
-public class UpdateProfileTagDTO {
+public class ProfileTagUpdateRequest {
     private Long tagId;
 }
