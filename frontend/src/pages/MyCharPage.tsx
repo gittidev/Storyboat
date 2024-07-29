@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import SubTopBar from '../components/SubTopBar';
+import SubTopBar from '../components/Commons/SubTopBar';
 // import CharacterCard from '../components/CharacterCard';
-import Tag from '../components/Tag'; // Assuming Tag is a custom component you have
+import Tag from '../components/Commons/Tag'; // Assuming Tag is a custom component you have
 
 // Importing images
 import img1 from '../images/img1.jpg';

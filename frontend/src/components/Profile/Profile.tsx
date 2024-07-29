@@ -5,7 +5,7 @@ import Modal from '@mui/material/Modal';
 import ProfileForm from './ProfileForm';
 import './Profile.css';
 import { Typography } from '@mui/material';
-import CustomButton from '../CustomButton';
+import CustomButton from '../Commons/CustomButton';
 
 
 const style = {

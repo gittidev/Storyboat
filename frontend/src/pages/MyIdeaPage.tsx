@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { Box } from '@mui/material';
-import SubTopBar from "../components/SubTopBar";
-import CustomButton from "../components/CustomButton";
-import { BorderBox } from '../components/BorderBox';
+import SubTopBar from "../components/Commons/SubTopBar";
+import CustomButton from "../components/Commons/CustomButton";
+import { BorderBox } from '../components/Commons/BorderBox';
 import useModal from '../hooks/useModal';
-import CustomModal from '../components/CustomModal';
+import CustomModal from '../components/Commons/CustomModal';
 import MyIdeaForm, { MyIdea } from '../components/MyIdea/MyIdeaForm';
-import CustomCard from '../components/CustomCard'; // Assuming you want to display ideas in CustomCard
+import CustomCard from '../components/Commons/CustomCard'; // Assuming you want to display ideas in CustomCard
 
 export interface MyIdeaBoxProps extends MyIdea {
 id: number;

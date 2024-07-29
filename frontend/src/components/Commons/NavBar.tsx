@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Link as RouterLink } from "react-router-dom";
-import "../assets/stylesheets/custom-scrollbar.css"
+import "../../assets/stylesheets/custom-scrollbar.css"
 import { styled,  Theme,  CSSObject } from "@mui/material/styles";
 import {
   FolderOpenRoundedIcon,
@@ -30,11 +30,11 @@ import {
 import MuiDrawer from "@mui/material/Drawer";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import Logo from "../assets/logo.png";
+import Logo from "../../assets/logo.png";
 import LongMenu from "./LongMenu";
 
-import SelectStudio from "./SelectStudio";
-import { handleMenuClick } from "../utils/menuUtils";
+import SelectStudio from "../SelectStudio";
+import { handleMenuClick } from "../../utils/menuUtils";
 import CustomButton from "./CustomButton";
 
 

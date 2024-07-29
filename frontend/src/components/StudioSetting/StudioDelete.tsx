@@ -1,4 +1,4 @@
-import CustomButton from "../CustomButton"
+import CustomButton from "../Commons/CustomButton"
 import { Typography } from "@mui/material"
 
 const StudioDelete = ()=>{

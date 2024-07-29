@@ -1,6 +1,6 @@
-import NavBar from '../components/NavBar.tsx';
+import NavBar from '../components/Commons/NavBar.tsx';
 import { Outlet } from 'react-router-dom';
-import TopBar from '../components/TopBar.tsx';
+import TopBar from '../components/Commons/TopBar.tsx';
 import { Box, Container } from '@mui/material';
 import { styled } from '@mui/system';
 import { useEffect } from 'react';

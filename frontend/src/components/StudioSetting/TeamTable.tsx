@@ -1,6 +1,6 @@
 import Paper from '@mui/material/Paper';
 import { Table as MuiTable, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
-import LongMenu from '../LongMenu'; // LongMenu 컴포넌트 임포트
+import LongMenu from '../Commons/LongMenu'; // LongMenu 컴포넌트 임포트
 import "../../assets/stylesheets/custom-scrollbar.css";
 
 interface Column {

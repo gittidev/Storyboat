@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { Box } from '@mui/material';
-import SubTopBar from '../components/SubTopBar';
-import CustomButton from '../components/CustomButton';
-import CustomModal from '../components/CustomModal';
+import SubTopBar from '../components/Commons/SubTopBar';
+import CustomButton from '../components/Commons/CustomButton';
+import CustomModal from '../components/Commons/CustomModal';
 import useModal from '../hooks/useModal';
 import MyStoryForm, { MyStory } from '../components/Mystory/MyStoryForm';
-import { BorderBox } from '../components/BorderBox';
-import CustomCard from '../components/CustomCard'; // Importing the CustomCard component
+import { BorderBox } from '../components/Commons/BorderBox';
+import CustomCard from '../components/Commons/CustomCard'; // Importing the CustomCard component
 
 export interface MyStoryBoxProps extends MyStory {
   story_id: number;

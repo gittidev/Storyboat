@@ -1,8 +1,8 @@
-import CustomButton from "../components/CustomButton"
-import SubTopBar from "../components/SubTopBar"
+import CustomButton from "../components/Commons/CustomButton"
+import SubTopBar from "../components/Commons/SubTopBar"
 import { Box } from "@mui/material"
 import useModal from "../hooks/useModal"
-import { BorderBox } from "../components/BorderBox"
+import { BorderBox } from "../components/Commons/BorderBox"
 
 
 const IdeaBoxPage = () => {

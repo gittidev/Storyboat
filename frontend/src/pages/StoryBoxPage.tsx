@@ -1,7 +1,7 @@
-import CustomButton from '../components/CustomButton';
-import SubTopBar from '../components/SubTopBar';
+import CustomButton from '../components/Commons/CustomButton';
+import SubTopBar from '../components/Commons/SubTopBar';
 import { Box } from '@mui/material';
-import { BorderBox } from '../components/BorderBox';
+import { BorderBox } from '../components/Commons/BorderBox';
 
 
 const StoryBoxPage = () => {

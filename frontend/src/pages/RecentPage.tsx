@@ -1,4 +1,4 @@
-import SubTopBar from "../components/SubTopBar"
+import SubTopBar from "../components/Commons/SubTopBar"
 const RecentPage = ()=>{
     return (
         <div>

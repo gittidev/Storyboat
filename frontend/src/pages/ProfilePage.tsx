@@ -1,8 +1,8 @@
 import Profile from "../components/Profile/Profile"
-import TabBar from "../components/TabBar"
+import TabBar from "../components/Commons/TabBar"
 import MyStudioList from "../components/Profile/MyStudioList"
-import { BorderBox } from "../components/BorderBox"
-import SubTopBar from "../components/SubTopBar"
+import { BorderBox } from "../components/Commons/BorderBox"
+import SubTopBar from "../components/Commons/SubTopBar"
 import { Box } from "@mui/material"
 
 

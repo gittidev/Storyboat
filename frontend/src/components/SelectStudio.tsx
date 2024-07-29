@@ -4,7 +4,7 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { useRecoilState } from 'recoil';
-import { selectedStudioState } from '../stores/studioatom';
+import { selectedStudioState } from '../stores/studioAtom';
 
 export default function SelectStudio() {
   const [studio, setStudio] = useRecoilState(selectedStudioState);

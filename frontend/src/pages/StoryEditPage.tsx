@@ -8,9 +8,9 @@ import {
   Divider,
 } from "@mui/material";
 import dayjs from "dayjs"; // 날짜 포맷을 위한 라이브러리
-import SubTopBar from "../components/SubTopBar";
-import CustomButton from "../components/CustomButton";
-import { BorderBox } from "../components/BorderBox";
+import SubTopBar from "../components/Commons/SubTopBar";
+import CustomButton from "../components/Commons/CustomButton";
+import { BorderBox } from "../components/Commons/BorderBox";
 
 // 더미 데이터 생성
 const generateDummyData = (num: number) => {
