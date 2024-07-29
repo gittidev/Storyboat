@@ -46,12 +46,12 @@ export default function BasicModal() {
       <div>
         <h3>팀 찾기</h3>
         {findteams.map((findteam, index) => (
-           <FindteamBox
-             key={index}
-            title={findteam.title}
-            content={findteam.content}
-            tags={findteam.tags}
-           />
+          <FindteamBox
+            key={index}
+          title={findteam.title}
+          content={findteam.content}
+          tags={findteam.tags}
+          />
         ))}  
       </div>
 

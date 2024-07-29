@@ -1,21 +1,24 @@
-import * as React from 'react';
+import React from 'react';
 import IconButton from '@mui/material/IconButton';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 
-const options = [
-  '로그아웃',
-];
+interface OptionProps {
+  options: string[];
+  onClick: (option: string) => void;
+}
 
 const ITEM_HEIGHT = 48;
 
-export default function LongMenu() {
+const LongMenu: React.FC<OptionProps> = ({ options, onClick }) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
+
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
+
   const handleClose = () => {
     setAnchorEl(null);
   };
@@ -48,11 +51,19 @@ export default function LongMenu() {
         }}
       >
         {options.map((option) => (
-          <MenuItem key={option} selected={option === 'Pyxis'} onClick={handleClose}>
+          <MenuItem
+            key={option}
+            onClick={() => {
+              onClick(option);
+              handleClose();
+            }}
+          >
             {option}
           </MenuItem>
         ))}
       </Menu>
     </div>
   );
-}
+};
+
+export default LongMenu;
