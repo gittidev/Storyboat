@@ -23,7 +23,7 @@ import React from 'react';
 
 const KaKaoLoginButton: React.FC = () => {
   const handleLogin = () => {
-    window.location.href = '/oauth2/authorization/kakao';
+    window.location.href = 'https://i11c107.p.ssafy.io/api/oauth2/authorization/kakao';
   };
 
   return (
