@@ -7,6 +7,7 @@ import com.ssafy.storyboat.common.auth.filter.CustomLogoutFilter;
 import com.ssafy.storyboat.common.auth.filter.JWTFilter;
 import com.ssafy.storyboat.common.auth.util.JWTUtil;
 import jakarta.persistence.EntityManagerFactory;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -60,7 +61,17 @@ public class SecurityConfig {
 
                 // 세션 관리 설정 (무상태)
                 .sessionManagement((session) -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+
+
+                // 기본 로그인 화면 비활성화
+                .exceptionHandling((exceptions) -> exceptions
+                        .authenticationEntryPoint((request, response, authException) -> response.sendError(HttpServletResponse.SC_UNAUTHORIZED))
+                );
+
+
+
+        ;
 
 
 
