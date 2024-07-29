@@ -1,20 +1,39 @@
 pipeline {
     agent any
 
-    
     environment {
         DOCKERHUB_CREDENTIALS = credentials('docker-hub-credentials')
-
     }
+    // test
     stages {
-        stage('Checkout') {
+        stage('Start Notification') {
             steps {
-                git url: 'https://lab.ssafy.com/s11-webmobile1-sub2/S11P12C107.git', branch: 'dev', credentialsId: 'gitlab'
+                script {
+                    def gitCommitterName = sh(script: "git log -1 --pretty=format:'%an'", returnStdout: true).trim()
+                    def gitCommitMessage = sh(script: "git log -1 --pretty=%B", returnStdout: true).trim()
+                    
+                    mattermostSend(
+                        color: 'warning',
+                        message: """젠킨스 시작: ${env.JOB_NAME} #${env.BUILD_NUMBER}
+                        커밋 작성자: ${gitCommitterName}
+                        커밋 메시지: ${gitCommitMessage}
+                        (<${env.BUILD_URL}|Details>)""",
+                        endpoint: 'https://meeting.ssafy.com/hooks/1psxfrtocfyubrb6jrpd7daoay',
+                        channel: 'Jenkins---C107'
+                    )
+                }
             }
         }
+
+        stage('Checkout') {
+            steps {
+                git url: 'https://lab.ssafy.com/s11-webmobile1-sub2/S11P12C107.git', branch: 'test/dev', credentialsId: 'gitlab'
+            }
+        }
+
         stage('Build Backend') {
             when {
-                changeset "**/backend/**"  // 백엔드 코드가 변경된 경
+                changeset "**/backend/**"
             }
             steps {
                 dir('backend') {
@@ -23,9 +42,10 @@ pipeline {
                 }
             }
         }
+
         stage('Build Backend Docker Image') {
             when {
-                changeset "**/backend/**"  // 백엔드 코드가 변경된 경우
+                changeset "**/backend/**"
             }
             steps {
                 dir('backend') {
@@ -33,9 +53,10 @@ pipeline {
                 }
             }
         }
+
         stage('Push Backend Docker Image') {
             when {
-                changeset "**/backend/**"  // 백엔드 코드가 변경된 경우
+                changeset "**/backend/**"
             }
             steps {
                 script {
@@ -45,9 +66,10 @@ pipeline {
                 }
             }
         }
+
         stage('Build Frontend') {
             when {
-                changeset "**/frontend/**"  // 프론트엔드 코드가 변경된 경우
+                changeset "**/frontend/**"
             }
             steps {
                 dir('frontend') {
@@ -55,9 +77,10 @@ pipeline {
                 }
             }
         }
+
         stage('Build Frontend Docker Image') {
             when {
-                changeset "**/frontend/**"  // 프론트엔드 코드가 변경된 경우
+                changeset "**/frontend/**"
             }
             steps {
                 dir('frontend') {
@@ -65,9 +88,10 @@ pipeline {
                 }
             }
         }
+
         stage('Push Frontend Docker Image') {
             when {
-                changeset "**/frontend/**"  // 프론트엔드 코드가 변경된 경우
+                changeset "**/frontend/**"
             }
             steps {
                 script {
@@ -77,33 +101,40 @@ pipeline {
                 }
             }
         }
+    }
 
-        stage('Notification') {
-            steps{
-                echo 'jenkins notification!'
+    post {
+        success {
+            script {
+                def gitCommitterName = sh(script: "git log -1 --pretty=format:'%an'", returnStdout: true).trim()
+                def gitCommitMessage = sh(script: "git log -1 --pretty=%B", returnStdout: true).trim()
+                
+                mattermostSend(
+                    color: 'good',
+                    message: """빌드 성공: ${env.JOB_NAME} #${env.BUILD_NUMBER}
+                    커밋 작성자: ${gitCommitterName}
+                    커밋 메시지: ${gitCommitMessage}
+                    (<${env.BUILD_URL}|Details>)""",
+                    endpoint: 'https://meeting.ssafy.com/hooks/1psxfrtocfyubrb6jrpd7daoay',
+                    channel: 'Jenkins---C107'
+                )
             }
-            post {
-                success {
-                    script  {
-                        mattermostSend(
-                            color: 'good',
-                            message: "빌드 성공: ${env.JOB_NAME} #${env.BUILD_NUMBER} \n(<${env.BUILD_URL}|Details>)",
-                            endpoint: 'https://meeting.ssafy.com/hooks/1psxfrtocfyubrb6jrpd7daoay',
-                            channel: 'Jenkins---C107'
-                        )
-                    }
-                }
-                failure {
-                    script {
-                        mattermostSend(
-                            color: 'danger',
-                            message: "빌드 실패: ${env.JOB_NAME} #${env.BUILD_NUMBER} \n(<${env.BUILD_URL}|Details>)",
-                            endpoint: 'https://meeting.ssafy.com/hooks/1psxfrtocfyubrb6jrpd7daoay',
-                            channel: 'Jenkins---C107',
-                            failOnError: true
-                        )
-                    }
-                }
+        }
+        failure {
+            script {
+                def gitCommitterName = sh(script: "git log -1 --pretty=format:'%an'", returnStdout: true).trim()
+                def gitCommitMessage = sh(script: "git log -1 --pretty=%B", returnStdout: true).trim()
+                
+                mattermostSend(
+                    color: 'danger',
+                    message: """빌드 실패: ${env.JOB_NAME} #${env.BUILD_NUMBER}
+                    커밋 작성자: ${gitCommitterName}
+                    커밋 메시지: ${gitCommitMessage}
+                    (<${env.BUILD_URL}|Details>)""",
+                    endpoint: 'https://meeting.ssafy.com/hooks/1psxfrtocfyubrb6jrpd7daoay',
+                    channel: 'Jenkins---C107',
+                    failOnError: true
+                )
             }
         }
     }
