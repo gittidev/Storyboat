@@ -33,7 +33,7 @@ import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import Logo from "../../assets/logo.png";
 import LongMenu from "./LongMenu";
 
-import SelectStudio from "../SelectStudio";
+// import SelectStudio
 import { handleMenuClick } from "../../utils/menuUtils";
 import CustomButton from "./CustomButton";
 
@@ -136,7 +136,7 @@ export default function NavBar() {
         {/* 참여중인 스튜디오 고르기 */}
         <div style={{display : 'flex' , flexDirection : 'column', alignItems:'center', marginTop :'10px'}}>
         <CustomButton content="스튜디오 생성하기" bgcolor="green" width="200px"/>
-        <SelectStudio/>
+        {/* <SelectStudio/> */}
         </div>
 
     
