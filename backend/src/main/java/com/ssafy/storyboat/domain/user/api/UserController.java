@@ -1,6 +1,7 @@
 package com.ssafy.storyboat.domain.user.api;
 
 import com.ssafy.storyboat.common.api.ApiResponse;
+import com.ssafy.storyboat.common.auth.dto.CustomUserDetails;
 import com.ssafy.storyboat.common.auth.util.JWTUtil;
 import com.ssafy.storyboat.domain.user.application.UserService;
 import com.ssafy.storyboat.domain.user.dto.ProfileFindResponse;
@@ -8,6 +9,7 @@ import com.ssafy.storyboat.domain.user.dto.UserFindResponse;
 import com.ssafy.storyboat.domain.user.dto.ProfileUpdateRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -19,12 +21,9 @@ public class UserController {
     private final JWTUtil jwtUtil;
 
     @GetMapping
-    public ResponseEntity<ApiResponse<UserFindResponse>> getUser(@RequestHeader("Authorization") String token) {
-        //Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    public ResponseEntity<ApiResponse<UserFindResponse>> getUser(@AuthenticationPrincipal CustomUserDetails userDetails) {
 
-        String[] providers = getProviders(token);
-
-        UserFindResponse userFindResponse = userService.fetchSingleUser(providers[0], providers[1]);
+        UserFindResponse userFindResponse = userService.fetchSingleUser(userDetails.getProviderId(), userDetails.getProvider());
 
         return ResponseEntity.ok(ApiResponse.success(userFindResponse, "Fetch User Success"));
     }
@@ -36,19 +35,17 @@ public class UserController {
     }
 
     @GetMapping("/profile")
-    public ResponseEntity<ApiResponse<ProfileFindResponse>> getUserProfile(@RequestHeader("Authorization") String token) {
+    public ResponseEntity<ApiResponse<ProfileFindResponse>> getUserProfile(@AuthenticationPrincipal CustomUserDetails userDetails) {
 
-        String[] providers = getProviders(token);
-        ProfileFindResponse profileFindResponse = userService.fetchSingleProfile(providers[0], providers[1]);
+        ProfileFindResponse profileFindResponse = userService.fetchSingleProfile(userDetails.getProviderId(), userDetails.getProvider());
 
         return ResponseEntity.ok(ApiResponse.success(profileFindResponse, "Fetch Profile Success"));
     }
 
     @PostMapping("/profile")
-    public ResponseEntity<ApiResponse<ProfileUpdateRequest>> updateUserProfile(@RequestBody ProfileUpdateRequest profileUpdateRequest, @RequestHeader("Authorization") String token) {
+    public ResponseEntity<ApiResponse<ProfileUpdateRequest>> updateUserProfile(@RequestBody ProfileUpdateRequest profileUpdateRequest, @AuthenticationPrincipal CustomUserDetails userDetails) {
 
-        String[] providers = getProviders(token);
-        boolean success = userService.updateUserProfile(providers[0], providers[1], profileUpdateRequest);
+        boolean success = userService.updateUserProfile(userDetails.getProviderId(), userDetails.getProvider(), profileUpdateRequest);
 
         if (success) {
             return ResponseEntity.ok(ApiResponse.success(profileUpdateRequest, "Profile updated Success"));
@@ -57,15 +54,5 @@ public class UserController {
         }
 
     }
-
-    private String[] getProviders(String token) {
-        // JWT 토큰에서 "Bearer " 부분 제거
-        String jwtToken = token.substring(7);
-
-        // JWTUtil을 사용하여 토큰의 정보 가져오기
-        String username = jwtUtil.getUsername(jwtToken);
-        return username.split(" ");
-    }
-
 
 }

@@ -7,7 +7,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 public class CustomUserDetails implements UserDetails {
@@ -33,6 +32,10 @@ public class CustomUserDetails implements UserDetails {
     public String getUsername() {
         return user.getProviderId() + " " + user.getProvider(); // 사용자 이름
     }
+
+    public String getProviderId() { return user.getProviderId(); }
+
+    public String getProvider() { return user.getProvider(); }
 
     @Override
     public boolean isAccountNonExpired() {
