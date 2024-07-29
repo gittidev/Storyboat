@@ -7,16 +7,6 @@ pipeline {
 
     }
     stages {
-        stage{
-            script  {
-                mattermostSend(
-                    color: 'warning',
-                    message: "젠킨스 시작: ${env.JOB_NAME} #${env.BUILD_NUMBER} \n(<${env.BUILD_URL}|Details>)",
-                    endpoint: 'https://meeting.ssafy.com/hooks/1psxfrtocfyubrb6jrpd7daoay',
-                    channel: 'Jenkins---C107'
-                )
-            }
-        }
         stage('Checkout') {
             steps {
                 git url: 'https://lab.ssafy.com/s11-webmobile1-sub2/S11P12C107.git', branch: 'dev', credentialsId: 'gitlab'
