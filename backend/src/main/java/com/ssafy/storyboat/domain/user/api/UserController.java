@@ -23,8 +23,7 @@ public class UserController {
     @GetMapping
     public ResponseEntity<ApiResponse<UserFindResponse>> getUser(@AuthenticationPrincipal CustomUserDetails userDetails) {
 
-        UserFindResponse userFindResponse = userService.fetchSingleUser(userDetails.getProviderId(), userDetails.getProvider());
-
+        UserFindResponse userFindResponse = userService.findSingleUser(userDetails.getProviderId(), userDetails.getProvider());
         return ResponseEntity.ok(ApiResponse.success(userFindResponse, "Fetch User Success"));
     }
 
@@ -36,9 +35,7 @@ public class UserController {
 
     @GetMapping("/profile")
     public ResponseEntity<ApiResponse<ProfileFindResponse>> getUserProfile(@AuthenticationPrincipal CustomUserDetails userDetails) {
-
         ProfileFindResponse profileFindResponse = userService.fetchSingleProfile(userDetails.getProviderId(), userDetails.getProvider());
-
         return ResponseEntity.ok(ApiResponse.success(profileFindResponse, "Fetch Profile Success"));
     }
 
@@ -52,7 +49,8 @@ public class UserController {
         } else {
             return ResponseEntity.status(409).body(ApiResponse.error("Failed to update profile"));
         }
-
     }
+
+
 
 }

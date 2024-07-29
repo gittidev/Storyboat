@@ -1,6 +1,9 @@
 package com.ssafy.storyboat.common.auth.application;
 
 import com.ssafy.storyboat.common.auth.dto.*;
+import com.ssafy.storyboat.domain.studio.entity.Studio;
+import com.ssafy.storyboat.domain.studio.entity.StudioUser;
+import com.ssafy.storyboat.domain.studio.repository.StudioUserRepository;
 import com.ssafy.storyboat.domain.user.entity.Profile;
 import com.ssafy.storyboat.domain.user.entity.User;
 import jakarta.persistence.EntityManager;
@@ -27,6 +30,7 @@ import java.util.UUID;
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     private final EntityManagerFactory entityManagerFactory;
+    private final StudioUserRepository studioUserRepository;
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
@@ -100,6 +104,18 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                 joinUserProfile.setUser(joinUser);
 
                 entityManager.persist(joinUser);
+
+                // 개인 스튜디오 생성
+                Studio studio = Studio.builder()
+                        .build();
+
+                StudioUser studioUser = StudioUser.builder()
+                        .user(joinUser)
+                        .studio(studio)
+                        .role("ROLE_PRIVATE")
+                        .build();
+
+                studioUserRepository.save(studioUser);
 
                 entityManager.getTransaction().commit();  // 트랜잭션 커밋
 

@@ -1,5 +1,7 @@
 package com.ssafy.storyboat.domain.user.application;
 
+import com.ssafy.storyboat.domain.studio.entity.StudioUser;
+import com.ssafy.storyboat.domain.studio.repository.StudioUserRepository;
 import com.ssafy.storyboat.domain.tag.entity.ProfileTag;
 import com.ssafy.storyboat.domain.tag.entity.Tag;
 import com.ssafy.storyboat.domain.tag.repository.ProfileTagRepository;
@@ -27,16 +29,19 @@ public class UserService {
     private final UserRepository userRepository;
     private final ProfileRepository profileRepository;
     private final ProfileTagRepository profileTagRepository;
+    private final StudioUserRepository studioUserRepository;
     private final TagRepository tagRepository;
 
     @Transactional
-    public UserFindResponse fetchSingleUser(String providerId, String provider) {
+    public UserFindResponse findSingleUser(String providerId, String provider) {
 
         log.info("provider = " + provider + " providerId = " + providerId);
         User user = userRepository.findByProviderIdAndProvider(providerId, provider);
         Profile profile = profileRepository.findByUser(user);
 
-        return new UserFindResponse(user.getUserId(), profile.getPenName());
+        StudioUser studioUser = studioUserRepository.findByUserAndRole(user, "ROLE_PRIVATE");
+
+        return new UserFindResponse(user.getUserId(), profile.getPenName(), studioUser.getStudio().getId());
     }
 
     @Transactional(readOnly = true)

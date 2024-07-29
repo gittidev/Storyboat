@@ -11,5 +11,6 @@ public class OAuth2UserDTO {
     private String name;
     private String username;
     private Boolean joinStatus;
+
 }
 
