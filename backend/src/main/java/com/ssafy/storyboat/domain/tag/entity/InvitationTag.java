@@ -18,6 +18,7 @@ public class InvitationTag {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "invitation_tag_id")
     private Long id;
 
     @ManyToOne

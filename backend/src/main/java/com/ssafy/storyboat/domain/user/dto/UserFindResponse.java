@@ -6,7 +6,7 @@ import lombok.*;
 @Setter
 @ToString
 @AllArgsConstructor
-public class FetchSingleUserResponseDTO {
+public class UserFindResponse {
     private Long Id;
     private String penName;
 
