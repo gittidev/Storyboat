@@ -1,7 +1,7 @@
 package com.ssafy.storyboat.common.auth.application;
 
 import com.ssafy.storyboat.common.auth.dto.*;
-import com.ssafy.storyboat.domain.studio.entity.StudioUser;
+//import com.ssafy.storyboat.domain.studio.entity.StudioUser;
 import com.ssafy.storyboat.domain.user.entity.Profile;
 import com.ssafy.storyboat.domain.user.entity.User;
 import jakarta.persistence.EntityManager;
@@ -106,11 +106,11 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
                 // Repository 생성해서 User-Repository 추가하기!
 
-                // 1. StudioUser Entity 생성
-                StudioUser studioUser = StudioUser.builder()
-                        .user(joinUser)
-                        .role("ROLE_PRIVATE")
-                        .build();
+//                // 1. StudioUser Entity 생성
+//                StudioUser studioUser = StudioUser.builder()
+//                        .user(joinUser)
+//                        .role("ROLE_PRIVATE")
+//                        .build();
 
 
                 entityManager.getTransaction().commit();  // 트랜잭션 커밋
