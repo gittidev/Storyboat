@@ -88,7 +88,6 @@ pipeline {
                         mattermostSend(
                             color: 'good',
                             message: "빌드 성공: ${env.JOB_NAME} #${env.BUILD_NUMBER} \n(<${env.BUILD_URL}|Details>)",
-                            message: "빌드 성공: ${env.JOB_NAME} #${env.BUILD_NUMBER} \n(<${env.BUILD_URL}|Details>)",
                             endpoint: 'https://meeting.ssafy.com/hooks/1psxfrtocfyubrb6jrpd7daoay',
                             channel: 'Jenkins---C107'
                         )
