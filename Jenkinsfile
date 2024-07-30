@@ -14,7 +14,7 @@ pipeline {
                     
                     mattermostSend(
                         color: 'warning',
-                        message: """젠킨스 시작: ${env.JOB_NAME} #${env.BUILD_NUMBER}
+                        message: """빌드 시작: StoryBoat #${env.BUILD_NUMBER}
                         커밋 작성자: ${gitCommitterName}
                         커밋 메시지: ${gitCommitMessage}
                         (<${env.BUILD_URL}|Details>)""",
@@ -111,7 +111,7 @@ pipeline {
                 
                 mattermostSend(
                     color: 'good',
-                    message: """빌드 성공: ${env.JOB_NAME} #${env.BUILD_NUMBER}
+                    message: """빌드 성공: StoryBoat #${env.BUILD_NUMBER}
                     커밋 작성자: ${gitCommitterName}
                     커밋 메시지: ${gitCommitMessage}
                     (<${env.BUILD_URL}|Details>)""",
@@ -128,7 +128,7 @@ pipeline {
                 
                 mattermostSend(
                     color: 'danger',
-                    message: """빌드 실패: ${env.JOB_NAME} #${env.BUILD_NUMBER}
+                    message: """빌드 실패: StoryBoat #${env.BUILD_NUMBER}
                     커밋 작성자: ${gitCommitterName}
                     커밋 메시지: ${gitCommitMessage}
                     로그:
