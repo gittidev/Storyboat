@@ -50,7 +50,7 @@ public class SecurityConfig {
 
                 // 권한 설정
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/login", "/", "/oauth2/authorization/**").permitAll()
+                        .requestMatchers("/login", "/").permitAll()
                         .requestMatchers("/reissue").permitAll()
                         .anyRequest().authenticated()
                 )
@@ -68,12 +68,6 @@ public class SecurityConfig {
                 .exceptionHandling((exceptions) -> exceptions
                         .authenticationEntryPoint((request, response, authException) -> response.sendError(HttpServletResponse.SC_UNAUTHORIZED))
                 );
-
-
-
-        ;
-
-
 
         return http.build();
 

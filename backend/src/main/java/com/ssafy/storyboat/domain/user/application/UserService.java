@@ -32,6 +32,7 @@ public class UserService {
     private final StudioUserRepository studioUserRepository;
     private final TagRepository tagRepository;
 
+    // 유저 정보 providerId, provider 로 조회 
     @Transactional
     public UserFindResponse findSingleUser(String providerId, String provider) {
 

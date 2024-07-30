@@ -3,6 +3,7 @@ package com.ssafy.storyboat.common.auth.application;
 import com.ssafy.storyboat.common.auth.dto.*;
 import com.ssafy.storyboat.domain.studio.entity.Studio;
 import com.ssafy.storyboat.domain.studio.entity.StudioUser;
+import com.ssafy.storyboat.domain.studio.repository.StudioRepository;
 import com.ssafy.storyboat.domain.studio.repository.StudioUserRepository;
 import com.ssafy.storyboat.domain.user.entity.Profile;
 import com.ssafy.storyboat.domain.user.entity.User;
@@ -17,11 +18,13 @@ import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.UUID;
 
 @Service
@@ -31,11 +34,14 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     private final EntityManagerFactory entityManagerFactory;
     private final StudioUserRepository studioUserRepository;
+    private final StudioRepository studioRepository;
 
     @Override
+    @Transactional
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
 
         OAuth2User oAuth2User = super.loadUser(userRequest);
+        log.info("OAuth2User : {}", oAuth2User);
 
         OAuth2Response oAuth2Response = null;
         String registrationId = userRequest.getClientRegistration().getRegistrationId();
@@ -77,6 +83,8 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             userDTO.setJoinStatus(false);
             log.info("로그인={}", userDTO.toString());
 
+            entityManager.getTransaction().commit();
+
             return new CustomOAuth2User(userDTO);
 
         // 회원가입 로직 -> 조회시 반환값 없을때
@@ -90,9 +98,10 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                         .email(email)
                         .providerId(providerId)
                         .provider(provider)
+                        .studioUsers(new ArrayList<>())
                         .build();
 
-                // Profile 객체 생성 및 User와의 관계 설정
+                // Profile 객체 생성 및 User 와의 관계 설정
                 String DEFAULT_PEN_NAME = "익명의 작가";
                 Profile joinUserProfile = Profile.builder()
                         .penName(DEFAULT_PEN_NAME + "#" + customUUID)
@@ -102,21 +111,30 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                         .build();
 
                 joinUserProfile.setUser(joinUser);
-
                 entityManager.persist(joinUser);
 
                 // 개인 스튜디오 생성
-                Studio studio = Studio.builder()
-                        .build();
-
-                StudioUser studioUser = StudioUser.builder()
-                        .user(joinUser)
-                        .studio(studio)
-                        .role("ROLE_PRIVATE")
-                        .build();
-
-                studioUserRepository.save(studioUser);
-
+//                Studio studio = Studio.builder()
+//                        .name("개인 저장소")
+//                        .description("개인 저장소")
+//                        .studioUsers(new ArrayList<>())
+//                        .build();
+//
+//                studioRepository.save(studio);
+//
+//                log.info(String.valueOf(studio.getId()));
+//                StudioUser studioUser = StudioUser.builder()
+//                        .user(joinUser)
+//                        .studio(studio)
+//
+//                        .role("ROLE_PRIVATE")
+//                        .build();
+//
+//                studioUser.setStudio(studio);
+//                studioUser.setUser(joinUser);
+//
+//                studioUserRepository.save(studioUser);
+//
                 entityManager.getTransaction().commit();  // 트랜잭션 커밋
 
                 OAuth2UserDTO userDTO = new OAuth2UserDTO();

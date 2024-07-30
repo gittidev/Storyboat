@@ -9,6 +9,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -28,13 +29,13 @@ public class Studio {
     private String description;
 
     @OneToMany(mappedBy = "studio", cascade = CascadeType.ALL, orphanRemoval = true)
-    List<StudioUser> studioUsers;
+    List<StudioUser> studioUsers = new ArrayList<>();
 
     @OneToMany(mappedBy = "studio", cascade = CascadeType.ALL, orphanRemoval = true)
-    List<StudioCharacter> studioCharacters;
+    List<StudioCharacter> studioCharacters = new ArrayList<>();
 
     @OneToMany(mappedBy = "studio", cascade = CascadeType.ALL, orphanRemoval = true)
-    List<StudioIdea> studioIdeas;
+    List<StudioIdea> studioIdeas = new ArrayList<>();
 
     @OneToOne(mappedBy = "studio")
     private Invitation invitation;
@@ -43,7 +44,9 @@ public class Studio {
     InvitationCode invitationCode;
 
     @OneToMany(mappedBy = "studio", cascade = CascadeType.ALL, orphanRemoval = true)
-    List<StudioStory> studioStories;
+    List<StudioStory> studioStories = new ArrayList<>();
+
+
 
 
 }

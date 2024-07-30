@@ -34,4 +34,14 @@ public class StudioUser {
 
     @Column(name = "reg_date")
     private LocalDateTime createdAt;
+
+    public void setStudio(Studio studio) {
+        this.studio = studio;
+        studio.getStudioUsers().add(this);
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+        user.getStudioUsers().add(this);
+    }
 }
