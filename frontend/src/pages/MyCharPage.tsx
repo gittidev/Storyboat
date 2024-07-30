@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import CharacterCard from '../components/CharacterCard';
+// import CharacterCard from '../components/CharacterCard';
 import Tag from '../components/Tag'; // Assuming Tag is a custom component you have
 
 // Importing images
