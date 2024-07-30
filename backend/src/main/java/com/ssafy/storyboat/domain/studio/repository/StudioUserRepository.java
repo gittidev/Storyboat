@@ -6,4 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface StudioUserRepository extends JpaRepository<StudioUser, Long> {
     StudioUser findByUserAndRole(User user, String role);
+    StudioUser findByUser_UserIdAndStudio_StudioId(Long userId, Long studioId);
 }
