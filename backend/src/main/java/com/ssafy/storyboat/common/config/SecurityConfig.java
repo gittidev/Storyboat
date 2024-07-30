@@ -6,6 +6,7 @@ import com.ssafy.storyboat.common.auth.application.CustomSuccessHandler;
 import com.ssafy.storyboat.common.auth.filter.CustomLogoutFilter;
 import com.ssafy.storyboat.common.auth.filter.JWTFilter;
 import com.ssafy.storyboat.common.auth.util.JWTUtil;
+import com.ssafy.storyboat.domain.user.repository.UserRepository;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.client.web.OAuth2LoginAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
 
 @Configuration
@@ -30,6 +32,7 @@ public class SecurityConfig {
     private final CustomOAuth2UserService customOAuth2UserService;
     private final CustomSuccessHandler customSuccessHandler;
     private final CustomFailureHandler customFailureHandler;
+    private final UserRepository userRepository;
 
     @Bean
     public SecurityFilterChain configure(HttpSecurity http) throws Exception {
@@ -39,6 +42,9 @@ public class SecurityConfig {
                 .formLogin((auth) -> auth.disable())
                 .httpBasic((auth) -> auth.disable());
 
+        //JWTFilter 추가
+        http
+                .addFilterBefore(new JWTFilter(jwtUtil, userRepository), UsernamePasswordAuthenticationFilter.class);
                 // OAuth2 로그인 설정
         http
                 .oauth2Login((oauth2) -> oauth2
@@ -55,8 +61,6 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
 
-                // JWT 필터 추가
-                .addFilterBefore(new JWTFilter(jwtUtil), OAuth2LoginAuthenticationFilter.class)
                 .addFilterBefore(new CustomLogoutFilter(jwtUtil, entityManagerFactory), LogoutFilter.class)
 
                 // 세션 관리 설정 (무상태)

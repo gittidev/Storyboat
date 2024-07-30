@@ -40,5 +40,11 @@ public class CustomOAuth2User implements OAuth2User {
         return userDTO.getUsername();
     }
 
+    public String getProviderId() { return userDTO.getUsername().split(" ")[0]; }
+
+    public String getProvider() { return userDTO.getUsername().split(" ")[1]; }
+
     public boolean getJoinStatus() {return userDTO.getJoinStatus();}
+
+    public Long getUserId() { return userDTO.getUserId(); }
 }

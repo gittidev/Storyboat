@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -38,6 +39,7 @@ public class UserService {
 
         log.info("provider = " + provider + " providerId = " + providerId);
         User user = userRepository.findByProviderIdAndProvider(providerId, provider);
+        log.info(user.getUserId() + " " + user.getUserId());
         Profile profile = profileRepository.findByUser(user);
 
         StudioUser studioUser = studioUserRepository.findByUserAndRole(user, "ROLE_PRIVATE");
@@ -65,10 +67,10 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public ProfileFindResponse fetchSingleProfile(String providerId, String provider) {
+    public ProfileFindResponse fetchSingleProfile(Long userId) {
         //log.info("provider = " + provider + " providerId = " + providerId);
-        User user = userRepository.findByProviderIdAndProvider(providerId, provider);
-        Profile profile = profileRepository.findByUser(user);
+        Optional<User> user = userRepository.findById(userId);
+        Profile profile = profileRepository.findByUser(user.get());
 
         ProfileFindResponse profileFindResponse = new ProfileFindResponse();
         profileFindResponse.setPenName(profile.getPenName());
@@ -77,10 +79,10 @@ public class UserService {
     }
 
     @Transactional
-    public boolean updateUserProfile(String providerId, String provider, ProfileUpdateRequest profileUpdateRequest) {
+    public boolean updateUserProfile(Long userId, ProfileUpdateRequest profileUpdateRequest) {
 
-        User user = userRepository.findByProviderIdAndProvider(providerId, provider);
-        Profile profile = profileRepository.findByUser(user);
+        Optional<User> user = userRepository.findById(userId);
+        Profile profile = profileRepository.findByUser(user.get());
         // 1. 해당 유저의 PenName 이 변경됬는지 확인
         if (!profile.getPenName().equals(profileUpdateRequest.getPenName())) {
             // 1.5 . 변경됬다면 PenName 이 중복되는지 확인 -> 중복시 false
@@ -109,7 +111,7 @@ public class UserService {
 
         //
         Profile updatedProfile = Profile.builder()
-                .user(user)
+                .user(user.get())
                 .profileId(profile.getProfileId())
                 .penName(profileUpdateRequest.getPenName())
                 .introduction(profileUpdateRequest.getIntroduction())
