@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import ProtectedRoute from "./ProtecedRoute";
 
@@ -19,7 +19,7 @@ import IdeaBoxPage from './pages/IdeaBoxPage';
 import StudioPage from './pages/StudioPage';
 import FindTeamPage from './pages/FindTeamPage';
 import ProfilePage from './pages/ProfilePage';
-import AIPaintingPage from './pages/AIPaintingPage';
+// import AIPaintingPage from './pages/AIPaintingPage';
 import LoginPage from './pages/LoginPage';
 
 import StudioSetting from "./components/Studio/StudioSetting";
@@ -38,7 +38,7 @@ function App() {
           <Route path="/main" element={<MainPage />}>
             <Route path="mystory" element={<MyStoryPage />} />
             <Route path="mychar" element={<MyCharPage />}/>
-            <Route path="/main/AIPaintingPage" element={<AIPaintingPage />} />
+            {/* <Route path="/main/AIPaintingPage" element={<AIPaintingPage />} /> */}
             <Route path="myidea" element={<MyIdeaPage />} />
             <Route path="storybox" element={<StoryBoxPage />} />
             <Route path="storyedit" element={<StoryEditPage />} />
