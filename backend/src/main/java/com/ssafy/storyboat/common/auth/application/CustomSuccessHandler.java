@@ -50,10 +50,10 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         // 성공 후 리디렉션
         if (customUserDetails.getJoinStatus()) {
             // 회원 가입시 보낼 경로
-            response.sendRedirect(getRedirectUrl(request, "https://i11c107.p.ssafy.io/storyboat"));
+            response.sendRedirect("https://i11c107.p.ssafy.io/storyboat");
         } else {
             // 로그인 시 보낼 경로
-            response.sendRedirect(getRedirectUrl(request, "https://i11c107.p.ssafy.io/storyboat"));
+            response.sendRedirect("https://i11c107.p.ssafy.io/storyboat");
         }
     }
 
@@ -99,18 +99,5 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         cookie.setPath("/");
         cookie.setHttpOnly(true);
         return cookie;
-    }
-
-    private String getRedirectUrl(HttpServletRequest request, String defaultUrl) {
-        String clientIp = request.getRemoteAddr();
-        if (isLocalIp(clientIp)) {
-            return defaultUrl.replace("https://i11c107.p.ssafy.io", "http://localhost:8080");
-        }
-        return defaultUrl;
-    }
-
-    private boolean isLocalIp(String ip) {
-    // 로컬 IP 주소 범위 확인 (IPv4)
-        return ip.startsWith("127.") || ip.equals("0:0:0:0:0:0:0:1") || ip.equals("::1") || ip.startsWith("192.168.");
     }
 }
