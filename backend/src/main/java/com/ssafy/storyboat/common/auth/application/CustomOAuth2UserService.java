@@ -3,8 +3,6 @@ package com.ssafy.storyboat.common.auth.application;
 import com.ssafy.storyboat.common.auth.dto.*;
 import com.ssafy.storyboat.domain.studio.entity.Studio;
 import com.ssafy.storyboat.domain.studio.entity.StudioUser;
-import com.ssafy.storyboat.domain.studio.repository.StudioRepository;
-import com.ssafy.storyboat.domain.studio.repository.StudioUserRepository;
 import com.ssafy.storyboat.domain.user.entity.Profile;
 import com.ssafy.storyboat.domain.user.entity.User;
 import jakarta.persistence.EntityManager;
@@ -34,8 +32,6 @@ import java.util.UUID;
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     private final EntityManagerFactory entityManagerFactory;
-    private final StudioUserRepository studioUserRepository;
-    private final StudioRepository studioRepository;
 
     @Override
     @Transactional

@@ -13,6 +13,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @Slf4j
@@ -31,9 +32,9 @@ public class StoryController {
 
     // 스튜디오에 스토리 생성
     @PostMapping()
-    private ResponseEntity<ApiResponse<Void>> createStory(@PathVariable final Long studioId, @RequestBody final String title) {
-        storyService.makeStory(studioId, title);
-        return null;
+    private ResponseEntity<ApiResponse<Void>> createStory(@PathVariable final Long studioId, @RequestBody Map<String, Object> payload) {
+        storyService.makeStory(studioId, (String)payload.get("title"));
+        return ResponseEntity.ok(ApiResponse.success("Stories Create Success"));
     }
 
     // 스토리 삭제
