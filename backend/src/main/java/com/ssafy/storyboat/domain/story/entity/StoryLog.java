@@ -18,7 +18,7 @@ public class StoryLog {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "story_log_id")
-    private Long studioStoryId;
+    private Long studioLogId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
