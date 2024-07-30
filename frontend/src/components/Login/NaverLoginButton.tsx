@@ -23,7 +23,8 @@ import React from 'react';
 
 const NaverLoginButton: React.FC = () => {
   const handleLogin = () => {
-    window.location.href = 'http://localhost:8080/oauth2/authorization/naver';
+    // window.location.href = 'http://localhost:8080/oauth2/authorization/naver';
+    window.location.href = 'https://i11c107.p.ssafy.io/api/oauth2/authorization/naver';
   };
 
   return (
