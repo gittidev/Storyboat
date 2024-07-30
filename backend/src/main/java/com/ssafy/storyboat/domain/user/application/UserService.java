@@ -42,7 +42,13 @@ public class UserService {
 
         StudioUser studioUser = studioUserRepository.findByUserAndRole(user, "ROLE_PRIVATE");
 
-        return new UserFindResponse(user.getUserId(), profile.getPenName(), studioUser.getStudio().getId());
+        return new UserFindResponse(user.getUserId(), profile.getPenName(), studioUser.getStudio().getStudioId());
+    }
+
+    @Transactional
+    public Long findUserId(String providerId, String provider) {
+        User user = userRepository.findByProviderIdAndProvider(providerId, provider);
+        return user.getUserId();
     }
 
     @Transactional(readOnly = true)

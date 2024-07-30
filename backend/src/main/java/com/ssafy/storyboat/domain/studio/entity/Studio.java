@@ -22,7 +22,7 @@ public class Studio {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "studio_id")
-    private Long id;
+    private Long StudioId;
 
     private String name;
 

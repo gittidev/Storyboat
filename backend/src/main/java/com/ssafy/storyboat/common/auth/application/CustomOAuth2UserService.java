@@ -82,7 +82,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             userDTO.setUsername(providerId + " " + provider);
             userDTO.setRole("ROLE_USER");
             userDTO.setJoinStatus(false);
-            log.info("로그인={}", userDTO.toString());
+            log.info("로그인={}", userDTO);
 
             entityManager.getTransaction().commit();
 
