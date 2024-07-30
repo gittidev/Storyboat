@@ -16,7 +16,7 @@ public class RefreshToken {
     private Long id;
 
     // 즉시 로딩
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
