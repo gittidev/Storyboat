@@ -3,6 +3,7 @@ package com.ssafy.storyboat.domain.studio.api;
 import com.ssafy.storyboat.common.api.ApiResponse;
 import com.ssafy.storyboat.common.auth.dto.CustomOAuth2User;
 import com.ssafy.storyboat.domain.studio.application.StudioService;
+import com.ssafy.storyboat.domain.studio.dto.StudioCreateRequest;
 import com.ssafy.storyboat.domain.studio.dto.StudioResponse;
 
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,13 @@ import java.util.List;
 public class StudioController {
 
     private final StudioService studioService;
+
+    @PostMapping("/studios")
+    public ResponseEntity<ApiResponse<Void>> createStudio(@AuthenticationPrincipal CustomOAuth2User customOAuth2User,
+                                                          @RequestBody StudioCreateRequest studioCreateRequest) {
+        studioService.createStudio(customOAuth2User, studioCreateRequest.getName(), studioCreateRequest.getDescription());
+        return ResponseEntity.ok(ApiResponse.success("create studio success"));
+    }
 
     @GetMapping("/studios")
     public ResponseEntity<ApiResponse<List<StudioResponse>>> getStudios(@AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
