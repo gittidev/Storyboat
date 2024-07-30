@@ -24,6 +24,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -93,7 +94,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             try {
                 UUID customUUID = generateUUIDFromString(currentTime + name);
 
-                // User 객체 생성
+                // 1. User 생성해 persist
                 User joinUser = User.builder()
                         .email(email)
                         .providerId(providerId)
@@ -101,40 +102,39 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                         .studioUsers(new ArrayList<>())
                         .build();
 
-                // Profile 객체 생성 및 User 와의 관계 설정
+                entityManager.persist(joinUser);
+
+                // 2. profile 생성해 persist
                 String DEFAULT_PEN_NAME = "익명의 작가";
                 Profile joinUserProfile = Profile.builder()
-                        .penName(DEFAULT_PEN_NAME + "#" + customUUID)
+                        .penName(DEFAULT_PEN_NAME + "_" + customUUID)
                         .imageUrl("")
                         .introduction("")
                         .user(joinUser)  // 양방향 관계 설정
                         .build();
 
-                joinUserProfile.setUser(joinUser);
-                entityManager.persist(joinUser);
+                entityManager.persist(joinUserProfile);
 
-                // 개인 스튜디오 생성
-//                Studio studio = Studio.builder()
-//                        .name("개인 저장소")
-//                        .description("개인 저장소")
-//                        .studioUsers(new ArrayList<>())
-//                        .build();
-//
-//                studioRepository.save(studio);
-//
-//                log.info(String.valueOf(studio.getId()));
-//                StudioUser studioUser = StudioUser.builder()
-//                        .user(joinUser)
-//                        .studio(studio)
-//
-//                        .role("ROLE_PRIVATE")
-//                        .build();
-//
-//                studioUser.setStudio(studio);
-//                studioUser.setUser(joinUser);
-//
-//                studioUserRepository.save(studioUser);
-//
+                // 3. 개인 스튜디오 생성해 영속
+                Studio studio = Studio.builder()
+                        .name("private")
+                        .description("private")
+                        .studioUsers(new ArrayList<>())
+                        .build();
+
+                entityManager.persist(studio);
+
+                // 4. StudioUser 생성해 persist
+                StudioUser studioUser = StudioUser.builder()
+                        .user(joinUser)
+                        .studio(studio)
+                        .role("ROLE_PRIVATE")
+                        .createdAt(LocalDateTime.now())
+                        .build();
+
+
+                entityManager.persist(studioUser);
+
                 entityManager.getTransaction().commit();  // 트랜잭션 커밋
 
                 OAuth2UserDTO userDTO = new OAuth2UserDTO();
@@ -143,7 +143,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                 userDTO.setJoinStatus(true);
                 userDTO.setRole("ROLE_USER");
 
-                log.info("회원가입={}", userDTO.toString());
+                log.info("회원가입={}", joinUser.getEmail());
 
                 return new CustomOAuth2User(userDTO);
 
