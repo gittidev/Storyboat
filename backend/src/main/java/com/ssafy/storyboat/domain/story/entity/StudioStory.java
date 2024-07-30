@@ -21,7 +21,7 @@ public class StudioStory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "studio_story_id")
-    private Long id;
+    private Long studioStoryId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "studio_id")

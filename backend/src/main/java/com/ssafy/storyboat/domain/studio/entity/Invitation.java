@@ -17,7 +17,7 @@ public class Invitation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "invitation_id")
-    private Long id;
+    private Long invitationId;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "studio_id")
