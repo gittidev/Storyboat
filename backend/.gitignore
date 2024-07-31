@@ -35,6 +35,8 @@ out/
 
 ### VS Code ###
 .vscode/
+<<<<<<< HEAD
+=======
 
 # Created by https://www.toptal.com/developers/gitignore/api/windows,macos,visualstudiocode,intellij,java,react,git
 # Edit at https://www.toptal.com/developers/gitignore?templates=windows,macos,visualstudiocode,intellij,java,react,git
@@ -287,3 +289,4 @@ $RECYCLE.BIN/
 *.lnk
 
 # End of https://www.toptal.com/developers/gitignore/api/windows,macos,visualstudiocode,intellij,java,react,git
+>>>>>>> fa42103a36adaa60c336262ce19a9365f75e65a6
