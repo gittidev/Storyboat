@@ -43,5 +43,22 @@ public class Profile {
     public void setUser(User user) {
         user.setProfile(this);
         this.user = user;
-    };
+    }
+
+    public void updatePenName(String newPenName) {
+        this.penName = newPenName;
+    }
+
+    public void updateIntroduction(String newIntroduction) {
+        this.introduction = newIntroduction;
+    }
+
+    public void updateImageUrl(String newImageUrl) {
+        this.imageUrl = newImageUrl;
+    }
+
+    public void updateProfileTags(List<ProfileTag> newProfileTags) {
+        this.profileTags = newProfileTags;
+    }
+
 }

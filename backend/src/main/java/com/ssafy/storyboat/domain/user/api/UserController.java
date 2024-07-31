@@ -5,6 +5,7 @@ import com.ssafy.storyboat.common.auth.dto.CustomOAuth2User;
 import com.ssafy.storyboat.domain.user.application.UserService;
 import com.ssafy.storyboat.domain.user.dto.ProfileFindResponse;
 import com.ssafy.storyboat.domain.user.dto.ProfileUpdateRequest;
+import com.ssafy.storyboat.domain.user.entity.Profile;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -19,44 +20,33 @@ public class UserController {
 
     private final UserService userService;
 
-    // @AuthenticationPrincipal CustomOAuth2User customOAuth2User 로 받아 .getUserId 로 접속한 유저의 주키 반환!
-    // 로그인 유저 정보 조회가 의미가 없어져서 주석 처리함
-
-//    @GetMapping
-//    public ResponseEntity<ApiResponse<UserFindResponse>> getUser(@AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
-//        log.info("userId = {}",customOAuth2User.getUserId());
-//
-//        UserFindResponse userFindResponse = userService.findSingleUser(customOAuth2User.getProviderId(), customOAuth2User.getProvider());
-//        return ResponseEntity.ok(ApiResponse.success(userFindResponse, "Fetch User Success"));
-//    }
-
+    // 필명 중복 확인
     @GetMapping("/pen-names/{penName}")
-    public ResponseEntity<ApiResponse<Boolean>> getUserByPenName(@PathVariable String penName) {
-        Boolean result = userService.searchPenName(penName);
-        return ResponseEntity.ok(ApiResponse.success(result, "Search User Success"));
+    public ResponseEntity<?> getUserByPenName(@PathVariable String penName) {
+        userService.searchPenName(penName);
+        return ResponseEntity.ok().body("필명 중복 X");
     }
 
+    // 유저 프로필 조회
     @GetMapping("/profiles")
-    public ResponseEntity<ApiResponse<ProfileFindResponse>> getUserProfile(@AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
-        ProfileFindResponse profileFindResponse = userService.fetchSingleProfile(customOAuth2User.getUserId());
-        return ResponseEntity.ok(ApiResponse.success(profileFindResponse, "Fetch Profile Success"));
+    public ResponseEntity<?> getUserProfile(@AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
+
+        Profile profile = userService.fetchSingleProfile(customOAuth2User.getUserId());
+        ProfileFindResponse profileFindResponse = new ProfileFindResponse();
+        profileFindResponse.setDTO(profile);
+
+        return ResponseEntity.ok().body(ApiResponse.success(profileFindResponse, "Find Profile Success"));
     }
 
+    // Tag 매핑 확인
     @PostMapping("/profiles")
-    public ResponseEntity<ApiResponse<ProfileUpdateRequest>> updateUserProfile(@RequestBody ProfileUpdateRequest profileUpdateRequest, @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
-
-        boolean success = userService.updateUserProfile(customOAuth2User.getUserId(), profileUpdateRequest);
-
-        if (success) {
-            return ResponseEntity.ok(ApiResponse.success(profileUpdateRequest, "Profile updated Success"));
-        } else {
-            return ResponseEntity.status(409).body(ApiResponse.error("Failed to update profile"));
-        }
+    public ResponseEntity<?> updateUserProfile(@RequestBody ProfileUpdateRequest profileUpdateRequest, @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
+        userService.updateUserProfile(customOAuth2User.getUserId(), profileUpdateRequest);
+        return ResponseEntity.ok().body(ApiResponse.success("Update Profile Success"));
     }
 
     @DeleteMapping
-    public ResponseEntity<ApiResponse<Void>> deleteUser(@AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
-
+    public ResponseEntity<?> deleteUser(@AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
         return ResponseEntity.ok(ApiResponse.success("User deleted successfully"));
     }
 
