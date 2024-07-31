@@ -23,8 +23,10 @@ public class Story {
 
     private Long studioStoryId;
 
-    private String StoryData;
+    private Long userId;
 
     @Indexed(expireAfterSeconds = 7 * 24 * 60 * 60) // 7일 후 자동 삭제
     private LocalDateTime date;
+
+    private String StoryData;
 }

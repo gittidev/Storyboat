@@ -1,18 +1,20 @@
 package com.ssafy.storyboat.domain.story.application;
 
+import com.ssafy.storyboat.common.dto.ApiResponse;
+import com.ssafy.storyboat.common.dto.Role;
+import com.ssafy.storyboat.common.exception.ForbiddenException;
+import com.ssafy.storyboat.common.exception.InternalServerErrorException;
+import com.ssafy.storyboat.common.exception.ResourceNotFoundException;
+import com.ssafy.storyboat.common.exception.UnauthorizedException;
 import com.ssafy.storyboat.domain.story.dto.StoryFindAllResponse;
 import com.ssafy.storyboat.domain.story.entity.Story;
-import com.ssafy.storyboat.domain.story.entity.StoryLog;
 import com.ssafy.storyboat.domain.story.entity.StudioStory;
-import com.ssafy.storyboat.domain.story.repository.StoryLogRepository;
 import com.ssafy.storyboat.domain.story.repository.StoryRepository;
 import com.ssafy.storyboat.domain.story.repository.StudioStoryRepository;
 import com.ssafy.storyboat.domain.studio.entity.Studio;
 import com.ssafy.storyboat.domain.studio.entity.StudioUser;
 import com.ssafy.storyboat.domain.studio.repository.StudioRepository;
 import com.ssafy.storyboat.domain.studio.repository.StudioUserRepository;
-import com.ssafy.storyboat.domain.user.application.UserService;
-import com.ssafy.storyboat.domain.user.entity.User;
 import com.ssafy.storyboat.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,7 +32,6 @@ import java.util.Optional;
 public class StoryService {
 
     private final StudioStoryRepository studioStoryRepository;
-    private final StoryLogRepository storyLogRepository;
     private final StudioRepository studioRepository;
     private final StudioUserRepository studioUserRepository;
     private final StoryRepository storyRepository;
@@ -42,7 +43,8 @@ public class StoryService {
     }
 
     public void makeStory(Long studioId, String title) {
-        Studio studio = studioRepository.findById(studioId).get();
+        Studio studio = studioRepository.findById(studioId)
+                .orElseThrow(() -> new ResourceNotFoundException("Studio not found"));
         StudioStory studioStory = StudioStory.builder()
                 .studio(studio)
                 .title(title)
@@ -50,63 +52,50 @@ public class StoryService {
         studioStoryRepository.save(studioStory);
     }
 
-    public DeleteResult deleteStory(Long userId, Long studioId , Long studioStoryId) {
+    public void deleteStory(Long userId, Long studioId , Long studioStoryId) {
         // Story 삭제도 Studio 의 Admin 만 삭제 가능!
         StudioUser studioUser = studioUserRepository.findByUser_UserIdAndStudio_StudioId(userId, studioId);
-        if (studioUser == null || !studioUser.getRole().equals("ROLE_ADMIN")) {
-            return DeleteResult.UNAUTHORIZED;
+        if (studioUser == null) {
+            throw new ResourceNotFoundException("Studio not found");
+        }
+        else if (studioUser.getRole().equals(Role.OWNER)) {
+            throw new ForbiddenException("권한 없음");
         }
         // 우선 삭제로 등록
-        Optional<StudioStory> optional = studioStoryRepository.findById(studioStoryId);
-        if (optional.isPresent()) {
-            studioStoryRepository.delete(optional.get());
-            return DeleteResult.SUCCESS;
+        StudioStory studioStory = studioStoryRepository.findById(studioStoryId)
+                .orElseThrow(() -> new ResourceNotFoundException("Studio story not found"));
+
+        studioStoryRepository.delete(studioStory);
+    }
+
+    public Story findStory(Long studioStoryId) {
+
+        return null;
+    }
+
+    //studioId, userId, studioStoryId, storyData)
+    public void saveStory(Long studioId, Long userId, Long studioStoryId, String storyData) {
+        StudioUser studioUser = studioUserRepository.findByUser_UserIdAndStudio_StudioId(userId, studioId);
+        if (studioUser == null) {
+            throw new ResourceNotFoundException("StudioUser not found");
         }
-        return DeleteResult.NOT_FOUND;
-    }
+        else if (!(studioUser.getRole().equals(Role.OWNER) || studioUser.getRole().equals(Role.MEMBER) || studioUser.getRole().equals(Role.ROLE_PRIVATE))) {
+            throw new ForbiddenException("권한 없음");
+        }
 
-    public boolean findStory(Long studioStoryId) {
-        Optional<StudioStory> studioStory = studioStoryRepository.findById(studioStoryId);
-        studioStory.get().getStoryLogs()
-
-    }
-
-    public boolean saveStory(Long studioStoryId, Long userId, String storyData) {
         try {
             // MongoDB에 저장
             Story story = Story.builder()
-                    .studioStoryId(studioStoryId)
-                    .date(LocalDateTime.now())
-                    .StoryData(storyData)
+                    .studioStoryId(studioStoryId) // 스튜디오 매핑
+                    .userId(userId) // user 매핑
+                    .date(LocalDateTime.now()) // 등록일 (TTL 7일)
+                    .StoryData(storyData) // Json 데이터
                     .build();
 
             storyRepository.save(story);
-
-            // RDB story_log에 저장
-            Optional<StudioStory> studioStoryOpt = studioStoryRepository.findById(studioStoryId);
-            Optional<User> userOpt = userRepository.findById(userId);
-
-            if (studioStoryOpt.isPresent() && userOpt.isPresent()) {
-                StudioStory studioStory = studioStoryOpt.get();
-                User user = userOpt.get();
-
-                StoryLog storyLog = StoryLog.builder()
-                        .user(user)
-                        .studioStory(studioStory)
-                        .key(story.getStudioStoryId())
-                        .build();
-
-                storyLogRepository.save(storyLog);
-            } else {
-                // 적절한 예외 처리
-                throw new RuntimeException("StudioStory or User not found");
-            }
-
-            return true;
         } catch (Exception e) {
             // 예외 처리
-            e.printStackTrace();
-            return false;
+            throw new InternalServerErrorException("MongoDB 저장 오류");
         }
     }
 }
