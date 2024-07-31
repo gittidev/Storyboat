@@ -6,7 +6,7 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import java.util.List;
 import java.util.Optional;
 
-public interface StoryRepository extends MongoRepository<Story, String> {
+public interface StoryRepository extends MongoRepository<Story, Long> {
     // studioStudioStoryId로 조회하며, date를 기준으로 내림차순 정렬
     List<Story> findByStudioStoryIdOrderByDateDesc(Long studioStoryId);
     Optional<Story> findTopByStudioStoryIdOrderByDateDesc(Long studioStoryId);

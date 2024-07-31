@@ -4,6 +4,7 @@ import com.ssafy.storyboat.common.dto.ApiResponse;
 import com.ssafy.storyboat.common.auth.dto.CustomOAuth2User;
 import com.ssafy.storyboat.domain.story.application.StoryService;
 import com.ssafy.storyboat.domain.story.dto.StoryFindAllResponse;
+import com.ssafy.storyboat.domain.story.entity.Story;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -45,8 +46,9 @@ public class StoryController {
 
     // 스토리 세부 조회
     @GetMapping("/{studioStoryId}") ResponseEntity<?> findStory(@PathVariable final Long studioId, @PathVariable final Long studioStoryId) {
+        Story story = storyService.findStory(studioStoryId);
 
-        return null;
+        return ResponseEntity.ok(ApiResponse.success(story.getStoryData(), "Stories Find Success"));
     }
 
     // 스토리 수정(저장)

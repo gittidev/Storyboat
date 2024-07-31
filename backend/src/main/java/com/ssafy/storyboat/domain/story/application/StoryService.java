@@ -58,7 +58,7 @@ public class StoryService {
         if (studioUser == null) {
             throw new ResourceNotFoundException("Studio not found");
         }
-        else if (studioUser.getRole().equals(Role.OWNER)) {
+        else if (studioUser.getRole().equals(Role.ROLE_OWNER)) {
             throw new ForbiddenException("권한 없음");
         }
         // 우선 삭제로 등록
@@ -68,9 +68,11 @@ public class StoryService {
         studioStoryRepository.delete(studioStory);
     }
 
+    @Transactional(readOnly = true)
     public Story findStory(Long studioStoryId) {
 
-        return null;
+        return storyRepository.findTopByStudioStoryIdOrderByDateDesc(studioStoryId)
+                .orElseThrow(() -> new ResourceNotFoundException("스토리 조회 실패"));
     }
 
     //studioId, userId, studioStoryId, storyData)
@@ -79,7 +81,7 @@ public class StoryService {
         if (studioUser == null) {
             throw new ResourceNotFoundException("StudioUser not found");
         }
-        else if (!(studioUser.getRole().equals(Role.OWNER) || studioUser.getRole().equals(Role.MEMBER) || studioUser.getRole().equals(Role.ROLE_PRIVATE))) {
+        else if (!(studioUser.getRole().equals(Role.ROLE_OWNER) || studioUser.getRole().equals(Role.ROLE_MEMBER) || studioUser.getRole().equals(Role.ROLE_PRIVATE))) {
             throw new ForbiddenException("권한 없음");
         }
 
