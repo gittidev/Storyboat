@@ -40,6 +40,14 @@ public class StudioService {
     private final UserRepository userRepository;
     private final StudioUserRepository studioUserRepository;
 
+    @Transactional(readOnly = true)
+    public void isAuthorized(Long studioId, Long userId) {
+        StudioUser studioUser = studioUserRepository.findByUser_UserIdAndStudio_StudioId(userId, studioId);
+        if (studioUser == null) {
+            throw new ForbiddenException("Studio 접근 권한 없음");
+        }
+    }
+
     @Transactional
     public void createStudio(CustomOAuth2User customOAuth2User, String name, String description) {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
