@@ -37,7 +37,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain configure(HttpSecurity http) throws Exception {
         http
-                // CSRF 및 기타 기본 보안 설정 비활성화
+                // CSRF 및 기타 기본 보안 설정 비활성
                 .csrf((auth) -> auth.disable())
                 .formLogin((auth) -> auth.disable())
                 .httpBasic((auth) -> auth.disable());
@@ -66,7 +66,6 @@ public class SecurityConfig {
                 // 세션 관리 설정 (무상태)
                 .sessionManagement((session) -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-
 
                 // 기본 로그인 화면 비활성화
                 .exceptionHandling((exceptions) -> exceptions

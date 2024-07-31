@@ -1,0 +1,43 @@
+.kakao-btn {
+    width: 400px;
+    display: flex;
+    align-items: center;
+    background-color: #fee500;
+    color: #000;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.25);
+    cursor: pointer;
+    padding: 10px 20px;
+    transition: background-color 0.3s, box-shadow 0.3s;
+    text-align: center;
+}
+
+.kakao-btn:hover {
+    background-color: #e5cc00;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.25);
+}
+
+.kakao-icon-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #fff;
+    border-radius: 2px;
+    height: 20px;
+    width: 20px;
+    margin-right: 10px;
+}
+
+.kakao-icon {
+    height: 18px;
+    width: 18px;
+}
+
+.btn-text {
+    font-size: 16px;
+    letter-spacing: 0.5px;
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+}

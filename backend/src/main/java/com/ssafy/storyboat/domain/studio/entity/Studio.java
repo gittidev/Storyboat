@@ -46,7 +46,11 @@ public class Studio {
     @OneToMany(mappedBy = "studio", cascade = CascadeType.ALL, orphanRemoval = true)
     List<StudioStory> studioStories = new ArrayList<>();
 
+    public void updateStudioName(String name) {
+        this.name = name;
+    }
 
-
-
+    public void updateStudioDescription(String description) {
+        this.description = description;
+    }
 }

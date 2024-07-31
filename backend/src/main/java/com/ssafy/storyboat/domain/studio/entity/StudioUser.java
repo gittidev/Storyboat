@@ -1,5 +1,6 @@
 package com.ssafy.storyboat.domain.studio.entity;
 
+import com.ssafy.storyboat.common.dto.Role;
 import com.ssafy.storyboat.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -30,7 +31,8 @@ public class StudioUser {
     @JoinColumn(name = "studio_id")
     private Studio studio;
 
-    private String role;
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
     @Column(name = "reg_date")
     private LocalDateTime createdAt;

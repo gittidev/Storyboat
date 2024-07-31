@@ -1,4 +1,4 @@
-import styled from "styled-components"
+// import styled from "styled-components"
 
 const LoadingPage = () => {
     return (
@@ -12,3 +12,4 @@ const LoadingPage = () => {
 }
 
 export default LoadingPage
+
