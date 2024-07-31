@@ -1,8 +1,10 @@
 package com.ssafy.storyboat.common.auth.filter;
 
+import com.ssafy.storyboat.common.auth.dto.CustomOAuth2User;
+import com.ssafy.storyboat.common.auth.dto.OAuth2UserDTO;
 import com.ssafy.storyboat.common.auth.util.JWTUtil;
-import com.ssafy.storyboat.common.auth.dto.CustomUserDetails;
 import com.ssafy.storyboat.domain.user.entity.User;
+import com.ssafy.storyboat.domain.user.repository.UserRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -21,13 +23,14 @@ import java.io.IOException;
 public class JWTFilter extends OncePerRequestFilter {
 
     private final JWTUtil jwtUtil;
+    private final UserRepository userRepository;
 
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
         //request 에서 Authorization 헤더를 찾음
-        String authorization= request.getHeader("Authorization");
+        String authorization = request.getHeader("Authorization");
         log.info("헤더 토큰={}", authorization);
 
         //Authorization 헤더 검증
@@ -41,6 +44,7 @@ public class JWTFilter extends OncePerRequestFilter {
         }
 
         String token = authorization.split(" ")[1];
+        log.info(token);
 
         // 토큰 소멸 시간 검증
         if (jwtUtil.isExpired(token)) {
@@ -53,19 +57,30 @@ public class JWTFilter extends OncePerRequestFilter {
         }
 
 
+        //토큰에서 username과 role 획득
         String username = jwtUtil.getUsername(token);
         String role = jwtUtil.getRole(token);
 
+        User user = userRepository.findByProviderIdAndProvider(username.split(" ")[0], username.split(" ")[1]);
+
+        if (user == null || user.getUserId() == null) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        }
+
         log.info("username={} role={}", username, role);
 
+        //userDTO 를 생성하여 값 set
+        OAuth2UserDTO userDTO = new OAuth2UserDTO();
+        userDTO.setUsername(username);
+        userDTO.setRole(role);
+        userDTO.setUserId(user.getUserId());
 
-        User userEntity = new User();
+        //UserDetails 에 회원 정보 객체 담기
+        CustomOAuth2User customOAuth2User = new CustomOAuth2User(userDTO);
 
-        CustomUserDetails customUserDetails = new CustomUserDetails(userEntity);
-
-        Authentication authToken = new UsernamePasswordAuthenticationToken(customUserDetails, null, customUserDetails.getAuthorities());
-
-        log.info("authToken={}", authToken);
+        //스프링 시큐리티 인증 토큰 생성
+        Authentication authToken = new UsernamePasswordAuthenticationToken(customOAuth2User, null, customOAuth2User.getAuthorities());
+        //세션에 사용자 등록
         SecurityContextHolder.getContext().setAuthentication(authToken);
 
         filterChain.doFilter(request, response);

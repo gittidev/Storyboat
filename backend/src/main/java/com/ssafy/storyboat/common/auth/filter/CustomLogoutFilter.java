@@ -40,7 +40,7 @@ public class CustomLogoutFilter extends GenericFilterBean {
 
         // path and method verify
         String requestUri = request.getRequestURI();
-        if (!requestUri.matches("/logout")) {
+        if (!requestUri.matches("/logouts")) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -157,7 +157,7 @@ public class CustomLogoutFilter extends GenericFilterBean {
 
             if (token.getRefreshToken().equals(refresh)) {
                 log.info("Deleting RefreshToken");
-                log.info("tokenID: {}, token: {}, user: {}", token.getId(), token.getRefreshToken(), token.getUser());
+                log.info("tokenID: {}, token: {}, user: {}", token.getRefreshTokenId(), token.getRefreshToken(), token.getUser());
 
                 iterator.remove(); // 부모 엔티티의 컬렉션에서 제거
                 result = true;

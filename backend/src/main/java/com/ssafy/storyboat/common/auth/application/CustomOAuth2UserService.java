@@ -1,7 +1,11 @@
 package com.ssafy.storyboat.common.auth.application;
 
 import com.ssafy.storyboat.common.auth.dto.*;
-//import com.ssafy.storyboat.domain.studio.entity.StudioUser;
+
+import com.ssafy.storyboat.domain.studio.entity.Studio;
+import com.ssafy.storyboat.domain.studio.entity.StudioUser;
+import com.ssafy.storyboat.domain.studio.repository.StudioRepository;
+import com.ssafy.storyboat.domain.studio.repository.StudioUserRepository;
 import com.ssafy.storyboat.domain.user.entity.Profile;
 import com.ssafy.storyboat.domain.user.entity.User;
 import jakarta.persistence.EntityManager;
@@ -21,6 +25,8 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.UUID;
 
 @Service
@@ -29,12 +35,15 @@ import java.util.UUID;
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     private final EntityManagerFactory entityManagerFactory;
+    private final StudioUserRepository studioUserRepository;
+    private final StudioRepository studioRepository;
 
-    @Transactional
     @Override
+    @Transactional
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
 
         OAuth2User oAuth2User = super.loadUser(userRequest);
+        log.info("OAuth2User : {}", oAuth2User);
 
         OAuth2Response oAuth2Response = null;
         String registrationId = userRequest.getClientRegistration().getRegistrationId();
@@ -74,7 +83,9 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             userDTO.setUsername(providerId + " " + provider);
             userDTO.setRole("ROLE_USER");
             userDTO.setJoinStatus(false);
-            log.info("로그인={}", userDTO.toString());
+            log.info("로그인={}", userDTO);
+
+            entityManager.getTransaction().commit();
 
             return new CustomOAuth2User(userDTO);
 
@@ -84,25 +95,46 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             try {
                 UUID customUUID = generateUUIDFromString(currentTime + name);
 
-                // User 객체 생성
+                // 1. User 생성해 persist
                 User joinUser = User.builder()
                         .email(email)
                         .providerId(providerId)
                         .provider(provider)
+                        .studioUsers(new ArrayList<>())
                         .build();
 
-                // Profile 객체 생성 및 User와의 관계 설정
+                entityManager.persist(joinUser);
+
+                // 2. profile 생성해 persist
                 String DEFAULT_PEN_NAME = "익명의 작가";
                 Profile joinUserProfile = Profile.builder()
-                        .penName(DEFAULT_PEN_NAME + "#" + customUUID)
+                        .penName(DEFAULT_PEN_NAME + "_" + customUUID)
                         .imageUrl("")
                         .introduction("")
                         .user(joinUser)  // 양방향 관계 설정
                         .build();
 
-                joinUserProfile.setUser(joinUser);
+                entityManager.persist(joinUserProfile);
 
-                entityManager.persist(joinUser);
+                // 3. 개인 스튜디오 생성해 영속
+                Studio studio = Studio.builder()
+                        .name("private")
+                        .description("private")
+                        .studioUsers(new ArrayList<>())
+                        .build();
+
+                entityManager.persist(studio);
+
+                // 4. StudioUser 생성해 persist
+                StudioUser studioUser = StudioUser.builder()
+                        .user(joinUser)
+                        .studio(studio)
+                        .role("ROLE_PRIVATE")
+                        .createdAt(LocalDateTime.now())
+                        .build();
+
+
+                entityManager.persist(studioUser);
 
                 // Repository 생성해서 User-Repository 추가하기!
 
@@ -121,7 +153,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                 userDTO.setJoinStatus(true);
                 userDTO.setRole("ROLE_USER");
 
-                log.info("회원가입={}", userDTO.toString());
+                log.info("회원가입={}", joinUser.getEmail());
 
                 return new CustomOAuth2User(userDTO);
 
