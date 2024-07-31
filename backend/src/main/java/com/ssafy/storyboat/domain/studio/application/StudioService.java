@@ -69,7 +69,7 @@ public class StudioService {
             StudioUser studioUser = StudioUser.builder()
                     .user(user)
                     .studio(studio)
-                    .role(Role.OWNER)
+                    .role(Role.ROLE_OWNER)
                     .createdAt(LocalDateTime.now())
                     .build();
 
@@ -100,7 +100,7 @@ public class StudioService {
         StudioUser studioUser = studioUserRepository.findByStudio_StudioIdAndUser_UserId(studioId, userId)
                 .orElseThrow(() -> new IllegalArgumentException("StudioUser not found"));
         // 사용자가 소유하지 않는 스튜디오거나, 권한이 팀장이 아니거나 개인 스튜디오가 아닌 경우 예외 발생
-        if (!studioUser.getRole().equals(Role.OWNER) && !studioUser.getRole().equals(Role.PRIVATE)) {
+        if (!studioUser.getRole().equals(Role.ROLE_OWNER) && !studioUser.getRole().equals(Role.ROLE_PRIVATE)) {
             throw new UnauthorizedException("Unauthorized");
         }
 
