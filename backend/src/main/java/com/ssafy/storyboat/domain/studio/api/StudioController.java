@@ -7,10 +7,8 @@ import com.ssafy.storyboat.domain.studio.dto.StudioCreateRequest;
 import com.ssafy.storyboat.domain.studio.dto.StudioResponse;
 
 import com.ssafy.storyboat.domain.studio.dto.StudioUpdateRequest;
-import com.ssafy.storyboat.domain.studio.dto.StudioUpdateResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.transaction.annotation.Transactional;

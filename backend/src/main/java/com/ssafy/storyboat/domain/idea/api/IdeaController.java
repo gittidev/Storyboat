@@ -3,9 +3,10 @@ package com.ssafy.storyboat.domain.idea.api;
 import com.ssafy.storyboat.common.auth.dto.CustomOAuth2User;
 import com.ssafy.storyboat.common.dto.ApiResponse;
 import com.ssafy.storyboat.domain.idea.application.IdeaService;
-import com.ssafy.storyboat.domain.studio.application.StudioService;
+import com.ssafy.storyboat.domain.idea.dto.IdeaCreateRequest;
+import com.ssafy.storyboat.domain.idea.dto.IdeaResponse;
+import com.ssafy.storyboat.domain.idea.dto.IdeaUpdateRequest;
 import com.ssafy.storyboat.domain.studio.dto.StudioCreateRequest;
-import com.ssafy.storyboat.domain.studio.dto.ideaResponse;
 import com.ssafy.storyboat.domain.studio.dto.StudioUpdateRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,33 +27,34 @@ public class IdeaController {
     private final IdeaService ideaService;
 
     @GetMapping
-    public ResponseEntity<?> getIdeas(@AuthenticationPrincipal CustomOAuth2User customOAuth2User, @PathVariable("studioId") Long studioId ) {
-        List<ideaResponse> ideas = ideaService.getIdeas(customOAuth2User.getProviderId(), customOAuth2User.getProvider());
+    public ResponseEntity<?> getIdeas(@AuthenticationPrincipal CustomOAuth2User customOAuth2User, @PathVariable Long studioId) {
+        List<?> ideas = ideaService.getIdeas(customOAuth2User, studioId);
         return ResponseEntity.ok().body(ApiResponse.success(ideas, "Ideas retrieved successfully"));
     }
 
     @PostMapping
-    public ResponseEntity<?> createIdea(@AuthenticationPrincipal CustomOAuth2User customOAuth2User, @RequestBody StudioCreateRequest studioCreateRequest) {
-        ideaService.createIdea(customOAuth2User, studioCreateRequest.getName(), studioCreateRequest.getDescription());
+    public ResponseEntity<?> createIdea(@AuthenticationPrincipal CustomOAuth2User customOAuth2User, @PathVariable Long studioId, @RequestBody IdeaCreateRequest ideaCreateRequest) {
+        ideaService.createIdea(customOAuth2User, studioId, ideaCreateRequest);
         return ResponseEntity.ok().body(ApiResponse.success("Idea created successfully"));
     }
 
     @GetMapping("/{ideaId}")
-    public ResponseEntity<?> viewIdea(@AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
-        IdeaResponse ideaResponse = ideaService.viewIdea();
-        return ResponseEntity.ok().body(ApiResponse.success(ideaResponse, "Studio retrieved successfully"));
+    public ResponseEntity<?> viewIdea(@AuthenticationPrincipal CustomOAuth2User customOAuth2User, @PathVariable Long studioId, @PathVariable Long ideaId) {
+        IdeaResponse ideaResponse = ideaService.viewIdea(customOAuth2User, studioId, ideaId);
+        return ResponseEntity.ok().body(ApiResponse.success(ideaResponse, "Idea view successfully"));
     }
 
-    @PutMapping("{ideaId}")
-    public ResponseEntity<?>  updateIdea(@AuthenticationPrincipal CustomOAuth2User customOAuth2User, @PathVariable("studioId") Long studioId, @RequestBody StudioUpdateRequest studioUpdateRequest) {
-        IdeaResponse ideaResponse = ideaService.updateIdea(customOAuth2User, )
-        return ResponseEntity.ok().body(ApiResponse.success(ideResponse, 
+    @PutMapping("/{ideaId}")
+    public ResponseEntity<?>  updateIdea(@AuthenticationPrincipal CustomOAuth2User customOAuth2User, @PathVariable Long studioId, @PathVariable Long ideaId, @RequestBody IdeaUpdateRequest ideaUpdateRequest) {
+        // 이름 변경, 설명 변경 내역들 제대로 받아오는지 로그
+        log.info("ideaId: {}, name: {}, description: {}", ideaId, ideaUpdateRequest.getTitle(), ideaUpdateRequest.getContent());
+        IdeaResponse ideaResponse = ideaService.updateIdea(customOAuth2User, studioId, ideaId, ideaUpdateRequest);
+        return ResponseEntity.ok().body(ApiResponse.success(ideaResponse, "Idea updated successfully"));
     }
 
-    @DeleteMapping("{ideaId}")
-    public ResponseEntity<?>  deleteIdea(@AuthenticationPrincipal CustomOAuth2User customOAuth2User, @PathVariable("studioId") Long studioId, @RequestBody StudioUpdateRequest studioUpdateRequest) {
-        IdeaResponse ideaResponse = ideaService.deleteIdea(customOAuth2User, studioId, studioUpdateRequest.getName(), studioUpdateRequest.getDescription());
-        return ResponseEntity.ok().body(ApiResponse.success(ideaResponse,
+    @DeleteMapping("/{ideaId}")
+    public ResponseEntity<?>  deleteIdea(@AuthenticationPrincipal CustomOAuth2User customOAuth2User, @PathVariable Long studioId, @RequestBody StudioUpdateRequest studioUpdateRequest) {
+        return null;
     }
 }
 
