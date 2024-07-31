@@ -8,6 +8,5 @@ import java.util.Optional;
 
 public interface StudioUserRepository extends JpaRepository<StudioUser, Long> {
     StudioUser findByUserAndRole(User user, String role);
-    Optional<StudioUser> findByStudio_StudioIdAndUser_UserId(Long studioId, Long userId);
-
+    StudioUser findByUser_UserIdAndStudio_StudioId(Long userId, Long studioId);
 }
