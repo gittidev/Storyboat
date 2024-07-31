@@ -33,7 +33,7 @@ public class StudioController {
 
     @GetMapping
     public ResponseEntity<?> getStudios(@AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
-        List<StudioResponse> studios = studioService.getStudios(customOAuth2User.getProviderId(), customOAuth2User.getProvider());
+        List<StudioResponse> studios = studioService.getStudios(customOAuth2User);
         return ResponseEntity.ok().body(ApiResponse.success(studios, "Studios retrieved successfully"));
     }
 

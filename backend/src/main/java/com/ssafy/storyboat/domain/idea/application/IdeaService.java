@@ -9,21 +9,16 @@ import com.ssafy.storyboat.domain.idea.dto.IdeaResponse;
 import com.ssafy.storyboat.domain.idea.dto.IdeaUpdateRequest;
 import com.ssafy.storyboat.domain.idea.entity.StudioIdea;
 import com.ssafy.storyboat.domain.idea.repository.StudioIdeaRepository;
-import com.ssafy.storyboat.domain.studio.dto.StudioResponse;
 import com.ssafy.storyboat.domain.studio.entity.Studio;
 import com.ssafy.storyboat.domain.studio.entity.StudioUser;
 import com.ssafy.storyboat.domain.studio.repository.StudioRepository;
 import com.ssafy.storyboat.domain.studio.repository.StudioUserRepository;
 import com.ssafy.storyboat.domain.user.application.UserService;
-import com.ssafy.storyboat.domain.user.entity.User;
-import com.ssafy.storyboat.domain.user.repository.UserRepository;
-import jakarta.persistence.EntityManagerFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -33,12 +28,10 @@ public class IdeaService {
     private final UserService userService;
     private final StudioRepository studioRepository;
     private final StudioUserRepository studioUserRepository;
-    private final UserRepository userRepository;
     private final StudioIdeaRepository studioIdeaRepository;
 
     private StudioUser checkAccessRole(CustomOAuth2User customOAuth2User, Long studioId) {
-
-        Long userId = userService.findUserId(customOAuth2User.getProviderId(), customOAuth2User.getProvider());
+        Long userId = customOAuth2User.getUserId();
         //studioId랑 userId를 로그 찍기
         log.info("studioId: {}, userId: {}", studioId, userId);
         StudioUser studioUser = studioUserRepository.findByStudio_StudioIdAndUser_UserId(studioId, userId)

@@ -47,7 +47,6 @@ public class IdeaController {
     @PutMapping("/{ideaId}")
     public ResponseEntity<?>  updateIdea(@AuthenticationPrincipal CustomOAuth2User customOAuth2User, @PathVariable Long studioId, @PathVariable Long ideaId, @RequestBody IdeaUpdateRequest ideaUpdateRequest) {
         // 이름 변경, 설명 변경 내역들 제대로 받아오는지 로그
-        log.info("ideaId: {}, name: {}, description: {}", ideaId, ideaUpdateRequest.getTitle(), ideaUpdateRequest.getContent());
         IdeaResponse ideaResponse = ideaService.updateIdea(customOAuth2User, studioId, ideaId, ideaUpdateRequest);
         return ResponseEntity.ok().body(ApiResponse.success(ideaResponse, "Idea updated successfully"));
     }
