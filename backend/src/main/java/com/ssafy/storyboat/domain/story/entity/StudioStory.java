@@ -31,4 +31,6 @@ public class StudioStory {
 
     @OneToMany(mappedBy = "studioStory", cascade = CascadeType.ALL, orphanRemoval = true)
     List<StoryLog> storyLogs;
+
+
 }

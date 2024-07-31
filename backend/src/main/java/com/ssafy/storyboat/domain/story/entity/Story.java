@@ -1,6 +1,8 @@
 package com.ssafy.storyboat.domain.story.entity;
 
 import jakarta.persistence.Id;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.mongodb.core.index.Indexed;
@@ -11,7 +13,9 @@ import java.time.LocalDateTime;
 
 @Document(collation = "story")
 @NoArgsConstructor
+@AllArgsConstructor
 @Getter
+@Builder
 public class Story {
 
     @Id

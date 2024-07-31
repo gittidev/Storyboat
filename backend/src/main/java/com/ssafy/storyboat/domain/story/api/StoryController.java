@@ -38,11 +38,11 @@ public class StoryController {
     }
 
     // 스토리 삭제
-    @DeleteMapping("/{storyId}")
-    private ResponseEntity<ApiResponse<Void>> deleteStory(@PathVariable final Long studioId, @PathVariable final Long storyId, @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
+    @DeleteMapping("/{studioStoryId}")
+    private ResponseEntity<ApiResponse<Void>> deleteStory(@PathVariable final Long studioId, @PathVariable final Long studioStoryId, @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
         Long userId = customOAuth2User.getUserId();
 
-        DeleteResult result = storyService.deleteStory(userId, studioId, storyId);
+        DeleteResult result = storyService.deleteStory(userId, studioId, studioStoryId);
 
         if (result == DeleteResult.SUCCESS) {
             return ResponseEntity.ok(ApiResponse.success("Delete Success"));
@@ -56,37 +56,43 @@ public class StoryController {
     }
 
     // 스토리 세부 조회
-    @GetMapping("/{storyId}") ResponseEntity<ApiResponse<Void>> findStory(@PathVariable final Long studioId, @PathVariable final Long storyId) {
+    @GetMapping("/{studioStoryId}") ResponseEntity<ApiResponse<Void>> findStory(@PathVariable final Long studioId, @PathVariable final Long studioStoryId) {
 
         return null;
     }
 
     // 스토리 수정(저장)
-    @PutMapping("/{storyId}") ResponseEntity<ApiResponse<Void>> saveStory(@PathVariable final Long studioId, @PathVariable final Long storyId) {
+    @PutMapping("/{studioStoryId}") ResponseEntity<ApiResponse<Void>> saveStory(@PathVariable final Long studioId, @PathVariable final Long studioStoryId, @RequestBody String storyData) {
 
-        return null;
+        boolean result = storyService.saveStory(studioId, studioStoryId, storyData);
+        if (result) {
+            return ResponseEntity.ok(ApiResponse.success("Save Success"));
+        }
+        else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.error("Save Error"));
+        }
     }
 
     // 스토리 업로드
-    @PostMapping("/{storyId}/{toStudioId}") ResponseEntity<ApiResponse<Void>> uploadStory(@PathVariable final Long studioId, @PathVariable final Long toStudioId, @PathVariable final Long storyId) {
+    @PostMapping("/{studioStoryId}/{toStudioId}") ResponseEntity<ApiResponse<Void>> uploadStory(@PathVariable final Long studioId, @PathVariable final Long toStudioId, @PathVariable final Long studioStoryId) {
 
         return null;
     }
 
     // 스토리 수정 History 조회
-    @GetMapping("/{storyId}/histories") ResponseEntity<ApiResponse<Void>> findHistories(@PathVariable final Long studioId, @PathVariable final Long storyId) {
+    @GetMapping("/{studioStoryId}/histories") ResponseEntity<ApiResponse<Void>> findHistories(@PathVariable final Long studioId, @PathVariable final Long studioStoryId) {
 
         return null;
     }
 
     // 해당 버전 스토리 조회(미리보기)
-    @GetMapping("/{storyId}/histories/{historyId}") ResponseEntity<ApiResponse<Void>> findHistory(@PathVariable final Long studioId, @PathVariable final Long historyId) {
+    @GetMapping("/{studioStoryId}/histories/{histudioStoryId}") ResponseEntity<ApiResponse<Void>> findHistory(@PathVariable final Long studioId, @PathVariable final Long histudioStoryId) {
 
         return null;
     }
 
     // 스토리 롤백
-    @PutMapping("/{storyId}/histories/{historyId}") ResponseEntity<ApiResponse<Void>> rollbackStory (@PathVariable final Long studioId, @PathVariable final Long historyId) {
+    @PutMapping("/{studioStoryId}/histories/{histudioStoryId}") ResponseEntity<ApiResponse<Void>> rollbackStory (@PathVariable final Long studioId, @PathVariable final Long histudioStoryId) {
 
         return null;
     }

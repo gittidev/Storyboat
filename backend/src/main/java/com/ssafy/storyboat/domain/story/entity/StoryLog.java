@@ -28,5 +28,5 @@ public class StoryLog {
     @JoinColumn(name = "studio_story_id")
     private StudioStory studioStory;
 
-    private String key;
+    private Long key;
 }
