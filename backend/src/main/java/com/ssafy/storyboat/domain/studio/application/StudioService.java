@@ -2,6 +2,7 @@ package com.ssafy.storyboat.domain.studio.application;
 
 import com.ssafy.storyboat.common.auth.dto.CustomOAuth2User;
 import com.ssafy.storyboat.common.dto.ApiResponse;
+import com.ssafy.storyboat.common.dto.Role;
 import com.ssafy.storyboat.common.exception.ForbiddenException;
 import com.ssafy.storyboat.common.exception.UnauthorizedException;
 import com.ssafy.storyboat.domain.studio.dto.StudioResponse;
@@ -68,7 +69,7 @@ public class StudioService {
             StudioUser studioUser = StudioUser.builder()
                     .user(user)
                     .studio(studio)
-                    .role("ROLE_LEADER")
+                    .role(Role.OWNER)
                     .createdAt(LocalDateTime.now())
                     .build();
 
@@ -100,7 +101,7 @@ public class StudioService {
                 .orElseThrow(() -> new IllegalArgumentException("StudioUser not found"));
 
         // 사용자가 소유하지 않는 스튜디오거나, 권한이 팀장이 아니거나 개인 스튜디오가 아닌 경우 예외 발생
-        if (!studioUser.getRole().equals("ROLE_LEADER") && !studioUser.getRole().equals("ROLE_PRIVATE")) {
+        if (!studioUser.getRole().equals(Role.OWNER) && !studioUser.getRole().equals(Role.PRIVATE)) {
             throw new UnauthorizedException("Unauthorized");
         }
 
