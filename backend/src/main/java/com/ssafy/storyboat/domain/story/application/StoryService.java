@@ -61,13 +61,13 @@ public class StoryService {
     @CheckAuthorization
     public void deleteStory(Long userId, Long studioId , Long studioStoryId) {
         // Story 삭제도 Studio 의 Admin 만 삭제 가능!
-        StudioUser studioUser = studioUserRepository.findByUser_UserIdAndStudio_StudioId(userId, studioId);
-        if (studioUser == null) {
-            throw new ResourceNotFoundException("Studio not found");
-        }
-        else if (studioUser.getRole().equals(Role.ROLE_OWNER)) {
+        StudioUser studioUser = studioUserRepository.findByStudio_StudioIdAndUser_UserId(studioId, userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Studio not found"));
+
+        if (studioUser.getRole().equals(Role.ROLE_OWNER)) {
             throw new ForbiddenException("권한 없음");
         }
+
         // 우선 삭제로 등록
         StudioStory studioStory = studioStoryRepository.findById(studioStoryId)
                 .orElseThrow(() -> new ResourceNotFoundException("Studio story not found"));
@@ -85,11 +85,9 @@ public class StoryService {
 
     @CheckAuthorization
     public void saveStory(Long studioId, Long userId, Long studioStoryId, String storyData) {
-        StudioUser studioUser = studioUserRepository.findByUser_UserIdAndStudio_StudioId(userId, studioId);
-        if (studioUser == null) {
-            throw new ResourceNotFoundException("StudioUser not found");
-        }
-        else if (!(studioUser.getRole().equals(Role.ROLE_OWNER) || studioUser.getRole().equals(Role.ROLE_MEMBER) || studioUser.getRole().equals(Role.ROLE_PRIVATE))) {
+        StudioUser studioUser = studioUserRepository.findByStudio_StudioIdAndUser_UserId(studioId, userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Studio not found"));
+         if (!(studioUser.getRole().equals(Role.ROLE_OWNER) || studioUser.getRole().equals(Role.ROLE_MEMBER) || studioUser.getRole().equals(Role.ROLE_PRIVATE))) {
             throw new ForbiddenException("권한 없음");
         }
 

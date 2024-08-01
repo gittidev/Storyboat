@@ -4,6 +4,7 @@ import com.ssafy.storyboat.common.auth.dto.CustomOAuth2User;
 import com.ssafy.storyboat.common.dto.ApiResponse;
 import com.ssafy.storyboat.common.dto.Role;
 import com.ssafy.storyboat.common.exception.ForbiddenException;
+import com.ssafy.storyboat.common.exception.ResourceNotFoundException;
 import com.ssafy.storyboat.common.exception.UnauthorizedException;
 import com.ssafy.storyboat.domain.studio.dto.StudioResponse;
 import com.ssafy.storyboat.domain.studio.dto.StudioUpdateResponse;
@@ -42,10 +43,8 @@ public class StudioService {
 
     @Transactional(readOnly = true)
     public void isAuthorized(Long studioId, Long userId) {
-        StudioUser studioUser = studioUserRepository.findByUser_UserIdAndStudio_StudioId(userId, studioId);
-        if (studioUser == null) {
-            throw new ForbiddenException("Studio 접근 권한 없음");
-        }
+        StudioUser studioUser = studioUserRepository.findByStudio_StudioIdAndUser_UserId(studioId, userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Studio 접근 권한 없음"));
     }
 
     @Transactional
