@@ -42,4 +42,11 @@ public class StudioController {
         StudioResponse studioResponse = studioService.updateStudio(customOAuth2User, studioId, studioUpdateRequest.getName(), studioUpdateRequest.getDescription());
         return ResponseEntity.ok().body(ApiResponse.success(studioResponse, "Studio updated successfully"));
     }
+
+    @GetMapping("/{studioId}/members")
+    public ResponseEntity<?> getStudioMembers(@AuthenticationPrincipal CustomOAuth2User customOAuth2User, @PathVariable("studioId") Long studioId) {
+        Long userId = customOAuth2User.getUserId();
+
+        return ResponseEntity.ok(ApiResponse.success("Find Studio Members Success"));
+    }
 }
