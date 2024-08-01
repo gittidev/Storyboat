@@ -1,17 +1,16 @@
 package com.ssafy.storyboat.domain.story.entity;
 
-import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-@Document(collation = "story")
+@Document(collection = "story") // 컬렉션 이름 수정
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -19,7 +18,7 @@ import java.time.LocalDateTime;
 public class Story {
 
     @Id
-    private Long storyId;
+    private String storyId; // MongoDB의 기본 _id는 보통 String 타입입니다.
 
     private Long studioStoryId;
 
@@ -28,5 +27,5 @@ public class Story {
     @Indexed(expireAfterSeconds = 7 * 24 * 60 * 60) // 7일 후 자동 삭제
     private LocalDateTime date;
 
-    private String StoryData;
+    private String storyData; // 변수 이름 수정
 }

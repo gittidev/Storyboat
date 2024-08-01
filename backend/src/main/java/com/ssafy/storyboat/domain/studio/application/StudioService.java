@@ -6,6 +6,7 @@ import com.ssafy.storyboat.common.dto.Role;
 import com.ssafy.storyboat.common.exception.ForbiddenException;
 import com.ssafy.storyboat.common.exception.ResourceNotFoundException;
 import com.ssafy.storyboat.common.exception.UnauthorizedException;
+import com.ssafy.storyboat.domain.story.application.CheckAuthorization;
 import com.ssafy.storyboat.domain.studio.dto.StudioResponse;
 import com.ssafy.storyboat.domain.studio.dto.StudioUpdateResponse;
 import com.ssafy.storyboat.domain.studio.entity.Studio;
@@ -13,6 +14,7 @@ import com.ssafy.storyboat.domain.studio.entity.StudioUser;
 import com.ssafy.storyboat.domain.studio.repository.StudioRepository;
 import com.ssafy.storyboat.domain.studio.repository.StudioUserRepository;
 import com.ssafy.storyboat.domain.user.application.UserService;
+import com.ssafy.storyboat.domain.user.entity.Profile;
 import com.ssafy.storyboat.domain.user.entity.User;
 import com.ssafy.storyboat.domain.user.repository.UserRepository;
 import jakarta.persistence.EntityManager;
@@ -43,6 +45,7 @@ public class StudioService {
 
     @Transactional(readOnly = true)
     public void isAuthorized(Long studioId, Long userId) {
+        log.info("studioId: " + studioId + ", userId: " + userId);
         StudioUser studioUser = studioUserRepository.findByStudio_StudioIdAndUser_UserId(studioId, userId)
                 .orElseThrow(() -> new ResourceNotFoundException("Studio 접근 권한 없음"));
     }
@@ -119,5 +122,11 @@ public class StudioService {
         studio.updateStudioDescription(description);
 
         return new StudioResponse(studio.getStudioId(), studio.getName(), studio.getDescription());
+    }
+
+    @Transactional
+    @CheckAuthorization
+    public List<Profile> findStudioUser(Long studioId, Long userId) {
+        return studioUserRepository.findAllProfiles(studioId);
     }
 }
