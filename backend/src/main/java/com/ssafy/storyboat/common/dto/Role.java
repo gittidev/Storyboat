@@ -10,7 +10,6 @@ public enum Role {
     ROLE_PRIVATE("ROLE_PRIVATE"),
     ROLE_REQUESTER("ROLE_REQUESTER");
 
-
     private final String role;
 
     Role(String role) {

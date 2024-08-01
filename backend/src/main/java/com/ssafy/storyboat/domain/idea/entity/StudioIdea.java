@@ -18,7 +18,7 @@ public class StudioIdea {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "studio_idea_id")
-    private Long id;
+    private Long studioIdeaId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "studio_id")
@@ -27,4 +27,9 @@ public class StudioIdea {
     private String title;
 
     private String content;
+
+    public void update(String title, String content) {
+        this.title = title;
+        this.content = content;
+    }
 }

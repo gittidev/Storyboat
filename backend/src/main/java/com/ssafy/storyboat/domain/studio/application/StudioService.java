@@ -57,7 +57,7 @@ public class StudioService {
             entityManager.getTransaction().begin();  // 트랜잭션 시작
 
             // 1. 유저 조회
-            Long userId = userService.findUserId(customOAuth2User.getProviderId(), customOAuth2User.getProvider());
+            Long userId = customOAuth2User.getUserId();
             User user = entityManager.find(User.class, userId);
             if (user == null) {
                 throw new UnauthorizedException("User not found");
@@ -92,22 +92,21 @@ public class StudioService {
     }
 
     @Transactional
-    public List<StudioResponse> getStudios(String providerId, String provider) {
-        Long userId = userService.findUserId(providerId, provider);
+    public List<StudioResponse> getStudios(CustomOAuth2User customOAuth2User) {
+        Long userId = customOAuth2User.getUserId();
         return studioRepository.findAllDTOByUserId(userId);
     }
 
     @Transactional
     public StudioResponse updateStudio(CustomOAuth2User customOAuth2User, Long studioId, String name, String description) {
         // 1. 유저 조회
-        Long userId = userService.findUserId(customOAuth2User.getProviderId(), customOAuth2User.getProvider());
+        Long userId = customOAuth2User.getUserId();
         userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
         // 2. 스튜디오 사용자 조회
         StudioUser studioUser = studioUserRepository.findByStudio_StudioIdAndUser_UserId(studioId, userId)
                 .orElseThrow(() -> new IllegalArgumentException("StudioUser not found"));
-
         // 사용자가 소유하지 않는 스튜디오거나, 권한이 팀장이 아니거나 개인 스튜디오가 아닌 경우 예외 발생
         if (!studioUser.getRole().equals(Role.ROLE_OWNER) && !studioUser.getRole().equals(Role.ROLE_PRIVATE)) {
             throw new UnauthorizedException("Unauthorized");
