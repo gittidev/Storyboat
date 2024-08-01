@@ -38,7 +38,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         log.info("username={} role={}", userName, role);
 
         // Refresh Token 생성
-        String refreshToken = jwtUtil.createJwt("refresh", userName, role, 24 * 60 * 60 * 1000L); // 1일 유효
+        String refreshToken = jwtUtil.createJwt("refresh", userName, role, 7 * 24 * 60 * 60 * 1000L); // 7일 유효
         log.info("Refresh Token: {}", refreshToken);
 
         // RefreshToken 저장
@@ -95,7 +95,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
     private Cookie createCookie(String key, String value) {
         Cookie cookie = new Cookie(key, value);
-        cookie.setMaxAge(7 * 24 * 60 * 60); // 쿠키의 유효 기간 (7일)
+        cookie.setMaxAge(7 * 24 * 60 * 60 * 1000); // 쿠키의 유효 기간 (7일)
         cookie.setPath("/");
         cookie.setHttpOnly(true);
         return cookie;
