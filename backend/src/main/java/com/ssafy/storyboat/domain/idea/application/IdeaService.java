@@ -11,6 +11,7 @@ import com.ssafy.storyboat.domain.idea.entity.StudioIdea;
 import com.ssafy.storyboat.domain.idea.repository.StudioIdeaRepository;
 import com.ssafy.storyboat.domain.studio.application.StudioReadAuthorization;
 import com.ssafy.storyboat.domain.studio.application.StudioWriteAuthorization;
+import com.ssafy.storyboat.domain.studio.dto.StudioUpdateRequest;
 import com.ssafy.storyboat.domain.studio.entity.Studio;
 import com.ssafy.storyboat.domain.studio.entity.StudioUser;
 import com.ssafy.storyboat.domain.studio.repository.StudioRepository;
@@ -63,5 +64,12 @@ public class IdeaService {
         studioIdeaRepository.save(studioIdea);
 
         return new IdeaResponse(studioIdea.getStudioIdeaId(), studioIdea.getTitle(), studioIdea.getContent());
+    }
+
+    @StudioWriteAuthorization
+    public void deleteIdea(Long studioId, Long userId, Long ideaId) {
+        StudioIdea studioIdea = studioIdeaRepository.findById(ideaId)
+                .orElseThrow(() -> new ForbiddenException("없는 아이디어 입니다."));
+        studioIdeaRepository.delete(studioIdea);
     }
 }

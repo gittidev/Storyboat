@@ -52,8 +52,9 @@ public class IdeaController {
     }
 
     @DeleteMapping("/{ideaId}")
-    public ResponseEntity<?>  deleteIdea(@AuthenticationPrincipal CustomOAuth2User customOAuth2User, @PathVariable Long studioId, @RequestBody StudioUpdateRequest studioUpdateRequest) {
-        return null;
+    public ResponseEntity<?>  deleteIdea(@AuthenticationPrincipal CustomOAuth2User customOAuth2User, @PathVariable Long studioId, @PathVariable Long ideaId) {
+        ideaService.deleteIdea(studioId, customOAuth2User.getUserId(), ideaId);
+        return ResponseEntity.ok().body(ApiResponse.success("Idea deleted successfully"));
     }
 }
 

@@ -30,4 +30,8 @@ public class StudioCharacter {
 
     @Column(name = "image_url")
     private String imageUrl;
+
+    public void updateImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
 }
