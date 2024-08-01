@@ -1,17 +1,16 @@
 package com.ssafy.storyboat.domain.story.application;
 
-import com.ssafy.storyboat.common.dto.ApiResponse;
 import com.ssafy.storyboat.common.dto.Role;
 import com.ssafy.storyboat.common.exception.ForbiddenException;
 import com.ssafy.storyboat.common.exception.InternalServerErrorException;
 import com.ssafy.storyboat.common.exception.ResourceNotFoundException;
-import com.ssafy.storyboat.common.exception.UnauthorizedException;
 import com.ssafy.storyboat.domain.story.dto.StoryFindAllResponse;
 import com.ssafy.storyboat.domain.story.dto.StoryHistoryFindAllResponse;
 import com.ssafy.storyboat.domain.story.entity.Story;
 import com.ssafy.storyboat.domain.story.entity.StudioStory;
 import com.ssafy.storyboat.domain.story.repository.StoryRepository;
 import com.ssafy.storyboat.domain.story.repository.StudioStoryRepository;
+import com.ssafy.storyboat.domain.studio.application.StudioReadAuthorization;
 import com.ssafy.storyboat.domain.studio.application.StudioService;
 import com.ssafy.storyboat.domain.studio.entity.Studio;
 import com.ssafy.storyboat.domain.studio.entity.StudioUser;
@@ -28,7 +27,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Transactional
@@ -45,12 +43,12 @@ public class StoryService {
 
 
     @Transactional(readOnly = true)
-    @CheckAuthorization
+    @StudioReadAuthorization
     public List<StoryFindAllResponse> findByStudioId(Long studioId, Long userId) {
         return studioStoryRepository.findDTOByStudioId(studioId);
     }
 
-    @CheckAuthorization
+    @StudioReadAuthorization
     public void makeStory(Long studioId, Long userId, String title) {
         Studio studio = studioRepository.findById(studioId)
                 .orElseThrow(() -> new ResourceNotFoundException("Studio not found"));
@@ -61,7 +59,7 @@ public class StoryService {
         studioStoryRepository.save(studioStory);
     }
 
-    @CheckAuthorization
+    @StudioReadAuthorization
     public void deleteStory(Long studioId, Long userId, Long studioStoryId) {
         // Story 삭제도 Studio 의 Admin 만 삭제 가능!
         StudioUser studioUser = studioUserRepository.findByStudio_StudioIdAndUser_UserId(studioId, userId)
@@ -79,13 +77,13 @@ public class StoryService {
     }
 
     @Transactional(readOnly = true)
-    @CheckAuthorization
+    @StudioReadAuthorization
     public Story findStories(Long studioId, Long userId, Long studioStoryId) {
         return storyRepository.findTopByStudioStoryIdOrderByDateDesc(studioStoryId)
                 .orElseThrow(() -> new ResourceNotFoundException("스토리 조회 실패"));
     }
 
-    @CheckAuthorization
+    @StudioReadAuthorization
     public void saveStory(Long studioId, Long userId, Long studioStoryId, String storyData) {
         StudioUser studioUser = studioUserRepository.findByStudio_StudioIdAndUser_UserId(studioId, userId)
                 .orElseThrow(() -> new ResourceNotFoundException("Studio not found"));
@@ -109,7 +107,7 @@ public class StoryService {
         }
     }
 
-    @CheckAuthorization
+    @StudioReadAuthorization
     public void uploadStory(Long userId, Story story, Long toStudioId, Long studioStoryId) {
 
         StudioStory studioStory = studioStoryRepository.findById(studioStoryId)
@@ -140,12 +138,12 @@ public class StoryService {
         }
     }
 
-    @CheckAuthorization
+    @StudioReadAuthorization
     public List<Story> findStoryHistory(Long studioId, Long userId, Long studioStoryId) {
         return storyRepository.findByStudioStoryIdOrderByDateDesc(studioStoryId);
     }
 
-    @CheckAuthorization
+    @StudioReadAuthorization
     public List<StoryHistoryFindAllResponse> findAllHistoryDTO(Long studioId, Long userId, List<Story> stories) {
         List<Profile> profiles = studioService.findStudioUser(studioId, userId);
         HashMap<Long, Profile> profileMap = new HashMap<>();
@@ -169,7 +167,7 @@ public class StoryService {
         return responses;
     }
 
-    @CheckAuthorization
+    @StudioReadAuthorization
     @Transactional(readOnly = true)
     public Story findStory(Long studioId, Long userId,  String storyId) {
         return storyRepository.findById(storyId)
