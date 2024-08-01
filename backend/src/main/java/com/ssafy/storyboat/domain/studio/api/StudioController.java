@@ -39,7 +39,7 @@ public class StudioController {
 
     @PutMapping("/{studioId}")
     public ResponseEntity<?>  updateStudio(@AuthenticationPrincipal CustomOAuth2User customOAuth2User, @PathVariable("studioId") Long studioId, @RequestBody StudioUpdateRequest studioUpdateRequest) {
-        StudioResponse studioResponse = studioService.updateStudio(customOAuth2User, studioId, studioUpdateRequest.getName(), studioUpdateRequest.getDescription());
+        StudioResponse studioResponse = studioService.updateStudio(studioId, customOAuth2User.getUserId(), studioUpdateRequest.getName(), studioUpdateRequest.getDescription());
         return ResponseEntity.ok().body(ApiResponse.success(studioResponse, "Studio updated successfully"));
     }
 }

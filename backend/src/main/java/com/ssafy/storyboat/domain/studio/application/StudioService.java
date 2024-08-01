@@ -118,21 +118,10 @@ public class StudioService {
     }
 
     @Transactional
-    public StudioResponse updateStudio(CustomOAuth2User customOAuth2User, Long studioId, String name, String description) {
-        // 1. 유저 조회
-        Long userId = customOAuth2User.getUserId();
-        userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+    @StudioOwnerAuthorization
+    public StudioResponse updateStudio(Long studioId, Long userId, String name, String description) {
 
-        // 2. 스튜디오 사용자 조회
-        StudioUser studioUser = studioUserRepository.findByStudio_StudioIdAndUser_UserId(studioId, userId)
-                .orElseThrow(() -> new IllegalArgumentException("StudioUser not found"));
-        // 사용자가 소유하지 않는 스튜디오거나, 권한이 팀장이 아니거나 개인 스튜디오가 아닌 경우 예외 발생
-        if (!studioUser.getRole().equals(Role.ROLE_OWNER) && !studioUser.getRole().equals(Role.ROLE_PRIVATE)) {
-            throw new UnauthorizedException("Unauthorized");
-        }
-
-        // 3. 스튜디오 조회 및 수정
+        // 1. 스튜디오 조회 및 수정
         Studio studio = studioRepository.findById(studioId)
                 .orElseThrow(() -> new ForbiddenException("Studio not found"));
 

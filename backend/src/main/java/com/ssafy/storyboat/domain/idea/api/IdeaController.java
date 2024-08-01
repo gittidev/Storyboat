@@ -28,26 +28,26 @@ public class IdeaController {
 
     @GetMapping
     public ResponseEntity<?> getIdeas(@AuthenticationPrincipal CustomOAuth2User customOAuth2User, @PathVariable Long studioId) {
-        List<?> ideas = ideaService.getIdeas(customOAuth2User, studioId);
+        List<?> ideas = ideaService.getIdeas(studioId, customOAuth2User.getUserId());
         return ResponseEntity.ok().body(ApiResponse.success(ideas, "Ideas retrieved successfully"));
     }
 
     @PostMapping
     public ResponseEntity<?> createIdea(@AuthenticationPrincipal CustomOAuth2User customOAuth2User, @PathVariable Long studioId, @RequestBody IdeaCreateRequest ideaCreateRequest) {
-        ideaService.createIdea(customOAuth2User, studioId, ideaCreateRequest);
+        ideaService.createIdea(studioId, customOAuth2User.getUserId(), ideaCreateRequest);
         return ResponseEntity.ok().body(ApiResponse.success("Idea created successfully"));
     }
 
     @GetMapping("/{ideaId}")
     public ResponseEntity<?> viewIdea(@AuthenticationPrincipal CustomOAuth2User customOAuth2User, @PathVariable Long studioId, @PathVariable Long ideaId) {
-        IdeaResponse ideaResponse = ideaService.viewIdea(customOAuth2User, studioId, ideaId);
+        IdeaResponse ideaResponse = ideaService.viewIdea(studioId, customOAuth2User.getUserId(), ideaId);
         return ResponseEntity.ok().body(ApiResponse.success(ideaResponse, "Idea view successfully"));
     }
 
     @PutMapping("/{ideaId}")
     public ResponseEntity<?>  updateIdea(@AuthenticationPrincipal CustomOAuth2User customOAuth2User, @PathVariable Long studioId, @PathVariable Long ideaId, @RequestBody IdeaUpdateRequest ideaUpdateRequest) {
         // 이름 변경, 설명 변경 내역들 제대로 받아오는지 로그
-        IdeaResponse ideaResponse = ideaService.updateIdea(customOAuth2User, studioId, ideaId, ideaUpdateRequest);
+        IdeaResponse ideaResponse = ideaService.updateIdea(studioId, customOAuth2User.getUserId(), ideaId, ideaUpdateRequest);
         return ResponseEntity.ok().body(ApiResponse.success(ideaResponse, "Idea updated successfully"));
     }
 
