@@ -125,4 +125,9 @@ public class StoryService {
             throw new InternalServerErrorException("MongoDB 저장 오류");
         }
     }
+
+    @CheckAuthorization
+    public List<Story> findStoryHistory(Long userId, Long studioId) {
+        return storyRepository.findByStudioStoryIdOrderByDateDesc(studioId);
+    }
 }
