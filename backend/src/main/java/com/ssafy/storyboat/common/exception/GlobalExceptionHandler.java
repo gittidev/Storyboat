@@ -30,7 +30,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ForbiddenException.class)
     public ResponseEntity<ApiResponse<?>> handleForbiddenException(ForbiddenException ex, WebRequest request) {
-        ApiResponse<?> response = ApiResponse.error( ex.getMessage());
+        ApiResponse<?> response = ApiResponse.error(ex.getMessage());
         return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
     }
 

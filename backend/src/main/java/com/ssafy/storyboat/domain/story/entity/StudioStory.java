@@ -28,7 +28,4 @@ public class StudioStory {
     private Studio studio;
 
     private String title;
-
-    @OneToMany(mappedBy = "studioStory", cascade = CascadeType.ALL, orphanRemoval = true)
-    List<StoryLog> storyLogs;
 }

@@ -1,12 +1,10 @@
 package com.ssafy.storyboat.domain.tag.entity;
 
-import com.ssafy.storyboat.domain.story.entity.StoryLog;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.antlr.v4.runtime.misc.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
