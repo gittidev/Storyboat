@@ -14,6 +14,7 @@ import com.ssafy.storyboat.domain.studio.entity.StudioUser;
 import com.ssafy.storyboat.domain.studio.repository.StudioRepository;
 import com.ssafy.storyboat.domain.studio.repository.StudioUserRepository;
 import com.ssafy.storyboat.domain.user.application.UserService;
+import com.ssafy.storyboat.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -28,6 +29,7 @@ public class IdeaService {
     private final UserService userService;
     private final StudioRepository studioRepository;
     private final StudioUserRepository studioUserRepository;
+    private final UserRepository userRepository;
     private final StudioIdeaRepository studioIdeaRepository;
 
     private StudioUser checkAccessRole(CustomOAuth2User customOAuth2User, Long studioId) {

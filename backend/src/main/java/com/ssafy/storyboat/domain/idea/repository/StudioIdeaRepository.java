@@ -11,7 +11,7 @@ import java.util.List;
 
 @Repository
 public interface StudioIdeaRepository extends JpaRepository<StudioIdea, Long> {
-    @Query("SELECT new com.ssafy.storyboat.domain.idea.dto.IdeaResponse(si.id, si.title, si.content) " +
+    @Query("SELECT new com.ssafy.storyboat.domain.idea.dto.IdeaResponse(si.studioIdeaId, si.title, si.content) " +
             "FROM StudioIdea si WHERE si.studio.studioId = :studioId")
     List<IdeaResponse> findByStudioId(Long studioId);
 }
