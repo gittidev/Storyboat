@@ -106,4 +106,10 @@ public class UserService {
         profileRepository.save(profile);
     }
 
+    @Transactional(readOnly = true)
+    public User findUserById(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+    }
+
 }

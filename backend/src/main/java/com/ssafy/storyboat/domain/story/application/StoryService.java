@@ -10,7 +10,7 @@ import com.ssafy.storyboat.domain.story.entity.Story;
 import com.ssafy.storyboat.domain.story.entity.StudioStory;
 import com.ssafy.storyboat.domain.story.repository.StoryRepository;
 import com.ssafy.storyboat.domain.story.repository.StudioStoryRepository;
-import com.ssafy.storyboat.domain.studio.application.StudioReadAuthorization;
+import com.ssafy.storyboat.domain.studio.application.authorization.StudioReadAuthorization;
 import com.ssafy.storyboat.domain.studio.application.StudioService;
 import com.ssafy.storyboat.domain.studio.entity.Studio;
 import com.ssafy.storyboat.domain.studio.entity.StudioUser;
