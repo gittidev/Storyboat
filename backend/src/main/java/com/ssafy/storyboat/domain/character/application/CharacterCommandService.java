@@ -1,11 +1,14 @@
 package com.ssafy.storyboat.domain.character.application;
 
+import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
+import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.ssafy.storyboat.common.exception.BadRequestException;
 import com.ssafy.storyboat.common.exception.ForbiddenException;
 import com.ssafy.storyboat.common.exception.InternalServerErrorException;
 import com.ssafy.storyboat.common.exception.ResourceNotFoundException;
+import com.ssafy.storyboat.domain.character.dto.CharacterCreateRequest;
 import com.ssafy.storyboat.domain.character.dto.CharacterUpdateRequest;
 import com.ssafy.storyboat.domain.character.entity.StudioCharacter;
 import com.ssafy.storyboat.domain.character.repository.CharacterRepository;
@@ -15,10 +18,6 @@ import com.ssafy.storyboat.domain.studio.entity.Studio;
 import com.ssafy.storyboat.domain.studio.entity.StudioUser;
 import com.ssafy.storyboat.domain.studio.repository.StudioRepository;
 import lombok.RequiredArgsConstructor;
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.ssafy.storyboat.domain.character.dto.CharacterCreateRequest;
-
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
