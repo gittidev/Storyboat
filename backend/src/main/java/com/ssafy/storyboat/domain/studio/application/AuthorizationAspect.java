@@ -30,4 +30,9 @@ public class AuthorizationAspect {
         studioService.isOwnerAuthorized(studioId, userId);
     }
 
+    @Before("@annotation(characterSendAuthorization) && args(studioId, userId, targetStudioId, ..)")
+    public void studioPrivateAuthorization(CharacterSendAuthorization characterSendAuthorization, Long studioId, Long userId, Long targetStudioId) {
+        studioService.isCharacterSendAuthorized(studioId, userId, targetStudioId);
+    }
+
 }

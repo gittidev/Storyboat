@@ -40,6 +40,18 @@ public class StudioService {
 
 
     @Transactional(readOnly = true)
+    public StudioUser isCharacterSendAuthorized(Long studioId, Long userId, Long targetStudioId) {
+        StudioUser targetStudioUser = isWriteAuthorized(targetStudioId, userId);
+        StudioUser thisStudioUser = isOwnerAuthorized(studioId, userId);
+
+        if (thisStudioUser.getRole() != Role.ROLE_PRIVATE) {
+            throw new ForbiddenException("캐릭터 전송 권한 없음");
+        }
+        return targetStudioUser;
+    }
+
+
+    @Transactional(readOnly = true)
     public StudioUser isOwnerAuthorized(Long studioId, Long userId) {
         StudioUser studioUser = isWriteAuthorized(studioId, userId);
         if (studioUser.getRole() != Role.ROLE_OWNER && studioUser.getRole() != Role.ROLE_PRIVATE) {

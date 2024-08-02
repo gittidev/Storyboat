@@ -9,14 +9,19 @@ import com.ssafy.storyboat.common.exception.ResourceNotFoundException;
 import com.ssafy.storyboat.domain.character.dto.CharacterUpdateRequest;
 import com.ssafy.storyboat.domain.character.entity.StudioCharacter;
 import com.ssafy.storyboat.domain.character.repository.CharacterRepository;
+import com.ssafy.storyboat.domain.studio.application.CharacterSendAuthorization;
+import com.ssafy.storyboat.domain.studio.application.StudioOwnerAuthorization;
+import com.ssafy.storyboat.domain.studio.application.StudioService;
 import com.ssafy.storyboat.domain.studio.application.StudioWriteAuthorization;
 import com.ssafy.storyboat.domain.studio.entity.Studio;
+import com.ssafy.storyboat.domain.studio.entity.StudioUser;
 import com.ssafy.storyboat.domain.studio.repository.StudioRepository;
 import lombok.RequiredArgsConstructor;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.ssafy.storyboat.domain.character.dto.CharacterCreateRequest;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,11 +32,13 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class CharacterCommandService {
 
     private final StudioRepository studioRepository;
     private final CharacterRepository characterRepository;
     private final AmazonS3 amazonS3;
+    private final StudioService studioService;
 
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
@@ -71,8 +78,9 @@ public class CharacterCommandService {
         characterRepository.save(studioCharacter);
     }
 
+    @StudioWriteAuthorization
     @Transactional
-    public void updateCharacter(Long studioId, Long userId, Long characterId, CharacterUpdateRequest updateRequest, MultipartFile file) throws IOException {
+    public void updateCharacter(Long studioId, Long userId, Long characterId, CharacterUpdateRequest updateRequest, MultipartFile file) {
         // 엔티티 조회
         StudioCharacter character = characterRepository.findById(characterId)
                 .orElseThrow(() -> new ResourceNotFoundException("찾을 수 없는 캐릭터입니다.: " + characterId));
@@ -87,14 +95,17 @@ public class CharacterCommandService {
 
             // 새 이미지 S3에 업로드
             String newImageKey = file.getOriginalFilename(); // 파일 이름을 키로 사용
-            amazonS3.putObject(new PutObjectRequest(bucket, newImageKey, file.getInputStream(), null));
+            try {
+                amazonS3.putObject(new PutObjectRequest(bucket, newImageKey, file.getInputStream(), null));
+            } catch (IOException e) {
+                throw new InternalServerErrorException("S3 파일 업로드 중 오류가 발생했습니다.");
+            }
             String newImageUrl = amazonS3.getUrl(bucket, newImageKey).toString();
             character.updateImageUrl(newImageUrl);
         }
 
-        // 나머지 필드 업데이트
-        character.setName(updateRequest.getName());
-        character.setDescription(updateRequest.getDescription());
+        // 이름과 설명 업데이트
+        character.updateNameAndDescription(updateRequest.getName(), updateRequest.getDescription());
 
         // 데이터베이스에 저장
         characterRepository.save(character);
@@ -120,5 +131,21 @@ public class CharacterCommandService {
 
         // 데이터베이스에서 엔티티 삭제
         characterRepository.deleteById(characterId);
+    }
+
+    public void exportCharacter(Long studioId, Long userId, Long targetStudioId, Long characterId) {
+        // 캐릭터가 존재하는지 확인
+        StudioCharacter character = characterRepository.findById(characterId)
+                .orElseThrow(() -> new ResourceNotFoundException("찾을 수 없는 캐릭터입니다."));
+
+        StudioUser targetStudioUser = studioService.isCharacterSendAuthorized(studioId, userId, targetStudioId);
+
+        // 캐릭터 복사
+        StudioCharacter newCharacter = new StudioCharacter();
+
+        // 복사한 캐릭터를 새로운 targetStudioUser에 저장
+        newCharacter.updateForCopy(character);
+        newCharacter.copyStudio(targetStudioUser.getStudio());
+        characterRepository.save(newCharacter);
     }
 }

@@ -34,4 +34,20 @@ public class StudioCharacter {
     public void updateImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
     }
+
+    public void updateNameAndDescription(String name, String description) {
+        this.name = name;
+        this.description = description;
+    }
+
+    public void copyStudio(Studio studio) {
+        this.studio = studio;
+    }
+
+    public void updateForCopy(StudioCharacter studioCharacter) {
+        this.studio = studioCharacter.studio;
+        this.name = studioCharacter.name;
+        this.description = studioCharacter.description;
+        this.imageUrl = studioCharacter.imageUrl;
+    }
 }
