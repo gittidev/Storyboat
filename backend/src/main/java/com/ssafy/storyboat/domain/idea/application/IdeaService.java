@@ -1,23 +1,15 @@
 package com.ssafy.storyboat.domain.idea.application;
 
-import com.ssafy.storyboat.common.auth.dto.CustomOAuth2User;
-import com.ssafy.storyboat.common.dto.Role;
 import com.ssafy.storyboat.common.exception.ForbiddenException;
-import com.ssafy.storyboat.common.exception.UnauthorizedException;
 import com.ssafy.storyboat.domain.idea.dto.IdeaCreateRequest;
 import com.ssafy.storyboat.domain.idea.dto.IdeaResponse;
 import com.ssafy.storyboat.domain.idea.dto.IdeaUpdateRequest;
 import com.ssafy.storyboat.domain.idea.entity.StudioIdea;
 import com.ssafy.storyboat.domain.idea.repository.StudioIdeaRepository;
-import com.ssafy.storyboat.domain.studio.application.StudioReadAuthorization;
-import com.ssafy.storyboat.domain.studio.application.StudioWriteAuthorization;
-import com.ssafy.storyboat.domain.studio.dto.StudioUpdateRequest;
+import com.ssafy.storyboat.domain.studio.application.authorization.StudioReadAuthorization;
+import com.ssafy.storyboat.domain.studio.application.authorization.StudioWriteAuthorization;
 import com.ssafy.storyboat.domain.studio.entity.Studio;
-import com.ssafy.storyboat.domain.studio.entity.StudioUser;
 import com.ssafy.storyboat.domain.studio.repository.StudioRepository;
-import com.ssafy.storyboat.domain.studio.repository.StudioUserRepository;
-import com.ssafy.storyboat.domain.user.application.UserService;
-import com.ssafy.storyboat.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

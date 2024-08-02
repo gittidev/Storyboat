@@ -3,8 +3,7 @@ package com.ssafy.storyboat.domain.character.application;
 import com.ssafy.storyboat.domain.character.dto.CharacterResponse;
 import com.ssafy.storyboat.domain.character.entity.StudioCharacter;
 import com.ssafy.storyboat.domain.character.repository.CharacterRepository;
-import com.ssafy.storyboat.domain.studio.application.StudioReadAuthorization;
-import com.ssafy.storyboat.domain.studio.application.StudioWriteAuthorization;
+import com.ssafy.storyboat.domain.studio.application.authorization.StudioReadAuthorization;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

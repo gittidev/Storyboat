@@ -9,10 +9,8 @@ import com.ssafy.storyboat.common.exception.ResourceNotFoundException;
 import com.ssafy.storyboat.domain.character.dto.CharacterUpdateRequest;
 import com.ssafy.storyboat.domain.character.entity.StudioCharacter;
 import com.ssafy.storyboat.domain.character.repository.CharacterRepository;
-import com.ssafy.storyboat.domain.studio.application.CharacterSendAuthorization;
-import com.ssafy.storyboat.domain.studio.application.StudioOwnerAuthorization;
 import com.ssafy.storyboat.domain.studio.application.StudioService;
-import com.ssafy.storyboat.domain.studio.application.StudioWriteAuthorization;
+import com.ssafy.storyboat.domain.studio.application.authorization.StudioWriteAuthorization;
 import com.ssafy.storyboat.domain.studio.entity.Studio;
 import com.ssafy.storyboat.domain.studio.entity.StudioUser;
 import com.ssafy.storyboat.domain.studio.repository.StudioRepository;
@@ -143,7 +141,7 @@ public class CharacterCommandService {
         // 캐릭터 복사
         StudioCharacter newCharacter = new StudioCharacter();
 
-        // 복사한 캐릭터를 새로운 targetStudioUser에 저장
+        // 복사한 캐릭터를 새로운 targetStudioUser 에 저장
         newCharacter.updateForCopy(character);
         newCharacter.copyStudio(targetStudioUser.getStudio());
         characterRepository.save(newCharacter);
