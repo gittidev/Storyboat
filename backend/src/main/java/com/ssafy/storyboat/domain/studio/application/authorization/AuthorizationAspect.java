@@ -1,5 +1,6 @@
 package com.ssafy.storyboat.domain.studio.application.authorization;
 
+import com.ssafy.storyboat.domain.studio.application.CharacterSendAuthorization;
 import com.ssafy.storyboat.domain.studio.application.StudioService;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
