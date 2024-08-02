@@ -1,4 +1,4 @@
-package com.ssafy.storyboat.domain.studio.application;
+package com.ssafy.storyboat.domain.studio.application.authorization;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
