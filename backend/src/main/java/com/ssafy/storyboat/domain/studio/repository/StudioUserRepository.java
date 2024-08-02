@@ -1,5 +1,6 @@
 package com.ssafy.storyboat.domain.studio.repository;
 
+import com.ssafy.storyboat.domain.studio.dto.StudioMemberFindAllResponse;
 import com.ssafy.storyboat.domain.studio.entity.StudioUser;
 import com.ssafy.storyboat.domain.user.entity.Profile;
 import com.ssafy.storyboat.domain.user.entity.User;
@@ -16,4 +17,10 @@ public interface StudioUserRepository extends JpaRepository<StudioUser, Long> {
 
     @Query("SELECT p FROM StudioUser s JOIN Profile p ON s.user = p.user WHERE s.studio.studioId = :studioId")
     List<Profile> findAllProfiles(@Param("studioId") Long studioId);
+
+    @Query("SELECT new com.ssafy.storyboat.domain.studio.dto.StudioMemberFindAllResponse(p.user.userId, p.penName, p.imageUrl, s.role)" +
+            "FROM StudioUser s JOIN Profile p ON s.user.userId = p.user.userId " +
+            "WHERE s.studio.studioId = :studioId")
+    List<StudioMemberFindAllResponse> findAllProfileDTOS(@Param("studioId") Long studioId);
+
 }

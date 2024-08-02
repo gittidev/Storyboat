@@ -1,6 +1,6 @@
-package com.ssafy.storyboat.domain.studio.application;
+package com.ssafy.storyboat.domain.studio.application.authorization;
 
-import com.ssafy.storyboat.domain.studio.entity.StudioUser;
+import com.ssafy.storyboat.domain.studio.application.StudioService;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.springframework.stereotype.Component;

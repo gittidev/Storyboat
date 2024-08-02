@@ -3,9 +3,13 @@ package com.ssafy.storyboat.domain.studio.application;
 import com.ssafy.storyboat.common.auth.dto.CustomOAuth2User;
 import com.ssafy.storyboat.common.dto.ApiResponse;
 import com.ssafy.storyboat.common.dto.Role;
+import com.ssafy.storyboat.common.exception.ConflictException;
 import com.ssafy.storyboat.common.exception.ForbiddenException;
 import com.ssafy.storyboat.common.exception.ResourceNotFoundException;
 import com.ssafy.storyboat.common.exception.UnauthorizedException;
+import com.ssafy.storyboat.domain.studio.application.authorization.StudioOwnerAuthorization;
+import com.ssafy.storyboat.domain.studio.application.authorization.StudioReadAuthorization;
+import com.ssafy.storyboat.domain.studio.dto.StudioMemberFindAllResponse;
 import com.ssafy.storyboat.domain.studio.dto.StudioResponse;
 import com.ssafy.storyboat.domain.studio.entity.Studio;
 import com.ssafy.storyboat.domain.studio.entity.StudioUser;
@@ -142,9 +146,64 @@ public class StudioService {
         return new StudioResponse(studio.getStudioId(), studio.getName(), studio.getDescription());
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     @StudioReadAuthorization
     public List<Profile> findStudioUser(Long studioId, Long userId) {
         return studioUserRepository.findAllProfiles(studioId);
+    }
+
+    @Transactional(readOnly = true)
+    @StudioReadAuthorization
+    public List<StudioMemberFindAllResponse> findStudioUserDTO(Long studioId, Long userId) {
+        return studioUserRepository.findAllProfileDTOS(studioId);
+
+    }
+
+    /**
+     * Studio 에서 Member 의 권한 설정
+     * @param studioId
+     * @param userId
+     * @param memberId
+     * @param role
+     */
+    @StudioOwnerAuthorization
+    public void updateMemberRole(Long studioId, Long userId, Long memberId, Role role) {
+        // 1. ROLE 조회 (ROLE_OWNER or ROLE_VIEWER or ROLE_MEMBER)
+        if (!(Role.ROLE_OWNER.equals(role) || Role.ROLE_MEMBER.equals(role) || Role.ROLE_VIEWER.equals(role))) {
+            throw new IllegalArgumentException("설정할 수 없는 권한: " + role);
+        }
+
+        // 2. 해당 유저의 ROLE 세팅
+        StudioUser studioUser = studioUserRepository.findByStudio_StudioIdAndUser_UserId(studioId, memberId)
+                .orElseThrow(() -> new ConflictException("해당 유저 Studio 에 존재하지 않음"));
+
+        studioUser.updateRole(role);
+        studioUserRepository.save(studioUser);
+    }
+
+    /**
+     * Studio 에서 Member 추방
+     * @param studioId
+     * @param userId
+     * @param memberId
+     */
+    @StudioOwnerAuthorization
+    public void deleteMember(Long studioId, Long userId, Long memberId) {
+        // 1. Member 가 OWNER 인지 확인
+        StudioUser studioUser = studioUserRepository.findByStudio_StudioIdAndUser_UserId(studioId, memberId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 유저 Studio 에 존재하지 않음"));
+
+        if (studioUser.getRole().equals(Role.ROLE_OWNER)) {
+            throw new ForbiddenException("OWNER 사용자는 추방할 수 없음");
+        }
+
+        // 2. Member 추방
+        studioUserRepository.delete(studioUser);
+    }
+
+    @Transactional(readOnly = true)
+    public Studio findByStudioId(Long studioId) {
+        return studioRepository.findById(studioId)
+                .orElseThrow(() -> new IllegalArgumentException("Studio not found"));
     }
 }

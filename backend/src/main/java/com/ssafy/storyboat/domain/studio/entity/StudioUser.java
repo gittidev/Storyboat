@@ -46,4 +46,8 @@ public class StudioUser {
         this.user = user;
         user.getStudioUsers().add(this);
     }
+
+    public void updateRole(Role role) {
+        this.role = role;
+    }
 }
