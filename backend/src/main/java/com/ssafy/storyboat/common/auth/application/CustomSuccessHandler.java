@@ -50,11 +50,12 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         // 성공 후 리디렉션
         if (customUserDetails.getJoinStatus()) {
             // 회원 가입시 보낼 경로
-            response.sendRedirect(request.getContextPath() + "/storyboat");
+            response.sendRedirect("http://localhost:5173/login/loading");
         } else {
             // 로그인 시 보낼 경로
-            response.sendRedirect(request.getContextPath() + "/storyboat");
+            response.sendRedirect("http://localhost:5173/login/loading");
         }
+
     }
 
     private void saveRefreshToken(String userName, String refreshToken) {
@@ -95,9 +96,12 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
     private Cookie createCookie(String key, String value) {
         Cookie cookie = new Cookie(key, value);
-        cookie.setMaxAge(7 * 24 * 60 * 60 * 1000); // 쿠키의 유효 기간 (7일)
+        cookie.setMaxAge(7 * 24 * 60 * 60); // 쿠키의 유효 기간 (7일)
         cookie.setPath("/");
+        cookie.setSecure(true); // 이 속성과
+        cookie.setAttribute("SameSite", "None"); // 이 속성 추가
         cookie.setHttpOnly(true);
         return cookie;
     }
+
 }

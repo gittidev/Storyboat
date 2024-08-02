@@ -20,6 +20,13 @@ import org.springframework.security.oauth2.client.web.OAuth2LoginAuthenticationF
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.Arrays;
+
+import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
 @EnableWebSecurity
@@ -40,7 +47,8 @@ public class SecurityConfig {
                 // CSRF 및 기타 기본 보안 설정 비활성
                 .csrf((auth) -> auth.disable())
                 .formLogin((auth) -> auth.disable())
-                .httpBasic((auth) -> auth.disable());
+                .httpBasic((auth) -> auth.disable())
+                .cors(withDefaults());  // .cors() 추가하여 CORS 설정 활성화;
 
         //JWTFilter 추가
         http
@@ -77,4 +85,22 @@ public class SecurityConfig {
         return http.build();
 
     }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+
+        configuration.addAllowedOrigin("http://localhost:5173");
+        configuration.addAllowedHeader("*");
+        configuration.addAllowedMethod("*");
+        configuration.setAllowCredentials(true);
+        //exposed-headers 설정
+        configuration.setExposedHeaders(Arrays.asList("Access-Control-Allow-Headers", "Authorization, x-xsrf-token, Access-Control-Allow-Headers, Origin, Accept, X-Requested-With, " +
+                "Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers"));
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }
+
 }
