@@ -42,7 +42,7 @@ public class JWTFilter extends OncePerRequestFilter {
         if (authorization == null || !authorization.startsWith("Bearer ")) {
 
             log.info("헤더에 Authorization 없거나 이상함!");
-            //filterChain.doFilter(request, response);
+            filterChain.doFilter(request, response);
             // API 응답 객체 생성
 //            ApiResponse<Object> apiResponse = ApiResponse.error("No Permission");
 //            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
