@@ -242,5 +242,10 @@ public class StudioService {
         return code;
     }
 
-   
+    @StudioOwnerAuthorization
+    public InvitationCode findInvitationCode(Long studioId, Long userId) {
+        Optional <InvitationCode> code = invitationCodeRepository.findByStudio_StudioId(studioId);
+        return code.orElse(null);
+    }
+
 }
