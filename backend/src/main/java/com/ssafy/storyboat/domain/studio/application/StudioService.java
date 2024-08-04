@@ -11,8 +11,12 @@ import com.ssafy.storyboat.domain.studio.application.authorization.StudioOwnerAu
 import com.ssafy.storyboat.domain.studio.application.authorization.StudioReadAuthorization;
 import com.ssafy.storyboat.domain.studio.dto.StudioMemberFindAllResponse;
 import com.ssafy.storyboat.domain.studio.dto.StudioResponse;
+import com.ssafy.storyboat.domain.studio.entity.Invitation;
+import com.ssafy.storyboat.domain.studio.entity.InvitationCode;
 import com.ssafy.storyboat.domain.studio.entity.Studio;
 import com.ssafy.storyboat.domain.studio.entity.StudioUser;
+import com.ssafy.storyboat.domain.studio.repository.InvitationCodeRepository;
+import com.ssafy.storyboat.domain.studio.repository.InvitationRepository;
 import com.ssafy.storyboat.domain.studio.repository.StudioRepository;
 import com.ssafy.storyboat.domain.studio.repository.StudioUserRepository;
 import com.ssafy.storyboat.domain.user.application.UserService;
@@ -30,6 +34,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -41,6 +46,9 @@ public class StudioService {
     private final EntityManagerFactory entityManagerFactory;
     private final UserRepository userRepository;
     private final StudioUserRepository studioUserRepository;
+    private final InvitationCodeUtil invitationCodeUtil;
+    private final InvitationRepository invitationRepository;
+    private final InvitationCodeRepository invitationCodeRepository;
 
 
     @Transactional(readOnly = true)
@@ -212,4 +220,27 @@ public class StudioService {
     public void deleteStudio(Long studioId, Long userId) {
         studioRepository.deleteById(studioId);  // 관련된 모든 엔티티가 하드 딜리트
     }
+
+    /**
+     * InvitationCode 생성, DB 저장
+     * @param studioId
+     * @param userId
+     * @return InvitationCode
+     */
+    @StudioOwnerAuthorization
+    public String makeInvitationCode(Long studioId, Long userId) {
+        String code = invitationCodeUtil.createCode(studioId, 1000 * 60 * 60 * 7L); // 7일
+        Studio studio = studioRepository.findById(studioId)
+                .orElseThrow(() -> new IllegalArgumentException("Studio not found"));
+        InvitationCode invitationCode = InvitationCode.builder()
+                .studio(studio)
+                .code(code)
+                .expirationDate(LocalDateTime.now().plusDays(7))
+                .build();
+
+        invitationCodeRepository.save(invitationCode);
+        return code;
+    }
+
+   
 }

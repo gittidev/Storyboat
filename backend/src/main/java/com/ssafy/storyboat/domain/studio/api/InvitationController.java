@@ -1,7 +1,6 @@
 package com.ssafy.storyboat.domain.studio.api;
 
 import com.ssafy.storyboat.common.auth.dto.CustomOAuth2User;
-import com.ssafy.storyboat.common.auth.dto.CustomUserDetails;
 import com.ssafy.storyboat.common.dto.ApiResponse;
 import com.ssafy.storyboat.domain.studio.application.InvitationService;
 import com.ssafy.storyboat.domain.studio.dto.InvitationFindAllResponse;
@@ -95,5 +94,26 @@ public class InvitationController {
         Long userId = user.getUserId();
         invitationService.deleteInvitation(studioId, userId);
         return ResponseEntity.ok().body(ApiResponse.success("모집글 삭제 성공"));
+    }
+
+
+    @PostMapping("/code/{studioId}")
+    public ResponseEntity<?> makeInvitationCode(@AuthenticationPrincipal final CustomOAuth2User user, @PathVariable Long studioId) {
+        Long userId = user.getUserId();
+
+
+    }
+
+    @GetMapping("/code/{studioId")
+    public ResponseEntity<?> showInvitationCode(@AuthenticationPrincipal final CustomOAuth2User user, @PathVariable Long studioId) {
+        Long userId = user.getUserId();
+
+    }
+
+    @PutMapping("/code/{invitationCode}")
+    public ResponseEntity<?> joinByCode(@AuthenticationPrincipal final CustomOAuth2User user, @PathVariable String invitationCode) {
+        Long userId = user.getUserId();
+
+
     }
 }
