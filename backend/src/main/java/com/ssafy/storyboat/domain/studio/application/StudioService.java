@@ -256,6 +256,10 @@ public class StudioService {
         return null;
     }
 
+    @StudioOwnerAuthorization
+    public void deleteInvitationCode(Long studioId, Long userId, Long invitationCodeId) {
+        invitationCodeRepository.deleteById(invitationCodeId);
+    }
 
-   
+
 }
