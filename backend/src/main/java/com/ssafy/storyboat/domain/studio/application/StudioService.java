@@ -244,8 +244,18 @@ public class StudioService {
 
     @StudioOwnerAuthorization
     public InvitationCode findInvitationCode(Long studioId, Long userId) {
-        Optional <InvitationCode> code = invitationCodeRepository.findByStudio_StudioId(studioId);
-        return code.orElse(null);
+        Optional<InvitationCode> code = invitationCodeRepository.findByStudio_StudioId(studioId);
+        if (code.isPresent()) {
+            InvitationCode invitationCode = code.get();
+            if (invitationCode.getExpirationDate().isBefore(LocalDateTime.now())) {
+                invitationCodeRepository.delete(invitationCode);
+                return null;
+            }
+            return invitationCode;
+        }
+        return null;
     }
 
+
+   
 }
