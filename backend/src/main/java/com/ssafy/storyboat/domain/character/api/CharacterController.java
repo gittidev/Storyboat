@@ -36,7 +36,7 @@ public class CharacterController {
     public ApiResponse<?> createCharacter(
             @AuthenticationPrincipal CustomOAuth2User customOAuth2User,
             @PathVariable Long studioId,
-            @RequestPart CharacterCreateRequest characterCreateRequest,
+            CharacterCreateRequest characterCreateRequest,
             @RequestPart MultipartFile file) {
         characterCommandService.createCharacter(studioId, customOAuth2User.getUserId(), characterCreateRequest, file);
         return ApiResponse.success("Create Character Success");

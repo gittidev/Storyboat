@@ -37,10 +37,10 @@ public class Studio {
     @OneToMany(mappedBy = "studio", cascade = CascadeType.ALL, orphanRemoval = true)
     List<StudioIdea> studioIdeas = new ArrayList<>();
 
-    @OneToOne(mappedBy = "studio")
+    @OneToOne(mappedBy = "studio", cascade = CascadeType.ALL, orphanRemoval = true)
     private Invitation invitation;
 
-    @OneToOne(mappedBy = "studio")
+    @OneToOne(mappedBy = "studio", cascade = CascadeType.ALL, orphanRemoval = true)
     InvitationCode invitationCode;
 
     @OneToMany(mappedBy = "studio", cascade = CascadeType.ALL, orphanRemoval = true)

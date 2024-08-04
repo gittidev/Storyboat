@@ -207,4 +207,9 @@ public class StudioService {
         return studioRepository.findById(studioId)
                 .orElseThrow(() -> new IllegalArgumentException("Studio not found"));
     }
+
+    @StudioOwnerAuthorization
+    public void deleteStudio(Long studioId, Long userId) {
+        studioRepository.deleteById(studioId);  // 관련된 모든 엔티티가 하드 딜리트
+    }
 }

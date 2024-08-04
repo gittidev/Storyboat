@@ -72,6 +72,12 @@ public class StudioController {
         return ResponseEntity.ok(ApiResponse.success(result, "Find Studio Members Success"));
     }
 
+    @DeleteMapping("/{studioId}")
+    public ResponseEntity<?> deleteStudio(@AuthenticationPrincipal CustomOAuth2User customOAuth2User, @PathVariable Long studioId) {
+        studioService.deleteStudio(studioId, customOAuth2User.getUserId());
+        return ResponseEntity.ok().body(ApiResponse.success("Studio deleted successfully"));
+    }
+
     // 테스트 필요
 
     /**
@@ -95,6 +101,7 @@ public class StudioController {
         studioService.deleteMember(studioId, userId, memberId);
         return ResponseEntity.ok().body(ApiResponse.success("Member deleted successfully"));
     }
+
 
 
 
