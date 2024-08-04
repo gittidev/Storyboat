@@ -46,9 +46,7 @@ public class StudioService {
     private final EntityManagerFactory entityManagerFactory;
     private final UserRepository userRepository;
     private final StudioUserRepository studioUserRepository;
-    private final InvitationCodeUtil invitationCodeUtil;
-    private final InvitationRepository invitationRepository;
-    private final InvitationCodeRepository invitationCodeRepository;
+
 
 
     @Transactional(readOnly = true)
@@ -221,68 +219,5 @@ public class StudioService {
         studioRepository.deleteById(studioId);  // 관련된 모든 엔티티가 하드 딜리트
     }
 
-    /**
-     * InvitationCode 생성, DB 저장
-     * @param studioId
-     * @param userId
-     * @return InvitationCode
-     */
-    @StudioOwnerAuthorization
-    public String makeInvitationCode(Long studioId, Long userId) {
-        String code = invitationCodeUtil.createCode(studioId, 1000 * 60 * 60 * 7L); // 7일
-        Studio studio = studioRepository.findById(studioId)
-                .orElseThrow(() -> new IllegalArgumentException("Studio not found"));
-        InvitationCode invitationCode = InvitationCode.builder()
-                .studio(studio)
-                .code(code)
-                .expirationDate(LocalDateTime.now().plusDays(7))
-                .build();
-
-        invitationCodeRepository.save(invitationCode);
-        return code;
-    }
-
-    @StudioOwnerAuthorization
-    public InvitationCode findInvitationCode(Long studioId, Long userId) {
-        Optional<InvitationCode> code = invitationCodeRepository.findByStudio_StudioId(studioId);
-        if (code.isPresent()) {
-            InvitationCode invitationCode = code.get();
-            if (invitationCode.getExpirationDate().isBefore(LocalDateTime.now())) {
-                invitationCodeRepository.delete(invitationCode);
-                return null;
-            }
-            return invitationCode;
-        }
-        return null;
-    }
-
-    @StudioOwnerAuthorization
-    public void deleteInvitationCode(Long studioId, Long userId, Long invitationCodeId) {
-        invitationCodeRepository.deleteById(invitationCodeId);
-    }
-
-    // 해당 코드 조회해 가입시키기...?
-    public void joinByCode(Long userId, String invitationCode) {
-        // 코드 조회해 검증 로직
-        Long studioId = invitationCodeUtil.getStudioId(invitationCode);
-        InvitationCode code = invitationCodeRepository.findByStudio_StudioId(studioId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 코드 존재 X"));
-
-        if (code.getExpirationDate().isBefore(LocalDateTime.now())) {
-            invitationCodeRepository.delete(code);
-            throw new IllegalArgumentException("해당 코드 만료");
-        }
-
-        // 스튜디오에 해당 유저 가입 (Member 로) -> Studio_User Entity 생성하기
-        User user = userService.findUserById(userId);
-
-        StudioUser studioUser = StudioUser.builder()
-                .user(user)
-                .role(Role.ROLE_MEMBER)
-                .createdAt(LocalDateTime.now())
-                .build();
-
-        studioUserRepository.save(studioUser);
-    }
 
 }

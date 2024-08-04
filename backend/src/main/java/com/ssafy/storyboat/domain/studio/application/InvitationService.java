@@ -1,15 +1,26 @@
 package com.ssafy.storyboat.domain.studio.application;
 
+import com.ssafy.storyboat.common.dto.Role;
 import com.ssafy.storyboat.common.exception.ResourceNotFoundException;
 import com.ssafy.storyboat.domain.studio.application.authorization.StudioOwnerAuthorization;
 import com.ssafy.storyboat.domain.studio.entity.Invitation;
+import com.ssafy.storyboat.domain.studio.entity.InvitationCode;
 import com.ssafy.storyboat.domain.studio.entity.Studio;
+import com.ssafy.storyboat.domain.studio.entity.StudioUser;
+import com.ssafy.storyboat.domain.studio.repository.InvitationCodeRepository;
 import com.ssafy.storyboat.domain.studio.repository.InvitationRepository;
+import com.ssafy.storyboat.domain.studio.repository.StudioRepository;
+import com.ssafy.storyboat.domain.studio.repository.StudioUserRepository;
+import com.ssafy.storyboat.domain.user.application.UserService;
+import com.ssafy.storyboat.domain.user.entity.User;
+import com.ssafy.storyboat.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -18,6 +29,11 @@ public class InvitationService {
 
     private final InvitationRepository invitationRepository;
     private final StudioService studioService;
+    private final InvitationCodeUtil invitationCodeUtil;
+    private final InvitationCodeRepository invitationCodeRepository;
+    private final StudioRepository studioRepository;
+    private final UserService userService;
+    private final StudioUserRepository studioUserRepository;
 
     /**
      * Studio 모집글 목록 조회
@@ -82,4 +98,69 @@ public class InvitationService {
         
         invitationRepository.delete(invitation);
     }
+
+    /**
+     * InvitationCode 생성, DB 저장
+     * @param studioId
+     * @param userId
+     * @return InvitationCode
+     */
+    @StudioOwnerAuthorization
+    public String makeInvitationCode(Long studioId, Long userId) {
+        String code = invitationCodeUtil.createCode(studioId, 1000 * 60 * 60 * 7L); // 7일
+        Studio studio = studioRepository.findById(studioId)
+                .orElseThrow(() -> new IllegalArgumentException("Studio not found"));
+        InvitationCode invitationCode = InvitationCode.builder()
+                .studio(studio)
+                .code(code)
+                .expirationDate(LocalDateTime.now().plusDays(7))
+                .build();
+
+        invitationCodeRepository.save(invitationCode);
+        return code;
+    }
+
+    @StudioOwnerAuthorization
+    public InvitationCode findInvitationCode(Long studioId, Long userId) {
+        Optional<InvitationCode> code = invitationCodeRepository.findByStudio_StudioId(studioId);
+        if (code.isPresent()) {
+            InvitationCode invitationCode = code.get();
+            if (invitationCode.getExpirationDate().isBefore(LocalDateTime.now())) {
+                invitationCodeRepository.delete(invitationCode);
+                return null;
+            }
+            return invitationCode;
+        }
+        return null;
+    }
+
+    @StudioOwnerAuthorization
+    public void deleteInvitationCode(Long studioId, Long userId, Long invitationCodeId) {
+        invitationCodeRepository.deleteById(invitationCodeId);
+    }
+
+    // 해당 코드 조회해 가입시키기...?
+    public void joinByCode(Long userId, String invitationCode) {
+        // 코드 조회해 검증 로직
+        Long studioId = invitationCodeUtil.getStudioId(invitationCode);
+        InvitationCode code = invitationCodeRepository.findByStudio_StudioId(studioId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 코드 존재 X"));
+
+        if (code.getExpirationDate().isBefore(LocalDateTime.now())) {
+            invitationCodeRepository.delete(code);
+            throw new IllegalArgumentException("해당 코드 만료");
+        }
+
+        // 스튜디오에 해당 유저 가입 (Member 로) -> Studio_User Entity 생성하기
+        User user = userService.findUserById(userId);
+
+        StudioUser studioUser = StudioUser.builder()
+                .user(user)
+                .role(Role.ROLE_MEMBER)
+                .createdAt(LocalDateTime.now())
+                .build();
+
+        studioUserRepository.save(studioUser);
+    }
+
 }
