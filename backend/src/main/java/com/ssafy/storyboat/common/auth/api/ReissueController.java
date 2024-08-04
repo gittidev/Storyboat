@@ -1,5 +1,6 @@
 package com.ssafy.storyboat.common.auth.api;
 
+import com.ssafy.storyboat.common.auth.dto.AccessTokenResponse;
 import com.ssafy.storyboat.common.auth.util.JWTUtil;
 import com.ssafy.storyboat.common.dto.ApiResponse;
 import com.ssafy.storyboat.domain.user.entity.RefreshToken;
@@ -91,8 +92,9 @@ public class ReissueController {
                     String newAccess = jwtUtil.createJwt("access", username, role, 600000L);
                     // response
                     response.addHeader("Authorization", "Bearer " + newAccess);
-
-                    return ResponseEntity.ok(ApiResponse.success("Access Token 발급"));
+                    AccessTokenResponse accessToken = new AccessTokenResponse();
+                    accessToken.setAccessToken("Bearer " + newAccess);
+                    return ResponseEntity.ok(ApiResponse.success(accessToken, "Access Token 발급"));
 
                 } else if (jwtUtil.isExpired(token.getRefreshToken())) {
                     entityManager.remove(token);
