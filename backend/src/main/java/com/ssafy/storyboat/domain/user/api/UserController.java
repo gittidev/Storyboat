@@ -2,6 +2,9 @@ package com.ssafy.storyboat.domain.user.api;
 
 import com.ssafy.storyboat.common.dto.ApiResponse;
 import com.ssafy.storyboat.common.auth.dto.CustomOAuth2User;
+import com.ssafy.storyboat.common.dto.Role;
+import com.ssafy.storyboat.domain.studio.dto.StudioResponse;
+import com.ssafy.storyboat.domain.studio.entity.Studio;
 import com.ssafy.storyboat.domain.user.application.UserService;
 import com.ssafy.storyboat.domain.user.dto.ProfileFindResponse;
 import com.ssafy.storyboat.domain.user.dto.ProfileUpdateRequest;
@@ -40,8 +43,10 @@ public class UserController {
     )
     public ResponseEntity<?> getUserProfile(@AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
         Profile profile = userService.fetchSingleProfile(customOAuth2User.getUserId());
+        StudioResponse privateStudio = userService.fetchPrivateStudio(customOAuth2User.getUserId());
         ProfileFindResponse profileFindResponse = new ProfileFindResponse();
         profileFindResponse.setDTO(profile);
+        profileFindResponse.setStudio(privateStudio);
         return ResponseEntity.ok().body(ApiResponse.success(profileFindResponse, "Find Profile Success"));
     }
 

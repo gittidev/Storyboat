@@ -1,6 +1,9 @@
 package com.ssafy.storyboat.domain.studio.repository;
 
+import com.ssafy.storyboat.common.dto.Role;
 import com.ssafy.storyboat.domain.studio.dto.StudioMemberFindAllResponse;
+import com.ssafy.storyboat.domain.studio.dto.StudioResponse;
+import com.ssafy.storyboat.domain.studio.entity.Studio;
 import com.ssafy.storyboat.domain.studio.entity.StudioUser;
 import com.ssafy.storyboat.domain.user.entity.Profile;
 import com.ssafy.storyboat.domain.user.entity.User;
@@ -23,4 +26,8 @@ public interface StudioUserRepository extends JpaRepository<StudioUser, Long> {
             "WHERE s.studio.studioId = :studioId")
     List<StudioMemberFindAllResponse> findAllProfileDTOS(@Param("studioId") Long studioId);
 
+    // 유저의 PRIVATE 스튜디오를 찾는 쿼리
+    @Query("SELECT new com.ssafy.storyboat.domain.studio.dto.StudioResponse(su.studio.studioId, su.studio.name, su.studio.description) " +
+            "FROM StudioUser su WHERE su.user.userId = :userId AND su.role = :role")
+    Optional<StudioResponse> findPrivateStudioByUserIdAndRole(@Param("userId") Long userId, @Param("role") Role role);
 }
