@@ -261,5 +261,28 @@ public class StudioService {
         invitationCodeRepository.deleteById(invitationCodeId);
     }
 
+    // 해당 코드 조회해 가입시키기...?
+    public void joinByCode(Long userId, String invitationCode) {
+        // 코드 조회해 검증 로직
+        Long studioId = invitationCodeUtil.getStudioId(invitationCode);
+        InvitationCode code = invitationCodeRepository.findByStudio_StudioId(studioId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 코드 존재 X"));
+
+        if (code.getExpirationDate().isBefore(LocalDateTime.now())) {
+            invitationCodeRepository.delete(code);
+            throw new IllegalArgumentException("해당 코드 만료");
+        }
+
+        // 스튜디오에 해당 유저 가입 (Member 로) -> Studio_User Entity 생성하기
+        User user = userService.findUserById(userId);
+
+        StudioUser studioUser = StudioUser.builder()
+                .user(user)
+                .role(Role.ROLE_MEMBER)
+                .createdAt(LocalDateTime.now())
+                .build();
+
+        studioUserRepository.save(studioUser);
+    }
 
 }
