@@ -247,6 +247,7 @@ public class StudioService {
     // 스튜디오 가입 신청 로직
     public void joinRequest(Long studioId, Long userId) {
         User user = userService.findUserById(userId);
+
         Studio studio = findByStudioId(studioId);
 
         if (studio.getName().equals("private")) {
