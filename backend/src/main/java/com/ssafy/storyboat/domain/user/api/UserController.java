@@ -50,7 +50,7 @@ public class UserController {
         return ResponseEntity.ok().body(ApiResponse.success(profileFindResponse, "Find Profile Success"));
     }
 
-    @PostMapping("/profiles")
+    @PutMapping("/profiles")
     @Operation(
             summary = "유저 프로필 수정",
             description = "현재 로그인한 사용자의 프로필을 수정합니다."
