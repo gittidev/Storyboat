@@ -103,6 +103,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                         .email(email)
                         .providerId(providerId)
                         .provider(provider)
+                        .isDeleted(false)
                         .studioUsers(new ArrayList<>())
                         .build();
 

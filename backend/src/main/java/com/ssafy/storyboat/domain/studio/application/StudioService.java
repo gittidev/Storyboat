@@ -282,4 +282,15 @@ public class StudioService {
 
     }
 
+    public void leaveStudio(Long studioId, Long userId) {
+        StudioUser studioUser = studioUserRepository.findByStudio_StudioIdAndUser_UserId(studioId, userId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 유저 Studio 에 존재하지 않음"));
+
+        if (studioUser.getRole().equals(Role.ROLE_OWNER)) {
+            throw new ForbiddenException("OWNER 사용자는 추방할 수 없음");
+        }
+
+        // 2. Member 추방
+        studioUserRepository.delete(studioUser);
+    }
 }
