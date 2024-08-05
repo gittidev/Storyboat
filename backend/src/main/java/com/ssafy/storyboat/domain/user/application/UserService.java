@@ -1,10 +1,13 @@
 package com.ssafy.storyboat.domain.user.application;
 
 import com.ssafy.storyboat.common.dto.ApiResponse;
+import com.ssafy.storyboat.common.dto.Role;
 import com.ssafy.storyboat.common.exception.ConflictException;
 import com.ssafy.storyboat.common.exception.ForbiddenException;
 import com.ssafy.storyboat.common.exception.ResourceNotFoundException;
 import com.ssafy.storyboat.common.exception.UnauthorizedException;
+import com.ssafy.storyboat.domain.studio.dto.StudioResponse;
+import com.ssafy.storyboat.domain.studio.entity.Studio;
 import com.ssafy.storyboat.domain.studio.entity.StudioUser;
 import com.ssafy.storyboat.domain.studio.repository.StudioUserRepository;
 import com.ssafy.storyboat.domain.tag.entity.ProfileTag;
@@ -37,6 +40,7 @@ public class UserService {
     private final ProfileRepository profileRepository;
     private final ProfileTagRepository profileTagRepository;
     private final TagRepository tagRepository;
+    private final StudioUserRepository studioUserRepository;
 
     @Transactional(readOnly = true)
     public void searchPenName(String penName) {
@@ -58,6 +62,12 @@ public class UserService {
             throw new ForbiddenException("Profile not found");
         }
         return profile;
+    }
+
+    @Transactional(readOnly = true)
+    public StudioResponse fetchPrivateStudio(Long userId) {
+        return studioUserRepository.findPrivateStudioByUserIdAndRole(userId, Role.ROLE_PRIVATE)
+                .orElse(null);  // 유저에게 ROLE_PRIVATE 스튜디오가 없을 경우 null 반환
     }
 
     @Transactional

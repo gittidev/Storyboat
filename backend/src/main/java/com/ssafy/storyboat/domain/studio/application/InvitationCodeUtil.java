@@ -1,4 +1,4 @@
-package com.ssafy.storyboat.common.auth.util;
+package com.ssafy.storyboat.domain.studio.application;
 
 import io.jsonwebtoken.Jwts;
 import lombok.extern.slf4j.Slf4j;
@@ -12,48 +12,33 @@ import java.util.Date;
 
 @Component
 @Slf4j
-public class JWTUtil {
+public class InvitationCodeUtil {
 
     private SecretKey secretKey;
 
-    public JWTUtil(@Value("${spring.jwt.secret}")String secret) {
+    public InvitationCodeUtil(@Value("${spring.jwt.secret}")String secret) {
         this.secretKey = new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), Jwts.SIG.HS256.key().build().getAlgorithm());
     }
 
-    public String getUsername(String token) {
-
-        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("username", String.class);
+    public Long getStudioId(String token) {
+        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("StudioId", Long.class);
     }
 
-
-    public String getRole(String token) {
-
-        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("role", String.class);
-    }
 
     public Boolean isExpired(String token) {
 
         try{
             Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().getExpiration().before(new Date());
-            log.info("만료x");
             return false;
         } catch (Exception e) {
-            log.info("만료");
             return true;
         }
     }
 
-    public String getCategory(String token) {
-        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("category", String.class);
-    }
-
-
-    public String createJwt(String category, String username, String role, Long expiredMs) {
+    public String createCode(Long studioId, Long expiredMs) {
 
         return Jwts.builder()
-                .claim("category", category)
-                .claim("username", username)
-                .claim("role", role)
+                .claim("StudioId", studioId)
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + expiredMs))
                 .signWith(secretKey)

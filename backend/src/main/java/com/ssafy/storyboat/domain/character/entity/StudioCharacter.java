@@ -28,6 +28,8 @@ public class StudioCharacter {
 
     private String description;
 
+    private String tags;
+
     @Column(name = "image_url")
     private String imageUrl;
 
@@ -35,9 +37,10 @@ public class StudioCharacter {
         this.imageUrl = imageUrl;
     }
 
-    public void updateNameAndDescription(String name, String description) {
+    public void updateInfo(String name, String description, String tags) {
         this.name = name;
         this.description = description;
+        this.tags = tags;
     }
 
     public void copyStudio(Studio studio) {
@@ -49,5 +52,6 @@ public class StudioCharacter {
         this.name = studioCharacter.name;
         this.description = studioCharacter.description;
         this.imageUrl = studioCharacter.imageUrl;
+        this.tags = studioCharacter.tags;
     }
 }

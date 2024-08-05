@@ -1,5 +1,7 @@
 package com.ssafy.storyboat.domain.studio.application;
 
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.ssafy.storyboat.common.auth.dto.CustomOAuth2User;
 import com.ssafy.storyboat.common.dto.ApiResponse;
 import com.ssafy.storyboat.common.dto.Role;
@@ -7,12 +9,21 @@ import com.ssafy.storyboat.common.exception.ConflictException;
 import com.ssafy.storyboat.common.exception.ForbiddenException;
 import com.ssafy.storyboat.common.exception.ResourceNotFoundException;
 import com.ssafy.storyboat.common.exception.UnauthorizedException;
+import com.ssafy.storyboat.domain.character.application.CharacterCommandService;
+import com.ssafy.storyboat.domain.character.application.CharacterQueryService;
+import com.ssafy.storyboat.domain.character.entity.StudioCharacter;
+import com.ssafy.storyboat.domain.character.repository.CharacterRepository;
 import com.ssafy.storyboat.domain.studio.application.authorization.StudioOwnerAuthorization;
 import com.ssafy.storyboat.domain.studio.application.authorization.StudioReadAuthorization;
+import com.ssafy.storyboat.domain.studio.application.authorization.StudioWriteAuthorization;
 import com.ssafy.storyboat.domain.studio.dto.StudioMemberFindAllResponse;
 import com.ssafy.storyboat.domain.studio.dto.StudioResponse;
+import com.ssafy.storyboat.domain.studio.entity.Invitation;
+import com.ssafy.storyboat.domain.studio.entity.InvitationCode;
 import com.ssafy.storyboat.domain.studio.entity.Studio;
 import com.ssafy.storyboat.domain.studio.entity.StudioUser;
+import com.ssafy.storyboat.domain.studio.repository.InvitationCodeRepository;
+import com.ssafy.storyboat.domain.studio.repository.InvitationRepository;
 import com.ssafy.storyboat.domain.studio.repository.StudioRepository;
 import com.ssafy.storyboat.domain.studio.repository.StudioUserRepository;
 import com.ssafy.storyboat.domain.user.application.UserService;
@@ -24,23 +35,27 @@ import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.PersistenceException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class StudioService {
 
-    private final UserService userService;
     private final StudioRepository studioRepository;
     private final EntityManagerFactory entityManagerFactory;
-    private final UserRepository userRepository;
     private final StudioUserRepository studioUserRepository;
+    private final AmazonS3 amazonS3;
+    private final CharacterRepository characterRepository;
+    @Value("${cloud.aws.s3.bucket}")
+    private String bucket;
 
 
     @Transactional(readOnly = true)
@@ -134,6 +149,13 @@ public class StudioService {
     }
 
     @Transactional
+    @StudioReadAuthorization
+    public StudioResponse getStudio(Long studioId, Long userId) {
+        return studioRepository.findDTOByStudioId(studioId)
+                .orElseThrow(() -> new ResourceNotFoundException("Studio not found"));
+    }
+
+    @Transactional
     @StudioOwnerAuthorization
     public StudioResponse updateStudio(Long studioId, Long userId, String name, String description) {
 
@@ -207,4 +229,56 @@ public class StudioService {
         return studioRepository.findById(studioId)
                 .orElseThrow(() -> new IllegalArgumentException("Studio not found"));
     }
+
+    @StudioOwnerAuthorization
+    public void deleteStudio(Long studioId, Long userId) {
+        List<StudioCharacter> characters = characterRepository.findByStudioId(studioId);
+        for (StudioCharacter character : characters) {
+            if (character.getImageUrl() != null) {
+                String imageKey = character.getImageUrl().substring(character.getImageUrl().lastIndexOf('/') + 1);
+                amazonS3.deleteObject(new DeleteObjectRequest(bucket, imageKey));
+            }
+            characterRepository.delete(character);
+        }
+        studioRepository.deleteById(studioId);  // 관련된 모든 엔티티가 하드 딜리트
+    }
+
+    // 스튜디오 가입 신청 로직
+    public void joinRequest(Long studioId, Long userId) {
+        User user = userService.findUserById(userId);
+        Studio studio = findByStudioId(studioId);
+
+        if (studio.getName().equals("private")) {
+            throw new IllegalArgumentException("개인 스튜디오 가입 불가");
+        }
+
+        StudioUser studioUser = StudioUser.builder()
+                .createdAt(LocalDateTime.now())
+                .user(user)
+                .studio(studio)
+                .role(Role.ROLE_REQUESTER)
+                .build();
+
+        studioUserRepository.save(studioUser);
+    }
+
+    // 스튜디오 가입신청 수락 로직
+    @StudioOwnerAuthorization
+    public void acceptRequest(Long studioId, Long userId, Long memberId, boolean result) {
+        StudioUser studioUser = studioUserRepository.findByStudio_StudioIdAndUser_UserId(studioId, memberId)
+                .orElseThrow(() -> new ResourceNotFoundException("회원 가입 신청 내역 없음"));
+
+        if (!studioUser.getRole().equals(Role.ROLE_REQUESTER)) {
+            throw new ResourceNotFoundException("회원 가입 신청 내역 없음");
+        }
+        if (result) {
+            studioUser.updateRole(Role.ROLE_MEMBER);
+            studioUserRepository.save(studioUser);
+        } else {
+            // 삭제 연산...
+            studioUserRepository.delete(studioUser);
+        }
+
+    }
+
 }

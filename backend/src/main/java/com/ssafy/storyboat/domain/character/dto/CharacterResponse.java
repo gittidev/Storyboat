@@ -12,11 +12,13 @@ public class CharacterResponse {
     private String name;
     private String description;
     private String imageUrl;
+    private String tags;
 
-    public CharacterResponse(Long id, String name, String description, String imageUrl) {
+    public CharacterResponse(Long id, String name, String description, String imageUrl, String tags) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.imageUrl = imageUrl;
+        this.tags = tags;
     }
 }
