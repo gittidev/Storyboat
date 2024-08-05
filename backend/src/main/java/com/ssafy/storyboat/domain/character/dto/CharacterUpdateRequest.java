@@ -14,10 +14,12 @@ import org.springframework.web.multipart.MultipartFile;
 public class CharacterUpdateRequest {
     private String name;
     private String description;
+    private String tags;
 
-    public CharacterUpdateRequest(String name, String description) {
+    public CharacterUpdateRequest(String name, String description, String tags) {
         this.name = name;
         this.description = description;
+        this.tags = tags;
     }
 }
 

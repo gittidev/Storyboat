@@ -25,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -60,15 +61,15 @@ public class CharacterCommandService {
     @Transactional
     @StudioWriteAuthorization
     public void createCharacter(Long studioId, Long userId, CharacterCreateRequest characterCreateRequest, MultipartFile file) {
-        String imageUrl = uploadFile(file);
-
         Studio studio = studioRepository.findById(studioId)
                 .orElseThrow(() -> new ForbiddenException("없는 스튜디오 입니다."));
 
+        String imageUrl = uploadFile(file);
         StudioCharacter studioCharacter = StudioCharacter.builder()
                 .studio(studio)
                 .name(characterCreateRequest.getName())
                 .description(characterCreateRequest.getDescription())
+                .tags(characterCreateRequest.getTags())
                 .imageUrl(imageUrl)
                 .build();
 

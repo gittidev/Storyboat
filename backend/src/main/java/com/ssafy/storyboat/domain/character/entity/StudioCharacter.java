@@ -28,6 +28,8 @@ public class StudioCharacter {
 
     private String description;
 
+    private String tags;
+
     @Column(name = "image_url")
     private String imageUrl;
 
@@ -49,5 +51,6 @@ public class StudioCharacter {
         this.name = studioCharacter.name;
         this.description = studioCharacter.description;
         this.imageUrl = studioCharacter.imageUrl;
+        this.tags = studioCharacter.tags;
     }
 }

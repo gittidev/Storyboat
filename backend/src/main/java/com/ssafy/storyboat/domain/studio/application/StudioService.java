@@ -1,5 +1,7 @@
 package com.ssafy.storyboat.domain.studio.application;
 
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.ssafy.storyboat.common.auth.dto.CustomOAuth2User;
 import com.ssafy.storyboat.common.dto.ApiResponse;
 import com.ssafy.storyboat.common.dto.Role;
@@ -7,8 +9,13 @@ import com.ssafy.storyboat.common.exception.ConflictException;
 import com.ssafy.storyboat.common.exception.ForbiddenException;
 import com.ssafy.storyboat.common.exception.ResourceNotFoundException;
 import com.ssafy.storyboat.common.exception.UnauthorizedException;
+import com.ssafy.storyboat.domain.character.application.CharacterCommandService;
+import com.ssafy.storyboat.domain.character.application.CharacterQueryService;
+import com.ssafy.storyboat.domain.character.entity.StudioCharacter;
+import com.ssafy.storyboat.domain.character.repository.CharacterRepository;
 import com.ssafy.storyboat.domain.studio.application.authorization.StudioOwnerAuthorization;
 import com.ssafy.storyboat.domain.studio.application.authorization.StudioReadAuthorization;
+import com.ssafy.storyboat.domain.studio.application.authorization.StudioWriteAuthorization;
 import com.ssafy.storyboat.domain.studio.dto.StudioMemberFindAllResponse;
 import com.ssafy.storyboat.domain.studio.dto.StudioResponse;
 import com.ssafy.storyboat.domain.studio.entity.Studio;
@@ -24,6 +31,7 @@ import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.PersistenceException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,12 +44,13 @@ import java.util.List;
 @Slf4j
 public class StudioService {
 
-    private final UserService userService;
     private final StudioRepository studioRepository;
     private final EntityManagerFactory entityManagerFactory;
-    private final UserRepository userRepository;
     private final StudioUserRepository studioUserRepository;
-
+    private final AmazonS3 amazonS3;
+    private final CharacterRepository characterRepository;
+    @Value("${cloud.aws.s3.bucket}")
+    private String bucket;
 
     @Transactional(readOnly = true)
     public StudioUser isCharacterSendAuthorized(Long studioId, Long userId, Long targetStudioId) {
@@ -210,6 +219,14 @@ public class StudioService {
 
     @StudioOwnerAuthorization
     public void deleteStudio(Long studioId, Long userId) {
+        List<StudioCharacter> characters = characterRepository.findByStudioId(studioId);
+        for (StudioCharacter character : characters) {
+            if (character.getImageUrl() != null) {
+                String imageKey = character.getImageUrl().substring(character.getImageUrl().lastIndexOf('/') + 1);
+                amazonS3.deleteObject(new DeleteObjectRequest(bucket, imageKey));
+            }
+            characterRepository.delete(character);
+        }
         studioRepository.deleteById(studioId);  // 관련된 모든 엔티티가 하드 딜리트
     }
 }

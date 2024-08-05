@@ -11,9 +11,11 @@ import org.springframework.web.multipart.MultipartFile;
 public class CharacterCreateRequest {
     private String name;
     private String description;
+    private String tags;
 
-    public CharacterCreateRequest(String name, String description) {
+    public CharacterCreateRequest(String name, String description, String tags) {
         this.name = name;
         this.description = description;
+        this.tags = tags;
     }
 }

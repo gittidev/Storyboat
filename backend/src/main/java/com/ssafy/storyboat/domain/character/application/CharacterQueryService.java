@@ -24,6 +24,7 @@ public class CharacterQueryService {
                         .name(character.getName())
                         .description(character.getDescription())
                         .imageUrl(character.getImageUrl())
+                        .tags(character.getTags())
                         .build())
                 .collect(Collectors.toList());
     }
