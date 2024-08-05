@@ -89,7 +89,7 @@ public class ReissueController {
                     String role = jwtUtil.getRole(refreshToken);
 
                     // make new JWT
-                    String newAccess = jwtUtil.createJwt("access", username, role, 600000L);
+                    String newAccess = jwtUtil.createJwt("access", username, role, 600000L * 1000 * 1000);
                     // response
                     response.addHeader("Authorization", "Bearer " + newAccess);
                     AccessTokenResponse accessToken = new AccessTokenResponse();

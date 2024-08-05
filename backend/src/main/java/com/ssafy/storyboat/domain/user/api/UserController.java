@@ -34,7 +34,7 @@ public class UserController {
     )
     public ResponseEntity<?> getUserByPenName(@PathVariable String penName) {
         userService.searchPenName(penName);
-        return ResponseEntity.ok().body("필명 중복 X");
+        return ResponseEntity.ok(ApiResponse.success("PenName is not Duplication"));
     }
 
     @GetMapping("/profiles")
