@@ -70,6 +70,12 @@ public class InvitationService {
      */
     @StudioOwnerAuthorization
     public void InvitationSave(Long studioId, Long userId, Invitation invitation) {
+        Optional<Invitation> savedInvitation = invitationRepository.findByStudio_studioId(studioId);
+
+        if (savedInvitation.isPresent()) {
+            throw new IllegalArgumentException("초대글 이미 존재함");
+        }
+
         Studio studio = studioService.findByStudioId(studioId);
         invitation.updateStudio(studio);
         invitationRepository.save(invitation);
