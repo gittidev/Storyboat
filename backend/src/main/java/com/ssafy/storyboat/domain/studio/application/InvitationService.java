@@ -77,6 +77,11 @@ public class InvitationService {
         }
 
         Studio studio = studioService.findByStudioId(studioId);
+
+        if (studio.getName().equals("private")) {
+            throw new IllegalArgumentException("개인 스튜디오 모집글 작성 X");
+        }
+
         invitation.updateStudio(studio);
         invitationRepository.save(invitation);
     }
