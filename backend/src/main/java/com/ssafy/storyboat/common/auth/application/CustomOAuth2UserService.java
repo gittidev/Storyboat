@@ -75,24 +75,28 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                     .getSingleResult();
 
             log.info(queriedUser.toString());
-
-            // 로그인 로직 (사용자 정보 처리 등)
-            OAuth2UserDTO userDTO = new OAuth2UserDTO();
+            OAuth2UserDTO userDTO = new OAuth2UserDTO();;
             userDTO.setName(name);
             userDTO.setUsername(providerId + " " + provider);
             userDTO.setRole("ROLE_USER");
-            userDTO.setJoinStatus(false);
-            log.info("로그인={}", userDTO);
-
+            if (queriedUser.getIsDeleted()) {
+                queriedUser.revokeUser();
+                userDTO.setJoinStatus(CustomJoinStatus.REVOKED);
+                log.info("유저 복구={}", userDTO);
+            } else {
+                // 로그인 로직 (사용자 정보 처리 등)
+                userDTO.setJoinStatus(CustomJoinStatus.JOINED);
+                log.info("로그인={}", userDTO);
+            }
             entityManager.getTransaction().commit();
 
             return new CustomOAuth2User(userDTO);
 
         // 회원가입 로직 -> 조회시 반환값 없을때
-        } catch (NoResultException e) {
+            } catch (NoResultException e) {
 
-            try {
-                UUID customUUID = generateUUIDFromString(currentTime + name);
+                try {
+                    UUID customUUID = generateUUIDFromString(currentTime + name);
 
                 // 1. User 생성해 persist
                 User joinUser = User.builder()
@@ -149,7 +153,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                 OAuth2UserDTO userDTO = new OAuth2UserDTO();
                 userDTO.setName(name);
                 userDTO.setUsername(providerId + " " + provider);
-                userDTO.setJoinStatus(true);
+                userDTO.setJoinStatus(CustomJoinStatus.JOINED);
                 userDTO.setRole("ROLE_USER");
 
                 log.info("회원가입={}", joinUser.getEmail());

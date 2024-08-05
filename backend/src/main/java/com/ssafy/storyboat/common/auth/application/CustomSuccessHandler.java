@@ -47,15 +47,9 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         // Access Token과 Refresh Token을 쿠키에 추가
         response.addCookie(createCookie("refresh", refreshToken));
 
-        // 성공 후 리디렉션
-        if (customUserDetails.getJoinStatus()) {
-            // 회원 가입시 보낼 경로
-            response.sendRedirect("http://localhost:5173/login/loading");
-        } else {
-            // 로그인 시 보낼 경로
-            response.sendRedirect("http://localhost:5173/login/loading");
-        }
-
+        // 로그인/회원가입 성공 시 리다이렉트
+        response.addHeader("SignupState",customUserDetails.getJoinStatus() + "");
+        response.sendRedirect("http://localhost:5173/login/loading");
     }
 
     private void saveRefreshToken(String userName, String refreshToken) {

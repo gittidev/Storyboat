@@ -66,7 +66,7 @@ public class UserController {
             description = "현재 로그인한 사용자의 계정을 삭제합니다."
     )
     public ResponseEntity<?> deleteUser(@AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
-//        userService.deleteUser(customOAuth2User.getUserId()); // 사용자 삭제 서비스 호출 추가
+        userService.deleteUser(customOAuth2User.getUserId()); // 사용자 삭제 서비스 호출 추가
         return ResponseEntity.ok(ApiResponse.success("User deleted successfully"));
     }
 }
