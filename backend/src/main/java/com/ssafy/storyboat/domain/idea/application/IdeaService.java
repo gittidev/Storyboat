@@ -1,6 +1,7 @@
 package com.ssafy.storyboat.domain.idea.application;
 
 import com.ssafy.storyboat.common.exception.ForbiddenException;
+import com.ssafy.storyboat.common.exception.ResourceNotFoundException;
 import com.ssafy.storyboat.domain.idea.dto.IdeaCreateRequest;
 import com.ssafy.storyboat.domain.idea.dto.IdeaResponse;
 import com.ssafy.storyboat.domain.idea.dto.IdeaUpdateRequest;
@@ -32,7 +33,7 @@ public class IdeaService {
     @StudioWriteAuthorization
     public void createIdea(Long studioId, Long userId, IdeaCreateRequest ideaCreateRequest) {
         Studio studio = studioRepository.findById(studioId)
-                .orElseThrow(() -> new ForbiddenException("없는 스튜디오 입니다."));
+                .orElseThrow(() -> new ResourceNotFoundException("Studio 없음"));
         StudioIdea studioIdea = StudioIdea.builder()
                 .studio(studio)
                 .title(ideaCreateRequest.getTitle())
@@ -44,14 +45,14 @@ public class IdeaService {
     @StudioReadAuthorization
     public IdeaResponse viewIdea(Long studioId, Long userId, Long ideaId) {
         StudioIdea studioIdea = studioIdeaRepository.findById(ideaId)
-                .orElseThrow(() -> new ForbiddenException("없는 아이디어 입니다."));
+                .orElseThrow(() -> new ResourceNotFoundException("아이디어 존재하지 않음"));
         return new IdeaResponse(studioIdea.getStudioIdeaId(), studioIdea.getTitle(), studioIdea.getContent());
     }
 
     @StudioWriteAuthorization
     public IdeaResponse updateIdea(Long studioId, Long userId, Long ideaId, IdeaUpdateRequest ideaUpdateRequest) {
         StudioIdea studioIdea = studioIdeaRepository.findById(ideaId)
-                .orElseThrow(() -> new ForbiddenException("없는 아이디어 입니다."));
+                .orElseThrow(() -> new ForbiddenException("아이디어 존재하지 않음"));
         studioIdea.update(ideaUpdateRequest.getTitle(), ideaUpdateRequest.getContent());
         studioIdeaRepository.save(studioIdea);
 
@@ -61,7 +62,7 @@ public class IdeaService {
     @StudioWriteAuthorization
     public void deleteIdea(Long studioId, Long userId, Long ideaId) {
         StudioIdea studioIdea = studioIdeaRepository.findById(ideaId)
-                .orElseThrow(() -> new ForbiddenException("없는 아이디어 입니다."));
+                .orElseThrow(() -> new ForbiddenException("아이디어 존재하지 않음"));
         studioIdeaRepository.delete(studioIdea);
     }
 }

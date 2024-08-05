@@ -43,7 +43,7 @@ public class CharacterCommandService {
 
     private String uploadFile(MultipartFile file) {
         if (file.isEmpty())
-            throw new BadRequestException("업로드할 파일이 없습니다.");
+            throw new BadRequestException("업로드할 파일 없음");
         try {
             ObjectMetadata objectMetadata = new ObjectMetadata();
             objectMetadata.setContentType(file.getContentType());
@@ -54,7 +54,7 @@ public class CharacterCommandService {
             amazonS3.putObject(bucket, uniqueFileName, file.getInputStream(), objectMetadata);
             return amazonS3.getUrl(bucket, uniqueFileName).toString();
         } catch (IOException e) {
-            throw new InternalServerErrorException("S3 파일 업로드 중 오류가 발생했습니다.");
+            throw new InternalServerErrorException("S3 파일 업로드 중 오류가 발생");
         }
     }
 
@@ -62,7 +62,7 @@ public class CharacterCommandService {
     @StudioWriteAuthorization
     public void createCharacter(Long studioId, Long userId, CharacterCreateRequest characterCreateRequest, MultipartFile file) {
         Studio studio = studioRepository.findById(studioId)
-                .orElseThrow(() -> new ForbiddenException("없는 스튜디오 입니다."));
+                .orElseThrow(() -> new ResourceNotFoundException("해당 스튜디오 존재하지 않음"));
 
         String imageUrl = uploadFile(file);
         StudioCharacter studioCharacter = StudioCharacter.builder()
@@ -81,7 +81,7 @@ public class CharacterCommandService {
     public void updateCharacter(Long studioId, Long userId, Long characterId, CharacterUpdateRequest updateRequest, MultipartFile file) {
         // 엔티티 조회
         StudioCharacter character = characterRepository.findById(characterId)
-                .orElseThrow(() -> new ResourceNotFoundException("찾을 수 없는 캐릭터입니다.: " + characterId));
+                .orElseThrow(() -> new ResourceNotFoundException("찾을 수 없는 캐릭터입니다"));
 
         // 이미지가 변경된 경우
         if (file != null && !file.isEmpty()) {
@@ -114,12 +114,12 @@ public class CharacterCommandService {
     public void deleteCharacter(Long studioId, Long userId, Long characterId) {
         // 엔티티가 존재하는지 확인
         if (!characterRepository.existsById(characterId)) {
-            throw new ResourceNotFoundException("찾을 수 없는 캐릭터입니다.: " + characterId);
+            throw new ResourceNotFoundException("캐릭터 존재하지 않음");
         }
 
         // 스튜디오 캐릭터 엔티티 조회
         StudioCharacter character = characterRepository.findById(characterId)
-                .orElseThrow(() -> new ResourceNotFoundException("찾을 수 없는 캐릭터입니다.: " + characterId));
+                .orElseThrow(() -> new ResourceNotFoundException("캐릭터 존재하지 않음"));
 
         // S3에서 이미지 삭제
         if (character.getImageUrl() != null) {
@@ -134,7 +134,7 @@ public class CharacterCommandService {
     public void exportCharacter(Long studioId, Long userId, Long targetStudioId, Long characterId) {
         // 캐릭터가 존재하는지 확인
         StudioCharacter character = characterRepository.findById(characterId)
-                .orElseThrow(() -> new ResourceNotFoundException("찾을 수 없는 캐릭터입니다."));
+                .orElseThrow(() -> new ResourceNotFoundException("캐릭터 존재하지 않음"));
 
         StudioUser targetStudioUser = studioService.isCharacterSendAuthorized(studioId, userId, targetStudioId);
 

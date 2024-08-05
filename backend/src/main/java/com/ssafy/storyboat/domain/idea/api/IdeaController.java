@@ -36,7 +36,7 @@ public class IdeaController {
             @AuthenticationPrincipal CustomOAuth2User customOAuth2User,
             @PathVariable Long studioId) {
         List<?> ideas = ideaService.getIdeas(studioId, customOAuth2User.getUserId());
-        return ResponseEntity.ok().body(ApiResponse.success(ideas, "Ideas retrieved successfully"));
+        return ResponseEntity.ok().body(ApiResponse.success(ideas, "아이디어 목록 조회 성공"));
     }
 
     @PostMapping
@@ -49,7 +49,7 @@ public class IdeaController {
             @PathVariable Long studioId,
             @RequestBody IdeaCreateRequest ideaCreateRequest) {
         ideaService.createIdea(studioId, customOAuth2User.getUserId(), ideaCreateRequest);
-        return ResponseEntity.ok().body(ApiResponse.success("Idea created successfully"));
+        return ResponseEntity.ok().body(ApiResponse.success("아이디어 생성 성공"));
     }
 
     @GetMapping("/{ideaId}")
@@ -62,7 +62,7 @@ public class IdeaController {
             @PathVariable Long studioId,
             @PathVariable Long ideaId) {
         IdeaResponse ideaResponse = ideaService.viewIdea(studioId, customOAuth2User.getUserId(), ideaId);
-        return ResponseEntity.ok().body(ApiResponse.success(ideaResponse, "Idea view successfully"));
+        return ResponseEntity.ok().body(ApiResponse.success(ideaResponse, "아이디어 조회 성공"));
     }
 
     @PutMapping("/{ideaId}")
@@ -76,7 +76,7 @@ public class IdeaController {
             @PathVariable Long ideaId,
             @RequestBody IdeaUpdateRequest ideaUpdateRequest) {
         IdeaResponse ideaResponse = ideaService.updateIdea(studioId, customOAuth2User.getUserId(), ideaId, ideaUpdateRequest);
-        return ResponseEntity.ok().body(ApiResponse.success(ideaResponse, "Idea updated successfully"));
+        return ResponseEntity.ok().body(ApiResponse.success(ideaResponse, "아이디어 수정 성공"));
     }
 
     @DeleteMapping("/{ideaId}")
@@ -89,6 +89,6 @@ public class IdeaController {
             @PathVariable Long studioId,
             @PathVariable Long ideaId) {
         ideaService.deleteIdea(studioId, customOAuth2User.getUserId(), ideaId);
-        return ResponseEntity.ok().body(ApiResponse.success("Idea deleted successfully"));
+        return ResponseEntity.ok().body(ApiResponse.success("아이디어 삭제 성공"));
     }
 }

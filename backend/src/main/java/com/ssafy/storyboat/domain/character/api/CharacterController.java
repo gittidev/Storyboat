@@ -48,7 +48,7 @@ public class CharacterController {
             CharacterCreateRequest characterCreateRequest,
             @RequestPart MultipartFile file) {
         characterCommandService.createCharacter(studioId, customOAuth2User.getUserId(), characterCreateRequest, file);
-        return ApiResponse.success("Create Character Success");
+        return ApiResponse.success("캐릭터 생성 성공");
     }
 
     @GetMapping
@@ -73,10 +73,10 @@ public class CharacterController {
             @PathVariable Long studioId,
             @PathVariable Long characterId) {
         characterCommandService.deleteCharacter(studioId, customOAuth2User.getUserId(), characterId);
-        return ApiResponse.success("Delete Character Success");
+        return ApiResponse.success("캐릭터 삭제 성공");
     }
 
-    @PostMapping("/{characterId}")
+    @PutMapping("/{characterId}")
     @Operation(
             summary = "Update a character",
             description = "지정된 캐릭터의 세부 정보를 업데이트합니다.",
@@ -95,10 +95,10 @@ public class CharacterController {
             CharacterUpdateRequest characterUpdateRequest,
             @RequestPart MultipartFile file) {
         characterCommandService.updateCharacter(studioId, customOAuth2User.getUserId(), characterId, characterUpdateRequest, file);
-        return ApiResponse.success("Update Character Success");
+        return ApiResponse.success("캐릭터 수정 성공");
     }
 
-    @PostMapping("/export/{characterId}")
+    @PostMapping("/{characterId}/{targetStudioId}")
     @Operation(
             summary = "Export a character",
             description = "캐릭터를 다른 스튜디오로 내보냅니다."
@@ -107,8 +107,8 @@ public class CharacterController {
             @AuthenticationPrincipal CustomOAuth2User customOAuth2User,
             @PathVariable Long studioId,
             @PathVariable Long characterId,
-            @RequestParam Long targetStudioId) {
+            @PathVariable Long targetStudioId) {
         characterCommandService.exportCharacter(studioId, customOAuth2User.getUserId(), targetStudioId, characterId);
-        return ApiResponse.success("Export Character Success");
+        return ApiResponse.success("캐릭터 업로드 성공");
     }
 }

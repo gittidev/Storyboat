@@ -39,7 +39,7 @@ public class StudioController {
             @AuthenticationPrincipal CustomOAuth2User customOAuth2User,
             @RequestBody StudioCreateRequest studioCreateRequest) {
         studioService.createStudio(customOAuth2User, studioCreateRequest.getName(), studioCreateRequest.getDescription());
-        return ResponseEntity.ok().body(ApiResponse.success("Studio created successfully"));
+        return ResponseEntity.ok().body(ApiResponse.success("스튜디오 생성 성공"));
     }
 
     @GetMapping
@@ -49,7 +49,7 @@ public class StudioController {
     )
     public ResponseEntity<?> getStudios(@AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
         List<StudioResponse> studios = studioService.getStudios(customOAuth2User);
-        return ResponseEntity.ok().body(ApiResponse.success(studios, "Studios retrieved successfully"));
+        return ResponseEntity.ok().body(ApiResponse.success(studios, "참여 스튜디오 목록 조회 성공"));
     }
 
     @PutMapping("/{studioId}")
@@ -62,7 +62,7 @@ public class StudioController {
             @PathVariable("studioId") Long studioId,
             @RequestBody StudioUpdateRequest studioUpdateRequest) {
         StudioResponse studioResponse = studioService.updateStudio(studioId, customOAuth2User.getUserId(), studioUpdateRequest.getName(), studioUpdateRequest.getDescription());
-        return ResponseEntity.ok().body(ApiResponse.success(studioResponse, "Studio updated successfully"));
+        return ResponseEntity.ok().body(ApiResponse.success(studioResponse, "스튜디오 설정 변경 성공"));
     }
 
     @GetMapping("/{studioId}")
@@ -72,7 +72,7 @@ public class StudioController {
     )
     public ResponseEntity<?> getStudio(@AuthenticationPrincipal CustomOAuth2User customOAuth2User, @PathVariable Long studioId) {
         StudioResponse studio = studioService.getStudio(studioId, customOAuth2User.getUserId());
-        return ResponseEntity.ok().body(ApiResponse.success(studio, "Studios retrieved successfully"));
+        return ResponseEntity.ok().body(ApiResponse.success(studio, "스튜디오 상세 조회 성공"));
     }
 
     @GetMapping("/{studioId}/members")
@@ -85,7 +85,7 @@ public class StudioController {
     @DeleteMapping("/{studioId}")
     public ResponseEntity<?> deleteStudio(@AuthenticationPrincipal CustomOAuth2User customOAuth2User, @PathVariable Long studioId) {
         studioService.deleteStudio(studioId, customOAuth2User.getUserId());
-        return ResponseEntity.ok().body(ApiResponse.success("Studio deleted successfully"));
+        return ResponseEntity.ok().body(ApiResponse.success("스튜디오 삭제 성공"));
     }
 
     // 테스트 필요
@@ -116,7 +116,7 @@ public class StudioController {
     @DeleteMapping("/{studioId}/members")
     public ResponseEntity<?> leaveStudio(@AuthenticationPrincipal CustomOAuth2User customOAuth2User, @PathVariable Long studioId) {
         studioService.leaveStudio(studioId,  customOAuth2User.getUserId());
-        return ResponseEntity.ok().body(ApiResponse.success(customOAuth2User.getName() +": leaveStudio successfully"));
+        return ResponseEntity.ok().body(ApiResponse.success("스튜디오 탈퇴 성공"));
     }
 
     @PostMapping("/{studioId}/join-requests")

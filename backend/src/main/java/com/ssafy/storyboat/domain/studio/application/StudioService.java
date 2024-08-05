@@ -5,10 +5,7 @@ import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.ssafy.storyboat.common.auth.dto.CustomOAuth2User;
 import com.ssafy.storyboat.common.dto.ApiResponse;
 import com.ssafy.storyboat.common.dto.Role;
-import com.ssafy.storyboat.common.exception.ConflictException;
-import com.ssafy.storyboat.common.exception.ForbiddenException;
-import com.ssafy.storyboat.common.exception.ResourceNotFoundException;
-import com.ssafy.storyboat.common.exception.UnauthorizedException;
+import com.ssafy.storyboat.common.exception.*;
 import com.ssafy.storyboat.domain.character.application.CharacterCommandService;
 import com.ssafy.storyboat.domain.character.application.CharacterQueryService;
 import com.ssafy.storyboat.domain.character.entity.StudioCharacter;
@@ -112,7 +109,7 @@ public class StudioService {
             Long userId = customOAuth2User.getUserId();
             User user = entityManager.find(User.class, userId);
             if (user == null) {
-                throw new UnauthorizedException("User not found");
+                throw new UnauthorizedException("로그인 유저 정보 조회 실패");
             }
 
             // 2. 개인 스튜디오 생성해 영속
@@ -140,6 +137,7 @@ public class StudioService {
             if (entityManager.getTransaction().isActive()) {
                 entityManager.getTransaction().rollback();
             }
+            throw new InternalServerErrorException("DB 저장 실패");
         }
     }
 
@@ -153,7 +151,7 @@ public class StudioService {
     @StudioReadAuthorization
     public StudioResponse getStudio(Long studioId, Long userId) {
         return studioRepository.findDTOByStudioId(studioId)
-                .orElseThrow(() -> new ResourceNotFoundException("Studio not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("해당 스튜디오 존재하지 않음"));
     }
 
     @Transactional
@@ -162,7 +160,7 @@ public class StudioService {
 
         // 1. 스튜디오 조회 및 수정
         Studio studio = studioRepository.findById(studioId)
-                .orElseThrow(() -> new ForbiddenException("Studio not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("해당 스튜디오 존재하지 않음"));
 
         studio.updateStudioName(name);
         studio.updateStudioDescription(description);
@@ -233,14 +231,14 @@ public class StudioService {
 
     @StudioOwnerAuthorization
     public void deleteStudio(Long studioId, Long userId) {
-        List<StudioCharacter> characters = characterRepository.findByStudioId(studioId);
-        for (StudioCharacter character : characters) {
-            if (character.getImageUrl() != null) {
-                String imageKey = character.getImageUrl().substring(character.getImageUrl().lastIndexOf('/') + 1);
-                amazonS3.deleteObject(new DeleteObjectRequest(bucket, imageKey));
-            }
-            characterRepository.delete(character);
-        }
+//        List<StudioCharacter> characters = characterRepository.findByStudioId(studioId);
+//        for (StudioCharacter character : characters) {
+//            if (character.getImageUrl() != null) {
+//                String imageKey = character.getImageUrl().substring(character.getImageUrl().lastIndexOf('/') + 1);
+//                amazonS3.deleteObject(new DeleteObjectRequest(bucket, imageKey));
+//            }
+//            characterRepository.delete(character);
+//        }
         studioRepository.deleteById(studioId);  // 관련된 모든 엔티티가 하드 딜리트
     }
 
@@ -290,10 +288,10 @@ public class StudioService {
 
     public void leaveStudio(Long studioId, Long userId) {
         StudioUser studioUser = studioUserRepository.findByStudio_StudioIdAndUser_UserId(studioId, userId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 유저 Studio 에 존재하지 않음"));
+                .orElseThrow(() -> new ResourceNotFoundException("해당 유저 Studio 에 존재하지 않음"));
 
         if (studioUser.getRole().equals(Role.ROLE_OWNER)) {
-            throw new ForbiddenException("OWNER 사용자는 추방할 수 없음");
+            throw new ForbiddenException("OWNER 권한은 탈퇴할 수 없음");
         }
 
         // 2. Member 추방
