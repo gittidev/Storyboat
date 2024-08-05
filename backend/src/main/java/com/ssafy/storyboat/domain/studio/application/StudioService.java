@@ -54,6 +54,7 @@ public class StudioService {
     private final StudioUserRepository studioUserRepository;
     private final AmazonS3 amazonS3;
     private final CharacterRepository characterRepository;
+    private final UserService userService;
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
