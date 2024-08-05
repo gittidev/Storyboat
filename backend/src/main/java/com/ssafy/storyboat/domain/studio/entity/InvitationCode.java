@@ -23,12 +23,12 @@ public class InvitationCode {
     private Long invitationCodeId;
 
     @OneToOne
-    @JoinColumn(name = "studio_id")
+    @JoinColumn(name = "studio_id", nullable = false)
     private Studio studio;
 
     @Column(name = "expiration_date")
     private LocalDateTime expirationDate;
 
-    @NotNull
+    @Column(name = "code", nullable = false, unique = true)
     private String code;
 }
