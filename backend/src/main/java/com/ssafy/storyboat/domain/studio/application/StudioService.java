@@ -219,5 +219,42 @@ public class StudioService {
         studioRepository.deleteById(studioId);  // 관련된 모든 엔티티가 하드 딜리트
     }
 
+    // 스튜디오 가입 신청 로직
+    public void joinRequest(Long studioId, Long userId) {
+        User user = userService.findUserById(userId);
+        Studio studio = findByStudioId(studioId);
+
+        if (studio.getName().equals("private")) {
+            throw new IllegalArgumentException("개인 스튜디오 가입 불가");
+        }
+
+        StudioUser studioUser = StudioUser.builder()
+                .createdAt(LocalDateTime.now())
+                .user(user)
+                .studio(studio)
+                .role(Role.ROLE_REQUESTER)
+                .build();
+
+        studioUserRepository.save(studioUser);
+    }
+
+    // 스튜디오 가입신청 수락 로직
+    @StudioOwnerAuthorization
+    public void acceptRequest(Long studioId, Long userId, Long memberId, boolean result) {
+        StudioUser studioUser = studioUserRepository.findByStudio_StudioIdAndUser_UserId(studioId, memberId)
+                .orElseThrow(() -> new ResourceNotFoundException("회원 가입 신청 내역 없음"));
+
+        if (!studioUser.getRole().equals(Role.ROLE_REQUESTER)) {
+            throw new ResourceNotFoundException("회원 가입 신청 내역 없음");
+        }
+        if (result) {
+            studioUser.updateRole(Role.ROLE_MEMBER);
+            studioUserRepository.save(studioUser);
+        } else {
+            // 삭제 연산...
+            studioUserRepository.delete(studioUser);
+        }
+
+    }
 
 }

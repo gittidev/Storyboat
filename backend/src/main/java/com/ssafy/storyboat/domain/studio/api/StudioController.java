@@ -103,15 +103,21 @@ public class StudioController {
         return ResponseEntity.ok().body(ApiResponse.success("Member deleted successfully"));
     }
 
-    @PostMapping("/{studio_id}/join-requests")
+    @PostMapping("/{studioId}/join-requests")
     public ResponseEntity<?> joinRequests(@AuthenticationPrincipal CustomOAuth2User customOAuth2User, @PathVariable Long studioId) {
-
+        Long userId = customOAuth2User.getUserId();
+        studioService.joinRequest(studioId, userId);
         return ResponseEntity.ok(ApiResponse.success("스튜디오 참여 신청 완료"));
     }
 
-    @PutMapping("/{studio_id}/join-requests/{request_id}")
-    public ResponseEntity<?> acceptJoinRequest(@AuthenticationPrincipal CustomOAuth2User customOAuth2User, @PathVariable Long studioId, @PathVariable Long requestId, @RequestBody JoinRequestAcceptRequest request) {
-
-        return ResponseEntity.ok(ApiResponse.success("스튜디오 참여 요청 수락 or 거절"));
+    @PutMapping("/{studioId}/join-requests/{memberId}")
+    public ResponseEntity<?> acceptJoinRequest(@AuthenticationPrincipal CustomOAuth2User customOAuth2User, @PathVariable Long studioId, @PathVariable Long memberId, @RequestBody JoinRequestAcceptRequest request) {
+        Long userId = customOAuth2User.getUserId();
+        boolean result = false;
+        if (request.equals("accept")) {
+            result = true;
+        }
+        studioService.acceptRequest(studioId, userId, memberId, result);
+        return ResponseEntity.ok(ApiResponse.success("스튜디오 참여 요청 " + (result ? "수락" : "거절")));
     }
 }

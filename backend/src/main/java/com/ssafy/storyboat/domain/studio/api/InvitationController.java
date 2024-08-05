@@ -3,12 +3,15 @@ package com.ssafy.storyboat.domain.studio.api;
 import com.ssafy.storyboat.common.auth.dto.CustomOAuth2User;
 import com.ssafy.storyboat.common.dto.ApiResponse;
 import com.ssafy.storyboat.domain.studio.application.InvitationService;
+import com.ssafy.storyboat.domain.studio.application.StudioService;
 import com.ssafy.storyboat.domain.studio.dto.InvitationFindAllResponse;
 import com.ssafy.storyboat.domain.studio.dto.InvitationFindOneResponse;
 import com.ssafy.storyboat.domain.studio.dto.InvitationSaveRequest;
 import com.ssafy.storyboat.domain.studio.entity.Invitation;
 import com.ssafy.storyboat.domain.studio.entity.InvitationCode;
+import com.ssafy.storyboat.domain.studio.entity.StudioUser;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -18,9 +21,11 @@ import java.util.List;
 @RestController
 @RequestMapping("/invitations")
 @RequiredArgsConstructor
+@Slf4j
 public class InvitationController {
 
     private final InvitationService invitationService;
+    private final StudioService studioService;
 
     /**
      * Studio 모집글 전체 조회
@@ -97,28 +102,27 @@ public class InvitationController {
         return ResponseEntity.ok().body(ApiResponse.success("모집글 삭제 성공"));
     }
 
-
     @PostMapping("/code/{studioId}")
     public ResponseEntity<?> makeInvitationCode(@AuthenticationPrincipal final CustomOAuth2User user, @PathVariable Long studioId) {
         Long userId = user.getUserId();
-
         String code = invitationService.makeInvitationCode(studioId, userId);
-        return ResponseEntity.ok(ApiResponse.success("http:localhost:8080/api/invitations/code/" + code, "모집 코드 생성 성공"));
+        return ResponseEntity.ok(ApiResponse.success("http://localhost:8080/api/invitations/code/" + code, "모집 코드 생성 성공"));
 
     }
 
-    @GetMapping("/code/{studioId")
+    @GetMapping("/code/{studioId}")
     public ResponseEntity<?> showInvitationCode(@AuthenticationPrincipal final CustomOAuth2User user, @PathVariable Long studioId) {
         Long userId = user.getUserId();
 
         InvitationCode invitationCode = invitationService.findInvitationCode(studioId, userId);
-        return ResponseEntity.ok(ApiResponse.success("http:localhost:8080/api/invitations/code/" + invitationCode.getCode(), "모집 코드 조회 성공"));
+        return ResponseEntity.ok(ApiResponse.success("http://localhost:8080/api/invitations/code/" + invitationCode.getCode(), "모집 코드 조회 성공"));
     }
 
     @DeleteMapping("/code/{studioId}")
     public ResponseEntity<?> deleteInvitationCode(@AuthenticationPrincipal final CustomOAuth2User user, @PathVariable Long studioId) {
         Long userId = user.getUserId();
         InvitationCode invitationCode = invitationService.findInvitationCode(studioId, userId);
+        log.info("invitationCodeID={}", invitationCode.getInvitationCodeId());
         invitationService.deleteInvitationCode(studioId, userId, invitationCode.getInvitationCodeId());
         return ResponseEntity.ok(ApiResponse.success("초대 코드 삭제 성공"));
     }
