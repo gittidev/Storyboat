@@ -103,7 +103,7 @@ public class CharacterCommandService {
         }
 
         // 이름과 설명 업데이트
-        character.updateNameAndDescription(updateRequest.getName(), updateRequest.getDescription());
+        character.updateInfo(updateRequest.getName(), updateRequest.getDescription(), updateRequest.getTags());
 
         // 데이터베이스에 저장
         characterRepository.save(character);

@@ -8,6 +8,8 @@ import com.ssafy.storyboat.domain.character.dto.CharacterCreateRequest;
 import com.ssafy.storyboat.domain.character.dto.CharacterUpdateRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,7 +33,14 @@ public class CharacterController {
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(
             summary = "Create a new character",
-            description = "지정된 스튜디오에 새로운 캐릭터를 생성합니다."
+            description = "지정된 스튜디오에 새로운 캐릭터를 생성합니다.",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+            description = "캐릭터 생성 요청",
+            required = true,
+            content = @Content(
+                    schema = @Schema(implementation = CharacterCreateRequest.class)
+            )
+    )
     )
     public ApiResponse<?> createCharacter(
             @AuthenticationPrincipal CustomOAuth2User customOAuth2User,
@@ -70,13 +79,20 @@ public class CharacterController {
     @PostMapping("/{characterId}")
     @Operation(
             summary = "Update a character",
-            description = "지정된 캐릭터의 세부 정보를 업데이트합니다."
+            description = "지정된 캐릭터의 세부 정보를 업데이트합니다.",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "캐릭터 업데이트 요청",
+                    required = true,
+                    content = @Content(
+                            schema = @Schema(implementation = CharacterUpdateRequest.class)
+                    )
+            )
     )
     public ApiResponse<?> updateCharacter(
             @AuthenticationPrincipal CustomOAuth2User customOAuth2User,
             @PathVariable Long studioId,
             @PathVariable Long characterId,
-            @RequestPart CharacterUpdateRequest characterUpdateRequest,
+            CharacterUpdateRequest characterUpdateRequest,
             @RequestPart MultipartFile file) {
         characterCommandService.updateCharacter(studioId, customOAuth2User.getUserId(), characterId, characterUpdateRequest, file);
         return ApiResponse.success("Update Character Success");

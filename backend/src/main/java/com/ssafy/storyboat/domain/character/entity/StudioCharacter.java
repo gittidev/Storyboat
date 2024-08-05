@@ -37,9 +37,10 @@ public class StudioCharacter {
         this.imageUrl = imageUrl;
     }
 
-    public void updateNameAndDescription(String name, String description) {
+    public void updateInfo(String name, String description, String tags) {
         this.name = name;
         this.description = description;
+        this.tags = tags;
     }
 
     public void copyStudio(Studio studio) {
