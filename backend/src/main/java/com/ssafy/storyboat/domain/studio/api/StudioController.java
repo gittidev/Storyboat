@@ -113,6 +113,12 @@ public class StudioController {
         return ResponseEntity.ok().body(ApiResponse.success("Member deleted successfully"));
     }
 
+    @DeleteMapping("/{studioId}/members")
+    public ResponseEntity<?> leaveStudio(@AuthenticationPrincipal CustomOAuth2User customOAuth2User, @PathVariable Long studioId) {
+        studioService.leaveStudio(studioId,  customOAuth2User.getUserId());
+        return ResponseEntity.ok().body(ApiResponse.success(customOAuth2User.getName() +": leaveStudio successfully"));
+    }
+
     @PostMapping("/{studioId}/join-requests")
     public ResponseEntity<?> joinRequests(@AuthenticationPrincipal CustomOAuth2User customOAuth2User, @PathVariable Long studioId) {
         Long userId = customOAuth2User.getUserId();
