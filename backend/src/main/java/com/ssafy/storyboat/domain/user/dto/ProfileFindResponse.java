@@ -1,6 +1,9 @@
 package com.ssafy.storyboat.domain.user.dto;
 
+<<<<<<< Updated upstream
 import com.ssafy.storyboat.domain.studio.dto.StudioResponse;
+=======
+>>>>>>> Stashed changes
 import com.ssafy.storyboat.domain.studio.entity.Studio;
 import com.ssafy.storyboat.domain.user.entity.Profile;
 import lombok.Getter;

@@ -134,6 +134,13 @@ public class StudioService {
     }
 
     @Transactional
+    @StudioReadAuthorization
+    public StudioResponse getStudio(Long studioId, Long userId) {
+        return studioRepository.findDTOByStudioId(studioId)
+                .orElseThrow(() -> new ResourceNotFoundException("Studio not found"));
+    }
+
+    @Transactional
     @StudioOwnerAuthorization
     public StudioResponse updateStudio(Long studioId, Long userId, String name, String description) {
 

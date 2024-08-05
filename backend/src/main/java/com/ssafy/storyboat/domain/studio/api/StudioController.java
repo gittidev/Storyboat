@@ -65,6 +65,16 @@ public class StudioController {
         return ResponseEntity.ok().body(ApiResponse.success(studioResponse, "Studio updated successfully"));
     }
 
+    @GetMapping("/{studioId}")
+    @Operation(
+            summary = "스튜디오 상세 조회",
+            description = "스튜디오 ID로 특정 스튜디오를 조회합니다."
+    )
+    public ResponseEntity<?> getStudio(@AuthenticationPrincipal CustomOAuth2User customOAuth2User, @PathVariable Long studioId) {
+        StudioResponse studio = studioService.getStudio(studioId, customOAuth2User.getUserId());
+        return ResponseEntity.ok().body(ApiResponse.success(studio, "Studios retrieved successfully"));
+    }
+
     @GetMapping("/{studioId}/members")
     public ResponseEntity<?> getStudioMembers(@AuthenticationPrincipal CustomOAuth2User customOAuth2User, @PathVariable("studioId") Long studioId) {
         Long userId = customOAuth2User.getUserId();
