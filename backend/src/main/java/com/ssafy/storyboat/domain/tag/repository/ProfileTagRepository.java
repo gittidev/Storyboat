@@ -11,4 +11,6 @@ public interface ProfileTagRepository extends JpaRepository<ProfileTag, Long> {
     @Modifying
     @Query("DELETE FROM ProfileTag pt WHERE pt.profile.profileId = :profileId")
     void deleteByProfileId(@Param("profileId") Long profileId);
+
+
 }

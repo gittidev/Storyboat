@@ -1,31 +1,27 @@
 package com.ssafy.storyboat.domain.user.application;
 
-import com.ssafy.storyboat.common.dto.ApiResponse;
 import com.ssafy.storyboat.common.dto.Role;
 import com.ssafy.storyboat.common.exception.ConflictException;
 import com.ssafy.storyboat.common.exception.ForbiddenException;
 import com.ssafy.storyboat.common.exception.ResourceNotFoundException;
 import com.ssafy.storyboat.common.exception.UnauthorizedException;
 import com.ssafy.storyboat.domain.studio.dto.StudioResponse;
-import com.ssafy.storyboat.domain.studio.entity.Studio;
-import com.ssafy.storyboat.domain.studio.entity.StudioUser;
 import com.ssafy.storyboat.domain.studio.repository.StudioUserRepository;
+import com.ssafy.storyboat.domain.tag.application.TagService;
 import com.ssafy.storyboat.domain.tag.entity.ProfileTag;
 import com.ssafy.storyboat.domain.tag.entity.Tag;
 import com.ssafy.storyboat.domain.tag.repository.ProfileTagRepository;
 import com.ssafy.storyboat.domain.tag.repository.TagRepository;
-import com.ssafy.storyboat.domain.user.dto.ProfileFindResponse;
-import com.ssafy.storyboat.domain.user.dto.UserFindResponse;
 import com.ssafy.storyboat.domain.user.dto.ProfileUpdateRequest;
+import com.ssafy.storyboat.domain.user.dto.UserProfileFindDTO;
 import com.ssafy.storyboat.domain.user.entity.Profile;
 import com.ssafy.storyboat.domain.user.entity.User;
 import com.ssafy.storyboat.domain.user.repository.ProfileRepository;
 import com.ssafy.storyboat.domain.user.repository.UserRepository;
-import org.springframework.data.crossstore.ChangeSetPersister;
-import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,6 +37,7 @@ public class UserService {
     private final ProfileTagRepository profileTagRepository;
     private final TagRepository tagRepository;
     private final StudioUserRepository studioUserRepository;
+    private final TagService tagService;
 
     @Transactional(readOnly = true)
     public void searchPenName(String penName) {
@@ -127,5 +124,21 @@ public class UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
         userRepository.deleteById(userId);
+    }
+
+    @Transactional(readOnly = true)
+    public UserProfileFindDTO findUser(Long userId) {
+        UserProfileFindDTO result = userRepository.findUserProfileByUserId(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        if (result.getIsDelete()) {
+            throw new ConflictException("User is deleted");
+        }
+
+        Profile profile = profileRepository.findByUser_userId(userId);
+        List<Tag> tags = tagService.findTagByProfileId(profile.getProfileId());
+
+        result.setTags(tags);
+        return result;
     }
 }

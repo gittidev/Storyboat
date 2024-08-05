@@ -7,11 +7,20 @@ import java.util.List;
 
 @Data
 public class UserProfileFindDTO {
-    private String userId;
+    private Long userId;
     private String email;
     private Boolean isDelete;
     private String penName;
     private String introduction;
     private String imageUrl;
     private List<Tag> tags;
+
+    public UserProfileFindDTO(Long userId, String email, Boolean isDelete, String penName, String introduction, String imageUrl) {
+        this.userId = userId;
+        this.email = email;
+        this.isDelete = isDelete;
+        this.penName = penName;
+        this.introduction = introduction;
+        this.imageUrl = imageUrl;
+    }
 }

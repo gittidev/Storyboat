@@ -8,6 +8,7 @@ import com.ssafy.storyboat.domain.studio.entity.Studio;
 import com.ssafy.storyboat.domain.user.application.UserService;
 import com.ssafy.storyboat.domain.user.dto.ProfileFindResponse;
 import com.ssafy.storyboat.domain.user.dto.ProfileUpdateRequest;
+import com.ssafy.storyboat.domain.user.dto.UserProfileFindDTO;
 import com.ssafy.storyboat.domain.user.entity.Profile;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -69,4 +70,11 @@ public class UserController {
         userService.deleteUser(customOAuth2User.getUserId()); // 사용자 삭제 서비스 호출 추가
         return ResponseEntity.ok(ApiResponse.success("User deleted successfully"));
     }
+
+    @GetMapping("/profiles/{userId}")
+    public ResponseEntity<?> findUser(@PathVariable Long userId) {
+        UserProfileFindDTO result = userService.findUser(userId);
+        return ResponseEntity.ok(ApiResponse.success(result, "해당 유저 조회 성공"));
+    }
+
 }
