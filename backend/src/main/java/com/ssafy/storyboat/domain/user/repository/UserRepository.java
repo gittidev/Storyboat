@@ -10,7 +10,7 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<User, Long> {
     User findByProviderIdAndProvider(String providerId, String provider);
 
-    @Query("select u.profile from User u join fetch u.profile where u.isDeleted = false and u.userId = :userId")
+    @Query("select u from User u join fetch u.profile where u.isDeleted = false and u.userId = :userId")
     Optional<Profile> findByUserId(Long userId);
 }
 

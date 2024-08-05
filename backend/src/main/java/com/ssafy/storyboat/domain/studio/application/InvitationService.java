@@ -78,8 +78,10 @@ public class InvitationService {
 
         Studio studio = studioService.findByStudioId(studioId);
 
-        if (studio.getName().equals("private")) {
-            throw new IllegalArgumentException("개인 스튜디오 모집글 작성 X");
+        StudioUser studioUser = studioUserRepository.findByStudio_StudioIdAndUser_UserId(studioId, userId)
+                .orElseThrow(() -> new ResourceNotFoundException("해당 스튜디고 존재 X"));
+        if (studioUser.getRole().equals(Role.ROLE_PRIVATE)) {
+            throw new IllegalArgumentException("개인 스튜디오에 초디 불가");
         }
 
         invitation.updateStudio(studio);
