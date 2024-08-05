@@ -6,12 +6,15 @@ import com.ssafy.storyboat.common.exception.InternalServerErrorException;
 import com.ssafy.storyboat.common.exception.ResourceNotFoundException;
 import com.ssafy.storyboat.domain.story.dto.StoryFindAllResponse;
 import com.ssafy.storyboat.domain.story.dto.StoryHistoryFindAllResponse;
+import com.ssafy.storyboat.domain.story.entity.LastStory;
 import com.ssafy.storyboat.domain.story.entity.Story;
 import com.ssafy.storyboat.domain.story.entity.StudioStory;
+import com.ssafy.storyboat.domain.story.repository.LastStoryRepository;
 import com.ssafy.storyboat.domain.story.repository.StoryRepository;
 import com.ssafy.storyboat.domain.story.repository.StudioStoryRepository;
 import com.ssafy.storyboat.domain.studio.application.authorization.StudioReadAuthorization;
 import com.ssafy.storyboat.domain.studio.application.StudioService;
+import com.ssafy.storyboat.domain.studio.application.authorization.StudioWriteAuthorization;
 import com.ssafy.storyboat.domain.studio.entity.Studio;
 import com.ssafy.storyboat.domain.studio.entity.StudioUser;
 import com.ssafy.storyboat.domain.studio.repository.StudioRepository;
@@ -27,6 +30,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -39,6 +43,7 @@ public class StoryService {
     private final StudioUserRepository studioUserRepository;
     private final StoryRepository storyRepository;
     private final StudioService studioService;
+    private final LastStoryRepository lastStoryRepository;
     private final UserRepository userRepository;
 
 
@@ -56,6 +61,7 @@ public class StoryService {
                 .studio(studio)
                 .title(title)
                 .build();
+
         studioStoryRepository.save(studioStory);
     }
 
@@ -76,14 +82,17 @@ public class StoryService {
         studioStoryRepository.delete(studioStory);
     }
 
-    @Transactional(readOnly = true)
-    @StudioReadAuthorization
-    public Story findStories(Long studioId, Long userId, Long studioStoryId) {
-        return storyRepository.findTopByStudioStoryIdOrderByDateDesc(studioStoryId)
-                .orElseThrow(() -> new ResourceNotFoundException("스토리 조회 실패"));
-    }
+//    @Transactional(readOnly = true)
+//    @StudioReadAuthorization
+//    public LastStory findStories(Long studioId, Long userId, Long studioStoryId) {
+////        return storyRepository.findTopByStudioStoryIdOrderByDateDesc(studioStoryId)
+////                .orElseThrow(() -> new ResourceNotFoundException("스토리 조회 실패"));
+//
+//        return lastStoryRepository.findLastStoryByStudioStoryId(studioStoryId)
+//                .orElseThrow(() -> new ResourceNotFoundException("스토리 조회 실패"));
+//    }
 
-    @StudioReadAuthorization
+    @StudioWriteAuthorization
     public void saveStory(Long studioId, Long userId, Long studioStoryId, String storyData) {
         StudioUser studioUser = studioUserRepository.findByStudio_StudioIdAndUser_UserId(studioId, userId)
                 .orElseThrow(() -> new ResourceNotFoundException("Studio not found"));
@@ -91,16 +100,33 @@ public class StoryService {
             throw new ForbiddenException("권한 없음");
         }
 
-        try {
-            // MongoDB에 저장
-            Story story = Story.builder()
-                    .studioStoryId(studioStoryId) // 스튜디오 매핑
-                    .userId(userId) // user 매핑
-                    .date(LocalDateTime.now()) // 등록일 (TTL 7일)
-                    .storyData(storyData) // Json 데이터
-                    .build();
+        // 1. LastStory 조회
+        Optional<LastStory> lastStory = lastStoryRepository.findLastStoryByStudioStoryId(studioStoryId);
+                //.orElseThrow(() -> new ResourceNotFoundException("스토리 조회 실패"));
 
-            storyRepository.save(story);
+        try {
+            // 최신 수정본이 존재한다면 해당 최신 수정본 TTL 적용
+            log.info("최신 수정본을 조회하고 있다면 삭제");
+            if (lastStory.isPresent()) {
+                Story savedStory = Story.builder()
+                        .studioStoryId(studioStoryId) // 스튜디오 매핑
+                        .userId(lastStory.get().getUserId()) // user 매핑
+                        .date(lastStory.get().getDate()) // 등록일 (TTL 7일)
+                        .storyData(lastStory.get().getStoryData()) // Json 데이터
+                        .build();
+                lastStoryRepository.delete(lastStory.get());
+                storyRepository.save(savedStory);
+            }
+
+            // 3. 현재 수정본 MongoDB에 저장
+            LastStory newStory = LastStory.builder()
+                    .studioStoryId(studioStoryId)
+                    .userId(userId)
+                    .date(LocalDateTime.now())
+                    .storyData(storyData)
+                    .build();
+            lastStoryRepository.save(newStory);
+
         } catch (Exception e) {
             // 예외 처리
             throw new InternalServerErrorException("MongoDB 저장 오류");
@@ -108,7 +134,7 @@ public class StoryService {
     }
 
     @StudioReadAuthorization
-    public void uploadStory(Long userId, Story story, Long toStudioId, Long studioStoryId) {
+    public void uploadStory(Long userId, LastStory story, Long toStudioId, Long studioStoryId) {
 
         StudioStory studioStory = studioStoryRepository.findById(studioStoryId)
                 .orElseThrow(() -> new ResourceNotFoundException("Studio_Story not found"));
@@ -123,15 +149,16 @@ public class StoryService {
 
         studioStoryRepository.save(saveStudioStory);
 
-        Story copyStory = Story.builder()
+        LastStory copyStory = LastStory.builder()
                 .studioStoryId(toStudioId)
                 .userId(userId)
                 .date(LocalDateTime.now())
                 .storyData(story.getStoryData())
                 .build();
+
         try {
             // MongoDB에 저장
-            storyRepository.save(copyStory);
+            lastStoryRepository.save(copyStory);
         } catch (Exception e) {
             // 예외 처리
             throw new InternalServerErrorException("MongoDB 저장 오류");
@@ -173,5 +200,12 @@ public class StoryService {
         return storyRepository.findById(storyId)
                 .orElseThrow(() -> new ResourceNotFoundException("Story not found"));
 
+    }
+
+    @StudioReadAuthorization
+    @Transactional(readOnly = true)
+    public LastStory findLastStory(Long studioId, Long userId,  Long studioStoryId) {
+        return lastStoryRepository.findLastStoryByStudioStoryId(studioStoryId)
+                .orElseThrow(() -> new ResourceNotFoundException("스토리 조회 실패"));
     }
 }

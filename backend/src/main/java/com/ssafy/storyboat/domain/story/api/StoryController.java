@@ -5,6 +5,7 @@ import com.ssafy.storyboat.common.auth.dto.CustomOAuth2User;
 import com.ssafy.storyboat.domain.story.application.StoryService;
 import com.ssafy.storyboat.domain.story.dto.StoryFindAllResponse;
 import com.ssafy.storyboat.domain.story.dto.StoryHistoryFindAllResponse;
+import com.ssafy.storyboat.domain.story.entity.LastStory;
 import com.ssafy.storyboat.domain.story.entity.Story;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -65,6 +66,7 @@ public class StoryController {
         return ResponseEntity.ok(ApiResponse.success("Stories Delete Success"));
     }
 
+    // 1. 변경 필요함!! -> LastStory 를 찾기
     @GetMapping("/{studioStoryId}")
     @Operation(
             summary = "스토리 세부 조회",
@@ -75,10 +77,11 @@ public class StoryController {
             @PathVariable final Long studioStoryId,
             @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
         Long userId = customOAuth2User.getUserId();
-        Story story = storyService.findStories(studioId, userId, studioStoryId);
+        LastStory story = storyService.findLastStory(studioId, userId, studioStoryId);
         return ResponseEntity.ok(ApiResponse.success(story.getStoryData(), "Stories Find Success"));
     }
 
+    // 2. LastStory 찾고 현재 내용 LastStory 에 저장, LastStory 는 Story 에 저장
     @PutMapping("/{studioStoryId}")
     @Operation(
             summary = "스토리 수정",
@@ -105,7 +108,8 @@ public class StoryController {
             @PathVariable final Long studioStoryId,
             @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
         Long userId = customOAuth2User.getUserId();
-        Story story = storyService.findStories(studioId, userId, studioStoryId);
+        LastStory story = storyService.findLastStory(studioId, userId, studioStoryId);
+
         storyService.uploadStory(userId, story, toStudioId, studioStoryId);
         return ResponseEntity.ok(ApiResponse.success("Upload Success"));
     }
@@ -139,6 +143,7 @@ public class StoryController {
         return ResponseEntity.ok(ApiResponse.success(story.getStoryData(), "Histories Find Success"));
     }
 
+    // 3. LastStory Story 에 저장하고 해당 Story -> LastStory 에 저장
     @PutMapping("/{studioStoryId}/histories/{storyId}")
     @Operation(
             summary = "스토리 롤백",

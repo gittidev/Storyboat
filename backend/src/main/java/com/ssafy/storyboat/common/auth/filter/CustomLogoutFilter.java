@@ -46,11 +46,16 @@ public class CustomLogoutFilter extends GenericFilterBean {
             return;
         }
 
+        log.info("2");
+
         String requestMethod = request.getMethod();
         if (!requestMethod.equals("POST")) {
             filterChain.doFilter(request, response);
             return;
         }
+
+        log.info("3");
+
 
         // Get refresh token from cookies
         String refresh = null;
@@ -63,6 +68,8 @@ public class CustomLogoutFilter extends GenericFilterBean {
                 }
             }
         }
+
+        log.info("4");
 
         // Refresh token null check
         if (refresh == null) {
