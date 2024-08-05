@@ -254,6 +254,11 @@ public class StudioService {
             throw new IllegalArgumentException("개인 스튜디오 가입 불가");
         }
 
+        Optional<StudioUser> pastStudioUser = studioUserRepository.findByStudio_StudioIdAndUser_UserId(studioId, userId);
+        if (pastStudioUser.isPresent()) {
+            throw new ConflictException("이미 가입된 Studio");
+        }
+
         StudioUser studioUser = StudioUser.builder()
                 .createdAt(LocalDateTime.now())
                 .user(user)
