@@ -134,6 +134,20 @@ public class InvitationService {
             throw new ConflictException("개인 스튜디오에 초대 불가");
         }
 
+        Optional<InvitationCode> oldCode = invitationCodeRepository.findByStudio_StudioId(studioId);
+        // 코드 존재 여부 확인
+        if (oldCode.isPresent()) {
+            InvitationCode invitationCode = oldCode.get();
+            // 코드 만료 여부 확인
+            if (invitationCode.getExpirationDate().isBefore(LocalDateTime.now())) {
+                invitationCodeRepository.delete(invitationCode);
+            }
+            else {
+                throw new ConflictException("해당 스튜디오 초대코드 존재");
+            }
+        }
+
+
         String code = invitationCodeUtil.createCode(studioId, 1000 * 60 * 60 * 7L); // 7일
         Studio studio = studioRepository.findById(studioId)
                 .orElseThrow(() -> new ResourceNotFoundException("해당 스튜디오 존재 X"));
