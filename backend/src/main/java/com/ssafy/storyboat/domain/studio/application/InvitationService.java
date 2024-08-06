@@ -3,6 +3,7 @@ package com.ssafy.storyboat.domain.studio.application;
 import com.ssafy.storyboat.common.auth.dto.CustomOAuth2User;
 import com.ssafy.storyboat.common.auth.dto.OAuth2UserDTO;
 import com.ssafy.storyboat.common.dto.Role;
+import com.ssafy.storyboat.common.exception.ConflictException;
 import com.ssafy.storyboat.common.exception.ResourceNotFoundException;
 import com.ssafy.storyboat.domain.studio.application.authorization.StudioOwnerAuthorization;
 import com.ssafy.storyboat.domain.studio.entity.Invitation;
@@ -132,6 +133,20 @@ public class InvitationService {
         if (studioUser.getRole().equals(Role.ROLE_PRIVATE)) {
             throw new IllegalArgumentException("개인 스튜디오에 초디 불가");
         }
+
+        Optional<InvitationCode> oldCode = invitationCodeRepository.findByStudio_StudioId(studioId);
+        // 코드 존재 여부 확인
+        if (oldCode.isPresent()) {
+            InvitationCode invitationCode = oldCode.get();
+            // 코드 만료 여부 확인
+            if (invitationCode.getExpirationDate().isBefore(LocalDateTime.now())) {
+                invitationCodeRepository.delete(invitationCode);
+            }
+            else {
+                throw new ConflictException("해당 스튜디오 초대코드 존재");
+            }
+        }
+
 
         String code = invitationCodeUtil.createCode(studioId, 1000 * 60 * 60 * 7L); // 7일
         Studio studio = studioRepository.findById(studioId)

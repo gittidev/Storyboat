@@ -34,7 +34,12 @@ public class JWTUtil {
     public Boolean isExpired(String token) {
 
         try{
-            Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().getExpiration().before(new Date());
+            Jwts.parser().verifyWith(secretKey).build()
+                    .parseSignedClaims(token)
+                    .getPayload()
+                    .getExpiration()
+                    .before(new Date());
+
             log.info("만료x");
             return false;
         } catch (Exception e) {
