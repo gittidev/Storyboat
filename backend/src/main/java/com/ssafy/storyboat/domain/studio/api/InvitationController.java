@@ -134,4 +134,11 @@ public class InvitationController {
         invitationService.joinByCode(userId, invitationCode);
         return ResponseEntity.ok(ApiResponse.success("초대 코드로 가입 성공"));
     }
+
+    @GetMapping("/search")
+    public ResponseEntity<?> search(@RequestParam String category, @RequestParam String keyword) {
+        // category = studioName or title // or tag
+        List<InvitationFindAllResponse> result = invitationService.searchInvitation(category, keyword);
+        return ResponseEntity.ok(ApiResponse.success(result, "모집글 검색 성공"));
+    }
 }

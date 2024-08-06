@@ -6,11 +6,13 @@ import com.ssafy.storyboat.common.dto.Role;
 import com.ssafy.storyboat.common.exception.ConflictException;
 import com.ssafy.storyboat.common.exception.ResourceNotFoundException;
 import com.ssafy.storyboat.domain.studio.application.authorization.StudioOwnerAuthorization;
+import com.ssafy.storyboat.domain.studio.dto.Invitation.InvitationFindAllResponse;
 import com.ssafy.storyboat.domain.studio.entity.*;
 import com.ssafy.storyboat.domain.studio.repository.InvitationCodeRepository;
 import com.ssafy.storyboat.domain.studio.repository.InvitationRepository;
 import com.ssafy.storyboat.domain.studio.repository.StudioRepository;
 import com.ssafy.storyboat.domain.studio.repository.StudioUserRepository;
+import com.ssafy.storyboat.domain.tag.dto.TagRequest;
 import com.ssafy.storyboat.domain.tag.entity.Tag;
 import com.ssafy.storyboat.domain.tag.repository.InvitationTagRepository;
 import com.ssafy.storyboat.domain.tag.repository.TagRepository;
@@ -25,10 +27,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -225,5 +225,30 @@ public class InvitationService {
 
         studioUserRepository.save(studioUser);
     }
+    
+    @Transactional(readOnly = true)
+    public List<InvitationFindAllResponse> searchInvitation(String category, String keyword) {
+        List<Invitation> invitations;
+        if (category.equals("studioName")) {
+            invitations = invitationRepository.findByStudio_NameContains(keyword);
+        } else if (category.equals("title")) {
+            invitations = invitationRepository.findByTitleContains(keyword);
+        }
+        // 음.. 태그 검색은 추후 추가
+//        else if (category.equals("tag")) {
+//
+//        }
+        else {
+            throw new IllegalArgumentException("검색 조건 없음");
+        }
 
+        List<InvitationFindAllResponse> responses = new ArrayList<>();
+        for (Invitation invitation : invitations) {
+            InvitationFindAllResponse response = new InvitationFindAllResponse();
+            response.setTitle(invitation.getTitle());
+            response.setStudioId(invitation.getStudio().getStudioId());
+            //response.set
+        }
+        return responses;
+    }
 }
