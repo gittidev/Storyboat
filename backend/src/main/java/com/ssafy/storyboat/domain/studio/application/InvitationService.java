@@ -11,6 +11,8 @@ import com.ssafy.storyboat.domain.studio.repository.InvitationCodeRepository;
 import com.ssafy.storyboat.domain.studio.repository.InvitationRepository;
 import com.ssafy.storyboat.domain.studio.repository.StudioRepository;
 import com.ssafy.storyboat.domain.studio.repository.StudioUserRepository;
+import com.ssafy.storyboat.domain.tag.dto.ProfileTagUpdateRequest;
+import com.ssafy.storyboat.domain.tag.dto.TagRequest;
 import com.ssafy.storyboat.domain.tag.entity.Tag;
 import com.ssafy.storyboat.domain.tag.repository.InvitationTagRepository;
 import com.ssafy.storyboat.domain.tag.repository.TagRepository;
@@ -25,10 +27,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -74,7 +74,7 @@ public class InvitationService {
      * @param invitation
      */
     @StudioOwnerAuthorization
-    public void InvitationSave(Long studioId, Long userId, Invitation invitation, List<Long> tagIds) {
+    public void InvitationSave(Long studioId, Long userId, Invitation invitation, List<ProfileTagUpdateRequest> tagRequests) {
         Optional<Invitation> savedInvitation = invitationRepository.findByStudio_studioId(studioId);
 
         if (savedInvitation.isPresent()) {
@@ -93,7 +93,9 @@ public class InvitationService {
         invitationRepository.save(invitation);
 
         // 중복된 태그 제거
-        Set<Long> uniqueTagIds = new HashSet<>(tagIds);
+        Set<Long> uniqueTagIds = tagRequests.stream()
+                .map(ProfileTagUpdateRequest::getTagId)
+                .collect(Collectors.toSet());
 
         for (Long tagId : uniqueTagIds) {
             Tag tag = tagRepository.findById(tagId)
@@ -112,15 +114,36 @@ public class InvitationService {
      * @param userId
      * @param invitation
      */
-
+    @Transactional
     @StudioOwnerAuthorization
-    public void updateInvitation(Long studioId, Long userId, Invitation invitation) {
+    public void updateInvitation(Long studioId, Long userId, Invitation invitation, List<ProfileTagUpdateRequest> tagRequests) {
         Invitation oldInvitation = invitationRepository.findByStudio_studioId(studioId)
                 .orElseThrow(() -> new ResourceNotFoundException("수정할 모집글 없음"));
 
         oldInvitation.updateTitle(invitation.getTitle());
         oldInvitation.updateDescription(invitation.getDescription());
-        
+
+        // 새로운 태그 추가 (중복 제거)
+        Set<Long> uniqueTagIds = tagRequests.stream()
+                .map(ProfileTagUpdateRequest::getTagId)
+                .collect(Collectors.toSet());
+
+        List<InvitationTag> tags = new ArrayList<>();
+
+        for (Long tagId : uniqueTagIds) {
+            Tag tag = tagRepository.findById(tagId)
+                    .orElseThrow(() -> new ResourceNotFoundException("태그가 존재하지 않음"));
+
+            InvitationTag invitationTag = InvitationTag.builder()
+                    .tag(tag)
+                    .invitation(oldInvitation)
+                    .build();
+
+            tags.add(invitationTag);
+        }
+
+        oldInvitation.setInvitationTags(tags);
+
         invitationRepository.save(oldInvitation);
     }
 

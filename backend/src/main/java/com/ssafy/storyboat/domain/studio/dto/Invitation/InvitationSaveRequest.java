@@ -1,5 +1,6 @@
 package com.ssafy.storyboat.domain.studio.dto.Invitation;
 
+import com.ssafy.storyboat.domain.tag.dto.ProfileTagUpdateRequest;
 import lombok.Data;
 
 import java.util.List;
@@ -8,5 +9,5 @@ import java.util.List;
 public class InvitationSaveRequest {
     private String title;
     private String description;
-    private List<Long> tagIds;
+    private List<ProfileTagUpdateRequest> tags;
 }

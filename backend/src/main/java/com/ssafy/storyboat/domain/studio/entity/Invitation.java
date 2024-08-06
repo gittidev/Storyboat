@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Entity
 @Table(name = "invitation")
 @NoArgsConstructor
@@ -27,6 +29,9 @@ public class Invitation {
 
     private String description;
 
+    @OneToMany(mappedBy = "invitation", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<InvitationTag> invitationTags;
+
     public void updateTitle(String title) {
         this.title = title;
     }
@@ -36,5 +41,10 @@ public class Invitation {
 
     public void updateStudio(Studio studio) {
         this.studio = studio;
+    }
+
+    public void setInvitationTags(List<InvitationTag> tags) {
+        this.invitationTags.clear();
+        this.invitationTags.addAll(tags);
     }
 }
