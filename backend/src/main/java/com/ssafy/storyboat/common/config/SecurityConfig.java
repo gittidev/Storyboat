@@ -69,6 +69,7 @@ public class SecurityConfig {
                         .requestMatchers("/swagger-ui/**").permitAll()
                         .requestMatchers("/v3/**").permitAll()
                         .requestMatchers("/signaling").permitAll()
+                        .requestMatchers("/invitations/code/join/*").permitAll()
                         .anyRequest().authenticated()
                 )
 
