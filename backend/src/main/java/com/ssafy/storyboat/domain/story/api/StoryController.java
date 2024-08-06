@@ -36,7 +36,7 @@ public class StoryController {
             @PathVariable final Long studioId,
             @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
         List<StoryFindAllResponse> list = storyService.findByStudioId(studioId, customOAuth2User.getUserId());
-        return ResponseEntity.ok(ApiResponse.success(list, "Stories Find Success"));
+        return ResponseEntity.ok(ApiResponse.success(list, "스토리 목록 조회 성공"));
     }
 
     @PostMapping
@@ -49,7 +49,7 @@ public class StoryController {
             @RequestBody Map<String, Object> payload,
             @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
         storyService.makeStory(studioId, customOAuth2User.getUserId(), (String) payload.get("title"));
-        return ResponseEntity.ok(ApiResponse.success("Stories Create Success"));
+        return ResponseEntity.ok(ApiResponse.success("스토리 생성 성공"));
     }
 
     @DeleteMapping("/{studioStoryId}")
@@ -126,7 +126,7 @@ public class StoryController {
         Long userId = customOAuth2User.getUserId();
         List<Story> stories = storyService.findStoryHistory(studioId, userId, studioStoryId);
         List<StoryHistoryFindAllResponse> result = storyService.findAllHistoryDTO(studioId, userId, stories);
-        return ResponseEntity.ok(ApiResponse.success(result, "Histories Find Success"));
+        return ResponseEntity.ok(ApiResponse.success(result, "히스토리 불러오기 성공"));
     }
 
     @GetMapping("/{studioStoryId}/histories/{storyId}")

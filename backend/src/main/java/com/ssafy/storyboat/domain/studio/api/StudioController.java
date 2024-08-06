@@ -79,7 +79,7 @@ public class StudioController {
     public ResponseEntity<?> getStudioMembers(@AuthenticationPrincipal CustomOAuth2User customOAuth2User, @PathVariable("studioId") Long studioId) {
         Long userId = customOAuth2User.getUserId();
         List<StudioMemberFindAllResponse> result = studioService.findStudioUserDTO(studioId, userId);
-        return ResponseEntity.ok(ApiResponse.success(result, "Find Studio Members Success"));
+        return ResponseEntity.ok(ApiResponse.success(result, "팀원 목록 조회 성공"));
     }
 
     @DeleteMapping("/{studioId}")
@@ -103,14 +103,14 @@ public class StudioController {
     public ResponseEntity<?> updateMemberRole(@AuthenticationPrincipal CustomOAuth2User customOAuth2User, @PathVariable Long studioId, @PathVariable Long memberId, @RequestBody RoleUpdateRequest roleUpdateRequest) {
         Long userId = customOAuth2User.getUserId();
         studioService.updateMemberRole(studioId, userId, memberId, roleUpdateRequest.getRole());
-        return ResponseEntity.ok().body(ApiResponse.success("Member Role updated successfully"));
+        return ResponseEntity.ok().body(ApiResponse.success("팀원 권한 설정 변경 성공"));
     }
 
     @DeleteMapping("/{studioId}/members/{memberId}")
     public ResponseEntity<?> deleteMember(@AuthenticationPrincipal CustomOAuth2User customOAuth2User, @PathVariable Long studioId, @PathVariable Long memberId) {
         Long userId = customOAuth2User.getUserId();
         studioService.deleteMember(studioId, userId, memberId);
-        return ResponseEntity.ok().body(ApiResponse.success("Member deleted successfully"));
+        return ResponseEntity.ok().body(ApiResponse.success("팀원 추방 성공"));
     }
 
     @DeleteMapping("/{studioId}/members")
@@ -129,10 +129,7 @@ public class StudioController {
     @PutMapping("/{studioId}/join-requests/{memberId}")
     public ResponseEntity<?> acceptJoinRequest(@AuthenticationPrincipal CustomOAuth2User customOAuth2User, @PathVariable Long studioId, @PathVariable Long memberId, @RequestBody JoinRequestAcceptRequest request) {
         Long userId = customOAuth2User.getUserId();
-        boolean result = false;
-        if (request.equals("accept")) {
-            result = true;
-        }
+        boolean result = request.getDecision().equals("accept");
         studioService.acceptRequest(studioId, userId, memberId, result);
         return ResponseEntity.ok(ApiResponse.success("스튜디오 참여 요청 " + (result ? "수락" : "거절")));
     }

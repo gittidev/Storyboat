@@ -192,12 +192,12 @@ public class StudioService {
     public void updateMemberRole(Long studioId, Long userId, Long memberId, Role role) {
         // 1. ROLE 조회 (ROLE_OWNER or ROLE_VIEWER or ROLE_MEMBER)
         if (!(Role.ROLE_OWNER.equals(role) || Role.ROLE_MEMBER.equals(role) || Role.ROLE_VIEWER.equals(role))) {
-            throw new IllegalArgumentException("설정할 수 없는 권한: " + role);
+            throw new ForbiddenException("설정할 수 없는 권한: " + role);
         }
 
         // 2. 해당 유저의 ROLE 세팅
         StudioUser studioUser = studioUserRepository.findByStudio_StudioIdAndUser_UserId(studioId, memberId)
-                .orElseThrow(() -> new ConflictException("해당 유저 Studio 에 존재하지 않음"));
+                .orElseThrow(() -> new ResourceNotFoundException("해당 유저 Studio 에 존재하지 않음"));
 
         studioUser.updateRole(role);
         studioUserRepository.save(studioUser);
@@ -213,7 +213,7 @@ public class StudioService {
     public void deleteMember(Long studioId, Long userId, Long memberId) {
         // 1. Member 가 OWNER 인지 확인
         StudioUser studioUser = studioUserRepository.findByStudio_StudioIdAndUser_UserId(studioId, memberId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 유저 Studio 에 존재하지 않음"));
+                .orElseThrow(() -> new ResourceNotFoundException("해당 유저 Studio 에 존재하지 않음"));
 
         if (studioUser.getRole().equals(Role.ROLE_OWNER)) {
             throw new ForbiddenException("OWNER 사용자는 추방할 수 없음");
@@ -249,12 +249,12 @@ public class StudioService {
         Studio studio = findByStudioId(studioId);
 
         if (studio.getName().equals("private")) {
-            throw new IllegalArgumentException("개인 스튜디오 가입 불가");
+            throw new ConflictException("개인 스튜디오 가입 불가");
         }
 
         Optional<StudioUser> pastStudioUser = studioUserRepository.findByStudio_StudioIdAndUser_UserId(studioId, userId);
         if (pastStudioUser.isPresent()) {
-            throw new ConflictException("이미 가입된 Studio");
+            throw new ConflictException("이미 가입된 스튜디오");
         }
 
         StudioUser studioUser = StudioUser.builder()

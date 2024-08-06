@@ -53,10 +53,10 @@ public class StoryService {
         return studioStoryRepository.findDTOByStudioId(studioId);
     }
 
-    @StudioReadAuthorization
+    @StudioWriteAuthorization
     public void makeStory(Long studioId, Long userId, String title) {
         Studio studio = studioRepository.findById(studioId)
-                .orElseThrow(() -> new ResourceNotFoundException("Studio not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("스튜디오 찾을 수 없음"));
         StudioStory studioStory = StudioStory.builder()
                 .studio(studio)
                 .title(title)
@@ -65,11 +65,11 @@ public class StoryService {
         studioStoryRepository.save(studioStory);
     }
 
-    @StudioReadAuthorization
+    @StudioWriteAuthorization
     public void deleteStory(Long studioId, Long userId, Long studioStoryId) {
         // Story 삭제도 Studio 의 Admin 만 삭제 가능!
         StudioUser studioUser = studioUserRepository.findByStudio_StudioIdAndUser_UserId(studioId, userId)
-                .orElseThrow(() -> new ResourceNotFoundException("Studio not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("스튜디오 찾을 수 없음"));
 
         if (studioUser.getRole().equals(Role.ROLE_OWNER)) {
             throw new ForbiddenException("권한 없음");
@@ -77,7 +77,7 @@ public class StoryService {
 
         // 우선 삭제로 등록
         StudioStory studioStory = studioStoryRepository.findById(studioStoryId)
-                .orElseThrow(() -> new ResourceNotFoundException("Studio story not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("스토리 찾을 수 없음"));
 
         studioStoryRepository.delete(studioStory);
     }
@@ -95,7 +95,7 @@ public class StoryService {
     @StudioWriteAuthorization
     public void saveStory(Long studioId, Long userId, Long studioStoryId, String storyData) {
         StudioUser studioUser = studioUserRepository.findByStudio_StudioIdAndUser_UserId(studioId, userId)
-                .orElseThrow(() -> new ResourceNotFoundException("Studio not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("스튜디오 찾을 수 없음"));
         if (!(studioUser.getRole().equals(Role.ROLE_OWNER) || studioUser.getRole().equals(Role.ROLE_MEMBER) || studioUser.getRole().equals(Role.ROLE_PRIVATE))) {
             throw new ForbiddenException("권한 없음");
         }
@@ -133,14 +133,14 @@ public class StoryService {
         }
     }
 
-    @StudioReadAuthorization
+    @StudioWriteAuthorization
     public void uploadStory(Long userId, LastStory story, Long toStudioId, Long studioStoryId) {
 
         StudioStory studioStory = studioStoryRepository.findById(studioStoryId)
-                .orElseThrow(() -> new ResourceNotFoundException("Studio_Story not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("스토리 찾을 수 없음"));
 
         Studio studio = studioRepository.findById(toStudioId)
-                .orElseThrow(() -> new ResourceNotFoundException("Studio not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("스튜디오 찾을 수 없음"));
 
         StudioStory saveStudioStory = StudioStory.builder()
                 .studio(studio)
@@ -198,7 +198,7 @@ public class StoryService {
     @Transactional(readOnly = true)
     public Story findStory(Long studioId, Long userId,  String storyId) {
         return storyRepository.findById(storyId)
-                .orElseThrow(() -> new ResourceNotFoundException("Story not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("스토리를 찾을 수 없음"));
 
     }
 

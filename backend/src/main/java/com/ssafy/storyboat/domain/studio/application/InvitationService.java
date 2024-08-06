@@ -3,6 +3,7 @@ package com.ssafy.storyboat.domain.studio.application;
 import com.ssafy.storyboat.common.auth.dto.CustomOAuth2User;
 import com.ssafy.storyboat.common.auth.dto.OAuth2UserDTO;
 import com.ssafy.storyboat.common.dto.Role;
+import com.ssafy.storyboat.common.exception.ConflictException;
 import com.ssafy.storyboat.common.exception.ResourceNotFoundException;
 import com.ssafy.storyboat.domain.studio.application.authorization.StudioOwnerAuthorization;
 import com.ssafy.storyboat.domain.studio.entity.Invitation;
@@ -73,7 +74,7 @@ public class InvitationService {
         Optional<Invitation> savedInvitation = invitationRepository.findByStudio_studioId(studioId);
 
         if (savedInvitation.isPresent()) {
-            throw new IllegalArgumentException("초대글 이미 존재함");
+            throw new ConflictException("초대글 이미 존재함");
         }
 
         Studio studio = studioService.findByStudioId(studioId);
@@ -81,7 +82,7 @@ public class InvitationService {
         StudioUser studioUser = studioUserRepository.findByStudio_StudioIdAndUser_UserId(studioId, userId)
                 .orElseThrow(() -> new ResourceNotFoundException("해당 스튜디고 존재 X"));
         if (studioUser.getRole().equals(Role.ROLE_PRIVATE)) {
-            throw new IllegalArgumentException("개인 스튜디오에 초디 불가");
+            throw new ConflictException("개인 스튜디오에 초디 불가");
         }
 
         invitation.updateStudio(studio);
@@ -128,14 +129,14 @@ public class InvitationService {
     @StudioOwnerAuthorization
     public String makeInvitationCode(Long studioId, Long userId) {
         StudioUser studioUser = studioUserRepository.findByStudio_StudioIdAndUser_UserId(studioId, userId)
-                .orElseThrow(() -> new ResourceNotFoundException("해당 스튜디고 가입 X"));
+                .orElseThrow(() -> new ResourceNotFoundException("해당 스튜디오 가입 X"));
         if (studioUser.getRole().equals(Role.ROLE_PRIVATE)) {
-            throw new IllegalArgumentException("개인 스튜디오에 초디 불가");
+            throw new ConflictException("개인 스튜디오에 초대 불가");
         }
 
         String code = invitationCodeUtil.createCode(studioId, 1000 * 60 * 60 * 7L); // 7일
         Studio studio = studioRepository.findById(studioId)
-                .orElseThrow(() -> new IllegalArgumentException("Studio not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("해당 스튜디오 존재 X"));
         InvitationCode invitationCode = InvitationCode.builder()
                 .studio(studio)
                 .code(code)
@@ -165,7 +166,7 @@ public class InvitationService {
     public void deleteInvitationCode(Long studioId, Long userId, Long invitationCodeId) {
         // JPQL을 사용한 삭제
         invitationCodeRepository.deleteByInvitationCodeId(invitationCodeId);
-        log.info("InvitationCode 삭제 성공");
+        log.info("모집 코드 삭제 성공");
     }
 
     // 해당 코드 조회해 가입시키기...?
@@ -173,12 +174,12 @@ public class InvitationService {
         // 코드 조회해 검증 로직
         Long studioId = invitationCodeUtil.getStudioId(invitationCode);
         InvitationCode code = invitationCodeRepository.findByStudio_StudioId(studioId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 코드 존재 X"));
+                .orElseThrow(() -> new ResourceNotFoundException("해당 코드 존재 X"));
 
         log.info("DB 조회 성공");
         if (code.getExpirationDate().isBefore(LocalDateTime.now())) {
             invitationCodeRepository.delete(code);
-            throw new IllegalArgumentException("해당 코드 만료");
+            throw new ResourceNotFoundException("해당 코드 만료");
         }
         log.info("만료 X");
         // 스튜디오에 해당 유저 가입 (Member 로) -> Studio_User Entity 생성하기
