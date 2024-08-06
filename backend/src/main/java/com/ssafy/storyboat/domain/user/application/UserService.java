@@ -100,6 +100,9 @@ public class UserService {
         }
 
         for (ProfileTagUpdateRequest newTag : profileUpdateRequest.getTags()) {
+            if (!tagMap.containsKey(newTag.getTagId())) {
+                throw new ResourceNotFoundException("해당 태그 존재하지 않음");
+            }
             Tag tag = tagMap.get(newTag.getTagId());
             ProfileTag profileTag = ProfileTag.builder()
                     .tag(tag)
