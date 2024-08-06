@@ -8,6 +8,8 @@ import com.ssafy.storyboat.common.exception.UnauthorizedException;
 import com.ssafy.storyboat.domain.studio.dto.StudioResponse;
 import com.ssafy.storyboat.domain.studio.repository.StudioUserRepository;
 import com.ssafy.storyboat.domain.tag.application.TagService;
+import com.ssafy.storyboat.domain.tag.dto.ProfileTagUpdateRequest;
+import com.ssafy.storyboat.domain.tag.dto.TagRequest;
 import com.ssafy.storyboat.domain.tag.entity.ProfileTag;
 import com.ssafy.storyboat.domain.tag.entity.Tag;
 import com.ssafy.storyboat.domain.tag.repository.ProfileTagRepository;
@@ -24,8 +26,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -78,6 +82,7 @@ public class UserService {
         if (profile == null) {
             throw new ResourceNotFoundException("Profile not found");
         }
+        ;
 
         // 3. PenName 중복 확인
         if (!profile.getPenName().equals(profileUpdateRequest.getPenName())) {
@@ -86,22 +91,24 @@ public class UserService {
             }
         }
 
-        // 4. 기존 태그 삭제
-        profileTagRepository.deleteByProfileId(profile.getProfileId());
-
         // 5. 새로운 태그 추가
         List<ProfileTag> tagList = new ArrayList<>();
-        List<Tag> tags = tagRepository.findAllByOrderByIdDesc();
+        List<Tag> tags = tagRepository.findAll();
+        HashMap<Long, Tag> tagMap = new HashMap<>();
+        for (Tag tag : tags) {
+            tagMap.put(tag.getId(), tag);
+        }
 
-        for (ProfileTag profileTag : profile.getProfileTags()) {
-            if (profileTag.getId() >= 1 && profileTag.getId() <= tags.size()) {
-                Tag tag = tags.get(profileTag.getId().intValue() - 1);
-                ProfileTag newProfileTag = ProfileTag.builder()
-                        .profile(profile)
-                        .tag(tag)
-                        .build();
-                tagList.add(newProfileTag);
+        for (ProfileTagUpdateRequest newTag : profileUpdateRequest.getTags()) {
+            if (!tagMap.containsKey(newTag.getTagId())) {
+                throw new ResourceNotFoundException("해당 태그 존재하지 않음");
             }
+            Tag tag = tagMap.get(newTag.getTagId());
+            ProfileTag profileTag = ProfileTag.builder()
+                    .tag(tag)
+                    .profile(profile)
+                    .build();
+            tagList.add(profileTag);
         }
 
         // 6. 프로필 업데이트
@@ -136,9 +143,14 @@ public class UserService {
         }
 
         Profile profile = profileRepository.findByUser_userId(userId);
-        List<Tag> tags = tagService.findTagByProfileId(profile.getProfileId());
-
-        result.setTags(tags);
+        result.setTags(findTags(profile.getProfileId()));
         return result;
+    }
+
+    @Transactional(readOnly = true)
+    public List<TagRequest> findTags(Long profileId) {
+        return tagService.findTagByProfileId(profileId).stream()
+                .map(TagRequest::new)
+                .collect(Collectors.toList());
     }
 }

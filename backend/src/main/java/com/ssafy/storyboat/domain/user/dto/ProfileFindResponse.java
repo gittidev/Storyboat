@@ -1,10 +1,13 @@
 package com.ssafy.storyboat.domain.user.dto;
 
 import com.ssafy.storyboat.domain.studio.dto.StudioResponse;
+import com.ssafy.storyboat.domain.tag.dto.TagRequest;
 import com.ssafy.storyboat.domain.user.entity.Profile;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -14,6 +17,7 @@ public class ProfileFindResponse {
     private String introduction;
     private String imageUrl;
     private StudioResponse privateStudio;
+    private List<TagRequest> tags;
 
     public void setDTO(Profile profile) {
         this.penName = profile.getPenName();

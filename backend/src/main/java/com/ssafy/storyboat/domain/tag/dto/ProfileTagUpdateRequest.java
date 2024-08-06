@@ -1,10 +1,8 @@
 package com.ssafy.storyboat.domain.tag.dto;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
-@Setter
-@Getter
+@Data
 public class ProfileTagUpdateRequest {
     private Long tagId;
 }
