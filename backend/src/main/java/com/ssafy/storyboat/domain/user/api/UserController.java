@@ -48,6 +48,8 @@ public class UserController {
         ProfileFindResponse profileFindResponse = new ProfileFindResponse();
         profileFindResponse.setDTO(profile);
         profileFindResponse.setStudio(privateStudio);
+        profileFindResponse.setTags(userService.findTags(profile.getProfileId()));
+
         return ResponseEntity.ok().body(ApiResponse.success(profileFindResponse, "Find Profile Success"));
     }
 

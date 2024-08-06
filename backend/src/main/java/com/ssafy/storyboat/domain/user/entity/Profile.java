@@ -57,8 +57,10 @@ public class Profile {
         this.imageUrl = newImageUrl;
     }
 
-    public void updateProfileTags(List<ProfileTag> newProfileTags) {
-        this.profileTags = newProfileTags;
+    public void updateProfileTags(List<ProfileTag> newTags) {
+        // 기존 태그 삭제
+        profileTags.clear();
+        profileTags.addAll(newTags);
     }
 
 }
