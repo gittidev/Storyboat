@@ -1,4 +1,4 @@
-package com.ssafy.storyboat.domain.studio.dto;
+package com.ssafy.storyboat.domain.studio.dto.Invitation;
 
 import com.ssafy.storyboat.domain.studio.entity.Invitation;
 import lombok.Data;

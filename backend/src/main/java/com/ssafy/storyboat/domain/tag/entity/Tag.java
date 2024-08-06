@@ -1,5 +1,6 @@
 package com.ssafy.storyboat.domain.tag.entity;
 
+import com.ssafy.storyboat.domain.studio.entity.InvitationTag;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

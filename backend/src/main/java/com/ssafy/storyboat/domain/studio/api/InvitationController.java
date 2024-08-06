@@ -4,17 +4,17 @@ import com.ssafy.storyboat.common.auth.dto.CustomOAuth2User;
 import com.ssafy.storyboat.common.dto.ApiResponse;
 import com.ssafy.storyboat.domain.studio.application.InvitationService;
 import com.ssafy.storyboat.domain.studio.application.StudioService;
-import com.ssafy.storyboat.domain.studio.dto.InvitationFindAllResponse;
-import com.ssafy.storyboat.domain.studio.dto.InvitationFindOneResponse;
-import com.ssafy.storyboat.domain.studio.dto.InvitationSaveRequest;
+import com.ssafy.storyboat.domain.studio.dto.Invitation.InvitationFindAllResponse;
+import com.ssafy.storyboat.domain.studio.dto.Invitation.InvitationFindOneResponse;
+import com.ssafy.storyboat.domain.studio.dto.Invitation.InvitationSaveRequest;
 import com.ssafy.storyboat.domain.studio.entity.Invitation;
 import com.ssafy.storyboat.domain.studio.entity.InvitationCode;
-import com.ssafy.storyboat.domain.studio.entity.StudioUser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 
@@ -66,7 +66,7 @@ public class InvitationController {
                 .description(invitationSaveRequest.getDescription())
                 .build();
 
-        invitationService.InvitationSave(studioId, userId, invitation);
+        invitationService.InvitationSave(studioId, userId, invitation, invitationSaveRequest.getTagIds());
         return ResponseEntity.ok().body(ApiResponse.success("모집글 생성 성공"));
     }
 

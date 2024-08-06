@@ -6,14 +6,14 @@ import com.ssafy.storyboat.common.dto.Role;
 import com.ssafy.storyboat.common.exception.ConflictException;
 import com.ssafy.storyboat.common.exception.ResourceNotFoundException;
 import com.ssafy.storyboat.domain.studio.application.authorization.StudioOwnerAuthorization;
-import com.ssafy.storyboat.domain.studio.entity.Invitation;
-import com.ssafy.storyboat.domain.studio.entity.InvitationCode;
-import com.ssafy.storyboat.domain.studio.entity.Studio;
-import com.ssafy.storyboat.domain.studio.entity.StudioUser;
+import com.ssafy.storyboat.domain.studio.entity.*;
 import com.ssafy.storyboat.domain.studio.repository.InvitationCodeRepository;
 import com.ssafy.storyboat.domain.studio.repository.InvitationRepository;
 import com.ssafy.storyboat.domain.studio.repository.StudioRepository;
 import com.ssafy.storyboat.domain.studio.repository.StudioUserRepository;
+import com.ssafy.storyboat.domain.tag.entity.Tag;
+import com.ssafy.storyboat.domain.tag.repository.InvitationTagRepository;
+import com.ssafy.storyboat.domain.tag.repository.TagRepository;
 import com.ssafy.storyboat.domain.user.application.UserService;
 import com.ssafy.storyboat.domain.user.entity.User;
 import com.ssafy.storyboat.domain.user.repository.UserRepository;
@@ -25,8 +25,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -42,6 +44,8 @@ public class InvitationService {
     private final UserService userService;
     private final StudioUserRepository studioUserRepository;
     private final EntityManager entityManager;
+    private final TagRepository tagRepository;
+    private final InvitationTagRepository invitationTagRepository;
 
     /**
      * Studio 모집글 목록 조회
@@ -70,7 +74,7 @@ public class InvitationService {
      * @param invitation
      */
     @StudioOwnerAuthorization
-    public void InvitationSave(Long studioId, Long userId, Invitation invitation) {
+    public void InvitationSave(Long studioId, Long userId, Invitation invitation, List<Long> tagIds) {
         Optional<Invitation> savedInvitation = invitationRepository.findByStudio_studioId(studioId);
 
         if (savedInvitation.isPresent()) {
@@ -80,13 +84,26 @@ public class InvitationService {
         Studio studio = studioService.findByStudioId(studioId);
 
         StudioUser studioUser = studioUserRepository.findByStudio_StudioIdAndUser_UserId(studioId, userId)
-                .orElseThrow(() -> new ResourceNotFoundException("해당 스튜디고 존재 X"));
+                .orElseThrow(() -> new ResourceNotFoundException("해당 스튜디오 존재 X"));
         if (studioUser.getRole().equals(Role.ROLE_PRIVATE)) {
-            throw new ConflictException("개인 스튜디오에 초디 불가");
+            throw new ConflictException("개인 스튜디오에 초대 불가");
         }
 
         invitation.updateStudio(studio);
         invitationRepository.save(invitation);
+
+        // 중복된 태그 제거
+        Set<Long> uniqueTagIds = new HashSet<>(tagIds);
+
+        for (Long tagId : uniqueTagIds) {
+            Tag tag = tagRepository.findById(tagId)
+                    .orElseThrow(() -> new ResourceNotFoundException("태그가 존재하지 않음"));
+            InvitationTag invitationTag = InvitationTag.builder()
+                    .tag(tag)
+                    .invitation(invitation)
+                    .build();
+            invitationTagRepository.save(invitationTag);
+        }
     }
 
     /**
