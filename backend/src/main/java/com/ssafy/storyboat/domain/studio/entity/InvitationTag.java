@@ -1,7 +1,6 @@
-package com.ssafy.storyboat.domain.tag.entity;
+package com.ssafy.storyboat.domain.studio.entity;
 
-import com.ssafy.storyboat.domain.studio.entity.Invitation;
-import com.ssafy.storyboat.domain.user.entity.Profile;
+import com.ssafy.storyboat.domain.tag.entity.Tag;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,7 +18,7 @@ public class InvitationTag {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "invitation_tag_id")
-    private Long id;
+    private Long invitationTagId;
 
     @ManyToOne
     @JoinColumn(name = "tag_id")
