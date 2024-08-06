@@ -91,7 +91,7 @@ public class StudioService {
     @Transactional(readOnly = true)
     public StudioUser isWriteAuthorized(Long studioId, Long userId) {
         StudioUser studioUser = isReadAuthorized(studioId, userId);
-        if (studioUser.getRole() == Role.ROLE_REQUESTER) {
+        if (studioUser.getRole() == Role.ROLE_VIEWER) {
             throw new ForbiddenException("Studio 수정 권한 없음");
         }
         return studioUser;

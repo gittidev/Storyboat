@@ -263,9 +263,8 @@ public class InvitationService {
 //
 //        }
         else {
-            throw new IllegalArgumentException("검색 조건 없음");
+            throw new ConflictException("검색 조건 없음");
         }
-
         return invitations;
     }
 }
