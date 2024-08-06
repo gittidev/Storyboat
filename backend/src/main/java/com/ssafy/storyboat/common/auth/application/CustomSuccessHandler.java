@@ -38,7 +38,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         log.info("username={} role={}", userName, role);
 
         // Refresh Token 생성
-        String refreshToken = jwtUtil.createJwt("refresh", userName, role, 24 * 60 * 60 * 1000L); // 1일 유효
+        String refreshToken = jwtUtil.createJwt("refresh", userName, role, 7 * 24 * 60 * 60 * 1000L); // 7일 유효
         log.info("Refresh Token: {}", refreshToken);
 
         // RefreshToken 저장
@@ -47,14 +47,9 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         // Access Token과 Refresh Token을 쿠키에 추가
         response.addCookie(createCookie("refresh", refreshToken));
 
-        // 성공 후 리디렉션
-        if (customUserDetails.getJoinStatus()) {
-            // 회원 가입시 보낼 경로
-            response.sendRedirect("https://i11c107.p.ssafy.io/storyboat");
-        } else {
-            // 로그인 시 보낼 경로
-            response.sendRedirect("https://i11c107.p.ssafy.io/storyboat");
-        }
+        // 로그인/회원가입 성공 시 리다이렉트
+        response.addHeader("SignupState",customUserDetails.getJoinStatus() + "");
+        response.sendRedirect("http://localhost:5173/login/loading");
     }
 
     private void saveRefreshToken(String userName, String refreshToken) {
@@ -97,6 +92,8 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         Cookie cookie = new Cookie(key, value);
         cookie.setMaxAge(7 * 24 * 60 * 60); // 쿠키의 유효 기간 (7일)
         cookie.setPath("/");
+        cookie.setSecure(true); // 이 속성과
+        cookie.setAttribute("SameSite", "None"); // 이 속성 추가
         cookie.setHttpOnly(true);
         return cookie;
     }

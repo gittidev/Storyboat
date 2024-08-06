@@ -1,10 +1,13 @@
 package com.ssafy.storyboat.domain.user.entity;
 
+import com.ssafy.storyboat.domain.tag.entity.ProfileTag;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Entity
 @Table(name = "profile")
@@ -32,10 +35,32 @@ public class Profile {
     @Column(name = "image_url")
     private String imageUrl;
 
+    @OneToMany(mappedBy = "profile", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ProfileTag> profileTags;
+
     // User <-> Profile 까지만 매핑되어 있음
 
     public void setUser(User user) {
         user.setProfile(this);
         this.user = user;
-    };
+    }
+
+    public void updatePenName(String newPenName) {
+        this.penName = newPenName;
+    }
+
+    public void updateIntroduction(String newIntroduction) {
+        this.introduction = newIntroduction;
+    }
+
+    public void updateImageUrl(String newImageUrl) {
+        this.imageUrl = newImageUrl;
+    }
+
+    public void updateProfileTags(List<ProfileTag> newTags) {
+        // 기존 태그 삭제
+        profileTags.clear();
+        profileTags.addAll(newTags);
+    }
+
 }

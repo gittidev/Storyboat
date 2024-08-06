@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import SubTopBar from '../components/Commons/SubTopBar';
 // import CharacterCard from '../components/CharacterCard';
-import Tag from '../components/Tag'; // Assuming Tag is a custom component you have
+import Tag from '../components/Commons/Tag'; // Assuming Tag is a custom component you have
 
 // Importing images
 import img1 from '../images/img1.jpg';
@@ -45,6 +46,8 @@ const MyCharPage: React.FC = () => {
 
     return (
         <>
+            <SubTopBar title={'내 캐릭터 보관함'}/>
+
             <button
                 onClick={handleGoToAIPainting}
                 style={{ backgroundColor: 'blue', color: 'white', padding: '10px', cursor: 'pointer' }}
@@ -53,7 +56,7 @@ const MyCharPage: React.FC = () => {
             </button>
 
             <br />
-            <h2>캐릭터 목록</h2>
+        
             <Tag />
             <br />
             <div className="character-list">

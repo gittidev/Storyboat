@@ -1,22 +1,11 @@
-// import { fetchProfile } from '../../apis/profileApi';
-// import React, { useState } from 'react';
 import React from 'react';
-// import { dummyProfile} from './ProfileData'
-import type { Profile } from './ProfileData';   
-
+import type { ProfileProps } from './ProfileData';   
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-// import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import ProfileForm from './ProfileForm';
 import './Profile.css';
-
-// interface Profile  {
-//   penName: string;
-//   profilePicture: File;
-//   preferredGenres: string;
-//   additionalInfo: string;
-// }
+import { Typography } from '@mui/material';
+import CustomButton from '../Commons/CustomButton';
 
 
 const style = {
@@ -33,12 +22,12 @@ const style = {
 
 export default function BasicModal() {
   const [open, setOpen] = React.useState(false);
-  const [profiles, setProfiles] = React.useState<Profile[]>([]);
+  const [profiles, setProfiles] = React.useState<ProfileProps[]>([]);
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
-  const handleSave = (profile: Profile) => {
+  const handleSave = (profile: ProfileProps) => {
     console.log('Profile saved:', profile);
     setProfiles((prevProfiles) => [...prevProfiles, profile]);
     // Handle character save logic here
@@ -46,8 +35,15 @@ export default function BasicModal() {
   };
 
   return (
-    <div>
-      <Button onClick={handleOpen}>프로필 수정</Button>
+    <>
+    <Box sx={{display: 'flex', justifyContent: 'space-between'}}>
+      <Typography variant="h6" component={'div'}>
+        내 프로필 관리
+      </Typography>
+      <CustomButton content='프로필 수정' bgcolor='lightBlue.200' hoverBgColor='teal.A100' onClick={handleOpen}/>
+    </Box>
+      
+
       <Modal
         open={open}
         onClose={handleClose}
@@ -55,42 +51,24 @@ export default function BasicModal() {
         aria-describedby="modal-modal-description"
       >
         <Box sx={style}>
-          {/* <ProfileForm onSave={handleSave} onClose={handleClose} />원본임 */}
           <ProfileForm onSave={handleSave} onClose={handleClose} />
         </Box>
       </Modal>
-      <div>
-        <h3>프로필</h3>
-        {/* <p>{Character}</p> */}
+      <Box>
         {profiles.map((profile, index) => (
           <Profile
             key={index}
             penName = {profile.penName}
-            // email = {profile.email}
+            email = {profile.email}
             profilePicture = {profile.profilePicture}
             preferredGenres = {profile.preferredGenres}
             additionalInfo = {profile.additionalInfo}
           />
         ))}
-      </div>
+      </Box>
 
-    </div>
+    </>
   );
-}
-
-// interface ProfileProps {
-//   penName : string;
-//   profilePicture: File | null;
-//   preferredGenres : string[];
-//   additionalInfo : string;
-// }
-
-interface ProfileProps {
-
-  penName : string;
-  profilePicture: string | null;
-  preferredGenres : string[];
-  additionalInfo : string;
 }
 
 // const FileUploadComponent: React.FC = () => {
@@ -130,14 +108,14 @@ interface ProfileProps {
 
 //이게 기존 코드임
 // const Profile: React.FC<ProfileProps> = ({ penName,profilePicture, preferredGenres, additionalInfo }) => {
-const Profile: React.FC<ProfileProps> = ({ penName, preferredGenres, additionalInfo }) => {
+const Profile: React.FC<ProfileProps> = ({ penName, email, profilePicture, preferredGenres, additionalInfo }) => {
   return (
     <div style={{ border: '1px solid #ddd', padding: '1rem', marginTop: '1rem' }}>
       <h2>{penName}</h2>
+      <h2>{email}</h2>
       <p><strong>profilePicture:</strong> </p>
       <img 
-            // src={URL.createObjectURL(profilePicture)} 
-            src={''} 
+            src={profilePicture} 
             alt="Profile Preview" 
             style={{ maxWidth: '100%', height: 'auto', marginTop: '1rem' }}
           />
