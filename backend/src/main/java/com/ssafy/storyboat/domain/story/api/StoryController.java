@@ -160,4 +160,6 @@ public class StoryController {
         storyService.saveStory(studioId, userId, studioStoryId, story.getStoryData());
         return ResponseEntity.ok(ApiResponse.success("Rollback Success"));
     }
+
+
 }

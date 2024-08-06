@@ -2,6 +2,7 @@ package com.ssafy.storyboat.domain.studio.api;
 
 import com.ssafy.storyboat.common.dto.ApiResponse;
 import com.ssafy.storyboat.common.auth.dto.CustomOAuth2User;
+import com.ssafy.storyboat.common.dto.Role;
 import com.ssafy.storyboat.domain.studio.application.StudioService;
 import com.ssafy.storyboat.domain.studio.dto.StudioCreateRequest;
 import com.ssafy.storyboat.domain.studio.dto.StudioResponse;
@@ -132,5 +133,12 @@ public class StudioController {
         boolean result = request.getDecision().equals("accept");
         studioService.acceptRequest(studioId, userId, memberId, result);
         return ResponseEntity.ok(ApiResponse.success("스튜디오 참여 요청 " + (result ? "수락" : "거절")));
+    }
+
+    @GetMapping("/{studioId}/my")
+    public ResponseEntity<?> findMyRole(@AuthenticationPrincipal CustomOAuth2User customOAuth2User, @PathVariable Long studioId) {
+        Long userId = customOAuth2User.getUserId();
+        Role role = studioService.findMYRole(studioId, userId);
+        return ResponseEntity.ok(ApiResponse.success(role, "유저 권한 조회 성공"));
     }
 }
