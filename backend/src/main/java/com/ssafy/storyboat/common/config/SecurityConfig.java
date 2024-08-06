@@ -68,6 +68,7 @@ public class SecurityConfig {
                         .requestMatchers("/reissue").permitAll()
                         .requestMatchers("/swagger-ui/**").permitAll()
                         .requestMatchers("/v3/**").permitAll()
+                        .requestMatchers("/signaling").permitAll()
                         .anyRequest().authenticated()
                 )
 
