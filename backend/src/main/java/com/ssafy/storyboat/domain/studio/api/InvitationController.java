@@ -9,6 +9,7 @@ import com.ssafy.storyboat.domain.studio.dto.Invitation.InvitationFindOneRespons
 import com.ssafy.storyboat.domain.studio.dto.Invitation.InvitationSaveRequest;
 import com.ssafy.storyboat.domain.studio.entity.Invitation;
 import com.ssafy.storyboat.domain.studio.entity.InvitationCode;
+import com.ssafy.storyboat.domain.tag.dto.ProfileTagUpdateRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @RestController
@@ -66,7 +68,7 @@ public class InvitationController {
                 .description(invitationSaveRequest.getDescription())
                 .build();
 
-        invitationService.InvitationSave(studioId, userId, invitation, invitationSaveRequest.getTagIds());
+        invitationService.InvitationSave(studioId, userId, invitation, invitationSaveRequest.getTags());
         return ResponseEntity.ok().body(ApiResponse.success("모집글 생성 성공"));
     }
 
@@ -85,7 +87,7 @@ public class InvitationController {
                 .description(invitationSaveRequest.getDescription())
                 .build();
 
-        invitationService.updateInvitation(studioId, userId, invitation);
+        invitationService.updateInvitation(studioId, userId, invitation, invitationSaveRequest.getTags());
         return ResponseEntity.ok().body(ApiResponse.success("모집글 수정 성공"));
     }
 
