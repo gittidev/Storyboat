@@ -1,33 +1,32 @@
 package com.ssafy.storyboat.domain.studio.application;
 
-import com.ssafy.storyboat.common.auth.dto.CustomOAuth2User;
-import com.ssafy.storyboat.common.auth.dto.OAuth2UserDTO;
 import com.ssafy.storyboat.common.dto.Role;
 import com.ssafy.storyboat.common.exception.ConflictException;
 import com.ssafy.storyboat.common.exception.ResourceNotFoundException;
 import com.ssafy.storyboat.domain.studio.application.authorization.StudioOwnerAuthorization;
+import com.ssafy.storyboat.domain.studio.dto.Invitation.InvitationFindAllResponse;
 import com.ssafy.storyboat.domain.studio.entity.*;
 import com.ssafy.storyboat.domain.studio.repository.InvitationCodeRepository;
 import com.ssafy.storyboat.domain.studio.repository.InvitationRepository;
 import com.ssafy.storyboat.domain.studio.repository.StudioRepository;
 import com.ssafy.storyboat.domain.studio.repository.StudioUserRepository;
 import com.ssafy.storyboat.domain.tag.dto.ProfileTagUpdateRequest;
-import com.ssafy.storyboat.domain.tag.dto.TagRequest;
 import com.ssafy.storyboat.domain.tag.entity.Tag;
 import com.ssafy.storyboat.domain.tag.repository.InvitationTagRepository;
 import com.ssafy.storyboat.domain.tag.repository.TagRepository;
 import com.ssafy.storyboat.domain.user.application.UserService;
 import com.ssafy.storyboat.domain.user.entity.User;
-import com.ssafy.storyboat.domain.user.repository.UserRepository;
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.NoResultException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -248,5 +247,25 @@ public class InvitationService {
 
         studioUserRepository.save(studioUser);
     }
+    
+    @Transactional(readOnly = true)
+    public List<InvitationFindAllResponse> searchInvitation(String category, String keyword) {
+        List<InvitationFindAllResponse> invitations;
+        if (category.equals("studioName")) {
+            invitations = invitationRepository.findByStudio_NameContains(keyword).stream().map(InvitationFindAllResponse::new)
+                    .collect(Collectors.toList());
+        } else if (category.equals("title")) {
+            invitations = invitationRepository.findByStudio_NameContains(keyword).stream().map(InvitationFindAllResponse::new)
+                    .collect(Collectors.toList());
+        }
+        // 음.. 태그 검색은 추후 추가
+//        else if (category.equals("tag")) {
+//
+//        }
+        else {
+            throw new IllegalArgumentException("검색 조건 없음");
+        }
 
+        return invitations;
+    }
 }
