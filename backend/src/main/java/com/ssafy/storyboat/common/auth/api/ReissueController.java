@@ -1,6 +1,8 @@
 package com.ssafy.storyboat.common.auth.api;
 
+import com.ssafy.storyboat.common.auth.dto.AccessTokenResponse;
 import com.ssafy.storyboat.common.auth.util.JWTUtil;
+import com.ssafy.storyboat.common.dto.ApiResponse;
 import com.ssafy.storyboat.domain.user.entity.RefreshToken;
 import com.ssafy.storyboat.domain.user.entity.User;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -87,14 +89,13 @@ public class ReissueController {
                     String role = jwtUtil.getRole(refreshToken);
 
                     // make new JWT
-                    String newAccess = jwtUtil.createJwt("access", username, role, 600000L);
-                    //String newRefresh = jwtUtil.createJwt("refresh", username, role, 24 * 60 * 60 * 1000L);
-
+                    String newAccess = jwtUtil.createJwt("access", username, role, 600000L * 1000 * 1000);
                     // response
                     response.addHeader("Authorization", "Bearer " + newAccess);
-                    //response.addCookie(createCookie("refresh", newRefresh));
+                    AccessTokenResponse accessToken = new AccessTokenResponse();
+                    accessToken.setAccessToken("Bearer " + newAccess);
+                    return ResponseEntity.ok(ApiResponse.success(accessToken, "Access Token 발급"));
 
-                    return new ResponseEntity<>(HttpStatus.OK);
                 } else if (jwtUtil.isExpired(token.getRefreshToken())) {
                     entityManager.remove(token);
                 }

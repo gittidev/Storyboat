@@ -1,6 +1,8 @@
 package com.ssafy.storyboat.common.auth.filter;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.storyboat.common.auth.util.JWTUtil;
+import com.ssafy.storyboat.common.dto.ApiResponse;
 import com.ssafy.storyboat.domain.user.entity.RefreshToken;
 import com.ssafy.storyboat.domain.user.entity.User;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -29,6 +31,7 @@ public class CustomLogoutFilter extends GenericFilterBean {
 
     private final JWTUtil jwtUtil;
     private final EntityManagerFactory entityManagerFactory;
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
@@ -36,11 +39,9 @@ public class CustomLogoutFilter extends GenericFilterBean {
     }
 
     private void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException, ServletException {
-
-
         // path and method verify
         String requestUri = request.getRequestURI();
-        if (!requestUri.matches("/logout")) {
+        if (!requestUri.matches("/api/logout")) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -65,7 +66,7 @@ public class CustomLogoutFilter extends GenericFilterBean {
 
         // Refresh token null check
         if (refresh == null) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            setErrorResponse(response, HttpServletResponse.SC_BAD_REQUEST, "Refresh token is missing");
             return;
         }
 
@@ -73,14 +74,14 @@ public class CustomLogoutFilter extends GenericFilterBean {
         try {
             jwtUtil.isExpired(refresh);
         } catch (ExpiredJwtException e) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            setErrorResponse(response, HttpServletResponse.SC_BAD_REQUEST, "Refresh token is expired");
             return;
         }
 
         // Check if token is refresh
         String category = jwtUtil.getCategory(refresh);
         if (!category.equals("refresh")) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            setErrorResponse(response, HttpServletResponse.SC_BAD_REQUEST, "Invalid token category");
             return;
         }
 
@@ -90,7 +91,6 @@ public class CustomLogoutFilter extends GenericFilterBean {
 
         EntityManager entityManager = entityManagerFactory.createEntityManager();
         try {
-
             entityManager.getTransaction().begin();  // 트랜잭션 시작
 
             // 사용자 조회
@@ -101,13 +101,10 @@ public class CustomLogoutFilter extends GenericFilterBean {
 
             log.info("User found: {}", queriedUser);
 
-            boolean tokenFound = false;
-
-            // RefreshToken을 삭제
-            tokenFound = removeExpiredOrMatchingTokens(queriedUser, refresh);
+            boolean tokenFound = removeExpiredOrMatchingTokens(queriedUser, refresh);
 
             if (!tokenFound) {
-                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                setErrorResponse(response, HttpServletResponse.SC_BAD_REQUEST, "Refresh token not found");
                 return;
             }
 
@@ -115,18 +112,18 @@ public class CustomLogoutFilter extends GenericFilterBean {
             entityManager.getTransaction().commit();  // 트랜잭션 커밋
 
         } catch (NoResultException e) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            setErrorResponse(response, HttpServletResponse.SC_BAD_REQUEST, "User not found");
             return;
         } catch (PersistenceException e) {
             log.error("Persistence error: " + e.getMessage());
             if (entityManager.getTransaction().isActive()) {
                 entityManager.getTransaction().rollback();  // 트랜잭션 롤백
             }
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            setErrorResponse(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Persistence error");
             return;
         } catch (Exception e) {
             log.error("Unexpected error: " + e.getMessage());
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            setErrorResponse(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Unexpected error");
             return;
         } finally {
             // 엔티티 매니저 닫기
@@ -135,14 +132,15 @@ public class CustomLogoutFilter extends GenericFilterBean {
             }
         }
 
-
         // Invalidate refresh token cookie
         Cookie cookie = new Cookie("refresh", null);
         cookie.setMaxAge(0);
         cookie.setPath("/");
         cookie.setHttpOnly(true);
         response.addCookie(cookie);
-        response.setStatus(HttpServletResponse.SC_OK);
+
+        // 성공 응답
+        setSuccessResponse(response, "Logout successful");
     }
 
     //@Transactional
@@ -157,7 +155,7 @@ public class CustomLogoutFilter extends GenericFilterBean {
 
             if (token.getRefreshToken().equals(refresh)) {
                 log.info("Deleting RefreshToken");
-                log.info("tokenID: {}, token: {}, user: {}", token.getId(), token.getRefreshToken(), token.getUser());
+                log.info("tokenID: {}, token: {}, user: {}", token.getRefreshTokenId(), token.getRefreshToken(), token.getUser());
 
                 iterator.remove(); // 부모 엔티티의 컬렉션에서 제거
                 result = true;
@@ -169,5 +167,19 @@ public class CustomLogoutFilter extends GenericFilterBean {
         return result;
         // entityManager.remove(token); 호출할 필요 없음
         // 부모 엔티티의 컬렉션에서 제거하면 orphanRemoval=true 설정에 의해 자식 엔티티가 자동으로 삭제됨
+    }
+
+    private void setErrorResponse(HttpServletResponse response, int status, String message) throws IOException {
+        response.setStatus(status);
+        ApiResponse<Object> errorResponse = ApiResponse.error(message);
+        response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
+        response.getWriter().flush();
+    }
+
+    private void setSuccessResponse(HttpServletResponse response, String message) throws IOException {
+        response.setStatus(HttpServletResponse.SC_OK);
+        ApiResponse<Object> successResponse = ApiResponse.success(message);
+        response.getWriter().write(objectMapper.writeValueAsString(successResponse));
+        response.getWriter().flush();
     }
 }

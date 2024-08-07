@@ -1,5 +1,6 @@
 package com.ssafy.storyboat.common.auth.dto;
 
+import com.ssafy.storyboat.common.auth.application.CustomJoinStatus;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
@@ -10,7 +11,6 @@ public class CustomOAuth2User implements OAuth2User {
     private final OAuth2UserDTO userDTO;
 
     public CustomOAuth2User(OAuth2UserDTO userDTO) {
-
         this.userDTO = userDTO;
     }
 
@@ -41,5 +41,11 @@ public class CustomOAuth2User implements OAuth2User {
         return userDTO.getUsername();
     }
 
-    public boolean getJoinStatus() {return userDTO.getJoinStatus();}
+    public String getProviderId() { return userDTO.getUsername().split(" ")[0]; }
+
+    public String getProvider() { return userDTO.getUsername().split(" ")[1]; }
+
+    public CustomJoinStatus getJoinStatus() {return userDTO.getJoinStatus();}
+
+    public Long getUserId() { return userDTO.getUserId(); }
 }

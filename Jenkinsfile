@@ -14,7 +14,7 @@ pipeline {
                     
                     mattermostSend(
                         color: 'warning',
-                        message: """빌드 시작: StoryBoat #${env.BUILD_NUMBER}
+                        message: """젠킨스 시작: ${env.JOB_NAME} #${env.BUILD_NUMBER}
                         커밋 작성자: ${gitCommitterName}
                         커밋 메시지: ${gitCommitMessage}
                         (<${env.BUILD_URL}|Details>)""",
@@ -111,7 +111,7 @@ pipeline {
                 
                 mattermostSend(
                     color: 'good',
-                    message: """빌드 성공: StoryBoat #${env.BUILD_NUMBER}
+                    message: """빌드 성공: ${env.JOB_NAME} #${env.BUILD_NUMBER}
                     커밋 작성자: ${gitCommitterName}
                     커밋 메시지: ${gitCommitMessage}
                     (<${env.BUILD_URL}|Details>)""",
@@ -124,17 +124,12 @@ pipeline {
             script {
                 def gitCommitterName = sh(script: "git log -1 --pretty=format:'%an'", returnStdout: true).trim()
                 def gitCommitMessage = sh(script: "git log -1 --pretty=%B", returnStdout: true).trim()
-                def logContent = currentBuild.rawBuild.getLog(50).join("\n")
                 
                 mattermostSend(
                     color: 'danger',
-                    message: """빌드 실패: StoryBoat #${env.BUILD_NUMBER}
+                    message: """빌드 실패: ${env.JOB_NAME} #${env.BUILD_NUMBER}
                     커밋 작성자: ${gitCommitterName}
                     커밋 메시지: ${gitCommitMessage}
-                    로그:
-                    ```
-                    ${logContent}
-                    ```
                     (<${env.BUILD_URL}|Details>)""",
                     endpoint: 'https://meeting.ssafy.com/hooks/1psxfrtocfyubrb6jrpd7daoay',
                     channel: 'Jenkins---C107',
