@@ -1,38 +1,25 @@
 package com.ssafy.storyboat.domain.studio.application;
 
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.ssafy.storyboat.common.auth.dto.CustomOAuth2User;
 import com.ssafy.storyboat.common.dto.ApiResponse;
 import com.ssafy.storyboat.common.dto.Role;
 import com.ssafy.storyboat.common.exception.*;
-import com.ssafy.storyboat.domain.character.application.CharacterCommandService;
-import com.ssafy.storyboat.domain.character.application.CharacterQueryService;
-import com.ssafy.storyboat.domain.character.entity.StudioCharacter;
-import com.ssafy.storyboat.domain.character.repository.CharacterRepository;
 import com.ssafy.storyboat.domain.studio.application.authorization.StudioOwnerAuthorization;
 import com.ssafy.storyboat.domain.studio.application.authorization.StudioReadAuthorization;
-import com.ssafy.storyboat.domain.studio.application.authorization.StudioWriteAuthorization;
 import com.ssafy.storyboat.domain.studio.dto.StudioMemberFindAllResponse;
 import com.ssafy.storyboat.domain.studio.dto.StudioResponse;
-import com.ssafy.storyboat.domain.studio.entity.Invitation;
-import com.ssafy.storyboat.domain.studio.entity.InvitationCode;
 import com.ssafy.storyboat.domain.studio.entity.Studio;
 import com.ssafy.storyboat.domain.studio.entity.StudioUser;
-import com.ssafy.storyboat.domain.studio.repository.InvitationCodeRepository;
-import com.ssafy.storyboat.domain.studio.repository.InvitationRepository;
 import com.ssafy.storyboat.domain.studio.repository.StudioRepository;
 import com.ssafy.storyboat.domain.studio.repository.StudioUserRepository;
 import com.ssafy.storyboat.domain.user.application.UserService;
 import com.ssafy.storyboat.domain.user.entity.Profile;
 import com.ssafy.storyboat.domain.user.entity.User;
-import com.ssafy.storyboat.domain.user.repository.UserRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.PersistenceException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -49,11 +36,7 @@ public class StudioService {
     private final StudioRepository studioRepository;
     private final EntityManagerFactory entityManagerFactory;
     private final StudioUserRepository studioUserRepository;
-    private final AmazonS3 amazonS3;
-    private final CharacterRepository characterRepository;
     private final UserService userService;
-    @Value("${cloud.aws.s3.bucket}")
-    private String bucket;
 
 
     @Transactional(readOnly = true)

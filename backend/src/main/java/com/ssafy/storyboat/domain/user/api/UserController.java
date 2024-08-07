@@ -3,6 +3,7 @@ package com.ssafy.storyboat.domain.user.api;
 import com.ssafy.storyboat.common.dto.ApiResponse;
 import com.ssafy.storyboat.common.auth.dto.CustomOAuth2User;
 import com.ssafy.storyboat.common.dto.Role;
+import com.ssafy.storyboat.domain.character.dto.CharacterUpdateRequest;
 import com.ssafy.storyboat.domain.studio.dto.StudioResponse;
 import com.ssafy.storyboat.domain.studio.entity.Studio;
 import com.ssafy.storyboat.domain.user.application.UserService;
@@ -17,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
@@ -58,8 +60,11 @@ public class UserController {
             summary = "유저 프로필 수정",
             description = "현재 로그인한 사용자의 프로필을 수정합니다."
     )
-    public ResponseEntity<?> updateUserProfile(@RequestBody ProfileUpdateRequest profileUpdateRequest, @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
-        userService.updateUserProfile(customOAuth2User.getUserId(), profileUpdateRequest);
+    public ResponseEntity<?> updateUserProfile(ProfileUpdateRequest profileUpdateRequest,
+                                               @AuthenticationPrincipal CustomOAuth2User customOAuth2User,
+                                               @RequestPart MultipartFile imageUrl) {
+        log.info("ASD");
+        userService.updateUserProfile(customOAuth2User.getUserId(), profileUpdateRequest, imageUrl);
         return ResponseEntity.ok().body(ApiResponse.success("Update Profile Success"));
     }
 

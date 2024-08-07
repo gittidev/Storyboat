@@ -1,10 +1,13 @@
 package com.ssafy.storyboat.domain.user.application;
 
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.ssafy.storyboat.common.dto.Role;
-import com.ssafy.storyboat.common.exception.ConflictException;
-import com.ssafy.storyboat.common.exception.ForbiddenException;
-import com.ssafy.storyboat.common.exception.ResourceNotFoundException;
-import com.ssafy.storyboat.common.exception.UnauthorizedException;
+import com.ssafy.storyboat.common.exception.*;
+import com.ssafy.storyboat.common.s3.S3Repository;
+import com.ssafy.storyboat.domain.character.dto.CharacterUpdateRequest;
+import com.ssafy.storyboat.domain.character.entity.StudioCharacter;
+import com.ssafy.storyboat.domain.studio.application.authorization.StudioWriteAuthorization;
 import com.ssafy.storyboat.domain.studio.dto.StudioResponse;
 import com.ssafy.storyboat.domain.studio.repository.StudioUserRepository;
 import com.ssafy.storyboat.domain.tag.application.TagService;
@@ -24,7 +27,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -42,6 +47,7 @@ public class UserService {
     private final TagRepository tagRepository;
     private final StudioUserRepository studioUserRepository;
     private final TagService tagService;
+    private final S3Repository s3Repository;
 
     @Transactional(readOnly = true)
     public void searchPenName(String penName) {
@@ -72,7 +78,7 @@ public class UserService {
     }
 
     @Transactional
-    public void updateUserProfile(Long userId, ProfileUpdateRequest profileUpdateRequest) {
+    public void updateUserProfile(Long userId, ProfileUpdateRequest profileUpdateRequest, MultipartFile file) {
         // 1. 사용자 조회 및 존재 여부 확인
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
@@ -82,7 +88,6 @@ public class UserService {
         if (profile == null) {
             throw new ResourceNotFoundException("Profile not found");
         }
-        ;
 
         // 3. PenName 중복 확인
         if (!profile.getPenName().equals(profileUpdateRequest.getPenName())) {
@@ -91,7 +96,7 @@ public class UserService {
             }
         }
 
-        // 5. 새로운 태그 추가
+        // 4. 새로운 태그 추가
         List<ProfileTag> tagList = new ArrayList<>();
         List<Tag> tags = tagRepository.findAll();
         HashMap<Long, Tag> tagMap = new HashMap<>();
@@ -111,10 +116,21 @@ public class UserService {
             tagList.add(profileTag);
         }
 
+        // 5. 프로필 이미지 업데이트 (S3 업로드 포함)
+        if (file != null && !file.isEmpty()) {
+            // 기존 이미지 URL이 있는 경우 S3에서 삭제
+            if (profile.getImageUrl() != null) {
+                s3Repository.deleteFile(profile.getImageUrl());
+            }
+
+            // 새 이미지 S3에 업로드
+            String newImageUrl = s3Repository.uploadFile(file, "");
+            profile.updateImageUrl(newImageUrl);
+        }
+
         // 6. 프로필 업데이트
         profile.updatePenName(profileUpdateRequest.getPenName());
         profile.updateIntroduction(profileUpdateRequest.getIntroduction());
-        profile.updateImageUrl(profileUpdateRequest.getImageUrl());
         profile.updateProfileTags(tagList);
 
         profileRepository.save(profile);
