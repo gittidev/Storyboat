@@ -1,5 +1,6 @@
 package com.ssafy.storyboat.domain.story.application;
 
+import com.ssafy.storyboat.common.dto.PageResponse;
 import com.ssafy.storyboat.common.dto.Role;
 import com.ssafy.storyboat.common.exception.ForbiddenException;
 import com.ssafy.storyboat.common.exception.InternalServerErrorException;
@@ -173,7 +174,7 @@ public class StoryService {
     }
 
     @StudioReadAuthorization
-    public List<StoryHistoryFindAllResponse> findAllHistoryDTO(Long studioId, Long userId, List<Story> stories) {
+    public PageResponse findAllHistoryDTO(Long studioId, Long userId, Page<Story> stories) {
         List<Profile> profiles = studioService.findStudioUser(studioId, userId);
         HashMap<Long, Profile> profileMap = new HashMap<>();
         for (Profile profile : profiles) {
@@ -181,7 +182,7 @@ public class StoryService {
             profileMap.put(profile.getUser().getUserId(), profile);
         }
         List<StoryHistoryFindAllResponse> responses = new ArrayList<>();
-        for (Story story : stories) {
+        for (Story story : stories.getContent()) {
             log.info("story.id={}, story.userId={}", story.getStoryId(), story.getUserId());
             Profile profile = profileMap.get(story.getUserId());
             log.info("profile.penName={}", profile.getPenName());
@@ -193,7 +194,12 @@ public class StoryService {
                     .build();
             responses.add(tmp);
         }
-        return responses;
+        PageResponse result = new PageResponse();
+        result.setContent(responses);
+        result.setSize(stories.getSize());
+        result.setTotalElements(stories.getTotalElements());
+        result.setTotalPages(stories.getTotalPages());
+        return result;
     }
 
     @StudioReadAuthorization
