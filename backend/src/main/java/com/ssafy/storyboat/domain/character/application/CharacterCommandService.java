@@ -78,7 +78,9 @@ public class CharacterCommandService {
 
     @StudioWriteAuthorization
     @Transactional
-    public void updateCharacter(Long studioId, Long userId, Long characterId, CharacterUpdateRequest updateRequest, MultipartFile file) {
+    public void updateCharacter(Long studioId, Long userId,
+                                Long characterId, CharacterUpdateRequest updateRequest,
+                                MultipartFile file) {
         // 엔티티 조회
         StudioCharacter character = characterRepository.findById(characterId)
                 .orElseThrow(() -> new ResourceNotFoundException("찾을 수 없는 캐릭터입니다"));

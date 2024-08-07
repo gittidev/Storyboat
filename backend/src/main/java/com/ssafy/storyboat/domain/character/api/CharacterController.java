@@ -93,7 +93,7 @@ public class CharacterController {
             @PathVariable Long studioId,
             @PathVariable Long characterId,
             CharacterUpdateRequest characterUpdateRequest,
-            @RequestPart MultipartFile file) {
+            @RequestPart(required = false) MultipartFile file) {
         characterCommandService.updateCharacter(studioId, customOAuth2User.getUserId(), characterId, characterUpdateRequest, file);
         return ApiResponse.success("캐릭터 수정 성공");
     }

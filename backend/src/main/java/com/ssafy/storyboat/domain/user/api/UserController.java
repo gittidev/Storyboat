@@ -62,7 +62,7 @@ public class UserController {
     )
     public ResponseEntity<?> updateUserProfile(ProfileUpdateRequest profileUpdateRequest,
                                                @AuthenticationPrincipal CustomOAuth2User customOAuth2User,
-                                               @RequestPart MultipartFile imageUrl) {
+                                               @RequestPart(required = false) MultipartFile imageUrl) {
         log.info("ASD");
         userService.updateUserProfile(customOAuth2User.getUserId(), profileUpdateRequest, imageUrl);
         return ResponseEntity.ok().body(ApiResponse.success("Update Profile Success"));
