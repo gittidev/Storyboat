@@ -116,7 +116,7 @@ public class InvitationController {
     public ResponseEntity<?> makeInvitationCode(@AuthenticationPrincipal final CustomOAuth2User user, @PathVariable Long studioId) {
         Long userId = user.getUserId();
         String code = invitationService.makeInvitationCode(studioId, userId);
-        return ResponseEntity.ok(ApiResponse.success("http://localhost:8080/api/invitations/code/" + code, "모집 코드 생성 성공"));
+        return ResponseEntity.ok(ApiResponse.success("http://localhost:8080/api/invitations/code/join/" + code, "모집 코드 생성 성공"));
 
     }
 
@@ -125,7 +125,7 @@ public class InvitationController {
         Long userId = user.getUserId();
 
         InvitationCode invitationCode = invitationService.findInvitationCode(studioId, userId);
-        return ResponseEntity.ok(ApiResponse.success("http://localhost:8080/api/invitations/code/" + invitationCode.getCode(), "모집 코드 조회 성공"));
+        return ResponseEntity.ok(ApiResponse.success("http://localhost:8080/api/invitations/code/join/" + invitationCode.getCode(), "모집 코드 조회 성공"));
     }
 
     @DeleteMapping("/code/{studioId}")
@@ -137,10 +137,17 @@ public class InvitationController {
         return ResponseEntity.ok(ApiResponse.success("초대 코드 삭제 성공"));
     }
 
-    @PutMapping("/code/{invitationCode}")
+    @GetMapping("/code/join/{invitationCode}")
     public ResponseEntity<?> joinByCode(@AuthenticationPrincipal final CustomOAuth2User user, @PathVariable String invitationCode) {
-        Long userId = user.getUserId();
 
+        log.info("들어옴");
+
+        if (user == null) {
+            log.info("유저 널");
+            return ResponseEntity.ok(ApiResponse.success("Asdfadsf"));
+        }
+
+        Long userId = user.getUserId();
         invitationService.joinByCode(userId, invitationCode);
         return ResponseEntity.ok(ApiResponse.success("초대 코드로 가입 성공"));
     }
