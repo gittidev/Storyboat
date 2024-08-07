@@ -2,6 +2,7 @@ package com.ssafy.storyboat.domain.studio.api;
 
 import com.ssafy.storyboat.common.auth.dto.CustomOAuth2User;
 import com.ssafy.storyboat.common.dto.ApiResponse;
+import com.ssafy.storyboat.common.dto.PageResponse;
 import com.ssafy.storyboat.domain.studio.application.InvitationService;
 import com.ssafy.storyboat.domain.studio.application.StudioService;
 import com.ssafy.storyboat.domain.studio.dto.Invitation.InvitationFindAllResponse;
@@ -43,7 +44,9 @@ public class InvitationController {
         List<InvitationFindAllResponse> responseList = invitations.stream()
                 .map(InvitationFindAllResponse::new)
                 .collect(Collectors.toList());
-        Page<InvitationFindAllResponse> result = new PageImpl<>(responseList, pageable, invitations.getTotalElements());
+        //Page<InvitationFindAllResponse> result = new PageImpl<>(responseList, pageable, invitations.getTotalElements());
+        Page<InvitationFindAllResponse> pages = new PageImpl<>(responseList, pageable, invitations.getTotalElements());
+        PageResponse result = new PageResponse(pages);
 
         return ResponseEntity.ok().body(ApiResponse.success(result, "모집글 전체 조회"));
     }
@@ -143,9 +146,16 @@ public class InvitationController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<?> search(@RequestParam String category, @RequestParam String keyword) {
+    public ResponseEntity<?> search(@RequestParam String category, @RequestParam String keyword, Pageable pageable) {
         // category = studioName or title // or tag
-        List<InvitationFindAllResponse> result = invitationService.searchInvitation(category, keyword);
+        Page<Invitation> invitations = invitationService.searchInvitation(category, keyword, pageable);
+
+        List<InvitationFindAllResponse> responseList = invitations.stream()
+                .map(InvitationFindAllResponse::new)
+                .collect(Collectors.toList());
+        Page<InvitationFindAllResponse> pages = new PageImpl<>(responseList, pageable, invitations.getTotalElements());
+        PageResponse result = new PageResponse(pages);
+
         return ResponseEntity.ok(ApiResponse.success(result, "모집글 검색 성공"));
     }
 }

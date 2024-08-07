@@ -2,21 +2,27 @@ package com.ssafy.storyboat.domain.story.api;
 
 import com.ssafy.storyboat.common.dto.ApiResponse;
 import com.ssafy.storyboat.common.auth.dto.CustomOAuth2User;
+import com.ssafy.storyboat.common.dto.PageResponse;
 import com.ssafy.storyboat.domain.story.application.StoryService;
 import com.ssafy.storyboat.domain.story.dto.StoryFindAllResponse;
 import com.ssafy.storyboat.domain.story.dto.StoryHistoryFindAllResponse;
 import com.ssafy.storyboat.domain.story.entity.LastStory;
 import com.ssafy.storyboat.domain.story.entity.Story;
+import com.ssafy.storyboat.domain.studio.dto.Invitation.InvitationFindAllResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @Slf4j
@@ -34,9 +40,12 @@ public class StoryController {
     )
     public ResponseEntity<?> findAllStories(
             @PathVariable final Long studioId,
-            @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
-        List<StoryFindAllResponse> list = storyService.findByStudioId(studioId, customOAuth2User.getUserId());
-        return ResponseEntity.ok(ApiResponse.success(list, "스토리 목록 조회 성공"));
+            @AuthenticationPrincipal CustomOAuth2User customOAuth2User,
+            Pageable pageable) {
+        Page<StoryFindAllResponse> list = storyService.findByStudioId(studioId, customOAuth2User.getUserId(), pageable);
+        PageResponse result = new PageResponse(list);
+
+        return ResponseEntity.ok(ApiResponse.success(result, "스토리 목록 조회 성공"));
     }
 
     @PostMapping
