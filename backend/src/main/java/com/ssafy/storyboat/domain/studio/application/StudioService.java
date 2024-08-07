@@ -280,4 +280,11 @@ public class StudioService {
         // 2. Member 추방
         studioUserRepository.delete(studioUser);
     }
+
+    public Role findMYRole(Long studioId, Long userID) {
+        StudioUser studioUser = studioUserRepository.findByStudio_StudioIdAndUser_UserId(studioId, userID)
+                .orElseThrow(() -> new ForbiddenException("스튜디오 가입되지 않은 유저"));
+
+        return studioUser.getRole();
+    }
 }

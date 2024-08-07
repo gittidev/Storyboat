@@ -19,6 +19,8 @@ import com.ssafy.storyboat.domain.user.entity.User;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -51,8 +53,8 @@ public class InvitationService {
      * @return
      */
     @Transactional(readOnly = true)
-    public List<Invitation> findAll() {
-        return invitationRepository.findAll();
+    public Page<Invitation> findAll(Pageable pageable) {
+        return invitationRepository.findAll(pageable);
     }
 
     /**
@@ -249,14 +251,12 @@ public class InvitationService {
     }
     
     @Transactional(readOnly = true)
-    public List<InvitationFindAllResponse> searchInvitation(String category, String keyword) {
-        List<InvitationFindAllResponse> invitations;
+    public Page<Invitation> searchInvitation(String category, String keyword, Pageable pageable) {
+        Page<Invitation> invitations;
         if (category.equals("studioName")) {
-            invitations = invitationRepository.findByStudio_NameContains(keyword).stream().map(InvitationFindAllResponse::new)
-                    .collect(Collectors.toList());
+            invitations = invitationRepository.findByStudio_NameContains(keyword, pageable);
         } else if (category.equals("title")) {
-            invitations = invitationRepository.findByStudio_NameContains(keyword).stream().map(InvitationFindAllResponse::new)
-                    .collect(Collectors.toList());
+            invitations = invitationRepository.findByTitleContains(keyword, pageable);
         }
         // 음.. 태그 검색은 추후 추가
 //        else if (category.equals("tag")) {
