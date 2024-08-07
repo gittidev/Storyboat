@@ -47,7 +47,7 @@ public class S3Repository {
             objectMetadata.setContentType(file.getContentType());
             objectMetadata.setContentLength(file.getSize());
 
-            String uniqueFileName = UUID.randomUUID() + "/" + file.getOriginalFilename();
+            String uniqueFileName = UUID.randomUUID() + "%" + file.getOriginalFilename();
 
             amazonS3.putObject(profileBucket, uniqueFileName, file.getInputStream(), objectMetadata);
             return amazonS3.getUrl(profileBucket, uniqueFileName).toString();
@@ -58,7 +58,7 @@ public class S3Repository {
 
     public String uploadDefaultProfileImage() {
         try {
-            ClassPathResource imgFile = new ClassPathResource("/img/default_profile.png");
+            ClassPathResource imgFile = new ClassPathResource("/image/default_profile.png");
             byte[] bytes = StreamUtils.copyToByteArray(imgFile.getInputStream());
 
             MultipartFile multipartFile = new CustomMultipartFile(
@@ -74,7 +74,7 @@ public class S3Repository {
     }
 
     public void deleteFile(String imageUrl) {
-        String fileName = imageUrl.substring(imageUrl.lastIndexOf("/") + 1);
+        String fileName = imageUrl.substring(imageUrl.lastIndexOf("%") + 1);
         try {
             amazonS3.deleteObject(new DeleteObjectRequest(profileBucket, fileName));
         } catch (Exception e) {

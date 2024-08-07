@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -17,7 +18,7 @@ public class ProfileFindResponse {
     private String introduction;
     private String imageUrl;
     private StudioResponse privateStudio;
-    private List<TagRequest> tags;
+    private List<TagRequest> tags = new ArrayList<>();
 
     public void setDTO(Profile profile) {
         this.penName = profile.getPenName();
