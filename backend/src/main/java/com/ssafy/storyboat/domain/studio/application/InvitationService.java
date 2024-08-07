@@ -19,6 +19,8 @@ import com.ssafy.storyboat.domain.user.entity.User;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -51,8 +53,8 @@ public class InvitationService {
      * @return
      */
     @Transactional(readOnly = true)
-    public List<Invitation> findAll() {
-        return invitationRepository.findAll();
+    public Page<Invitation> findAll(Pageable pageable) {
+        return invitationRepository.findAll(pageable);
     }
 
     /**
