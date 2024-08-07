@@ -251,14 +251,12 @@ public class InvitationService {
     }
     
     @Transactional(readOnly = true)
-    public List<InvitationFindAllResponse> searchInvitation(String category, String keyword) {
-        List<InvitationFindAllResponse> invitations;
+    public Page<Invitation> searchInvitation(String category, String keyword, Pageable pageable) {
+        Page<Invitation> invitations;
         if (category.equals("studioName")) {
-            invitations = invitationRepository.findByStudio_NameContains(keyword).stream().map(InvitationFindAllResponse::new)
-                    .collect(Collectors.toList());
+            invitations = invitationRepository.findByStudio_NameContains(keyword, pageable);
         } else if (category.equals("title")) {
-            invitations = invitationRepository.findByStudio_NameContains(keyword).stream().map(InvitationFindAllResponse::new)
-                    .collect(Collectors.toList());
+            invitations = invitationRepository.findByTitleContains(keyword, pageable);
         }
         // 음.. 태그 검색은 추후 추가
 //        else if (category.equals("tag")) {

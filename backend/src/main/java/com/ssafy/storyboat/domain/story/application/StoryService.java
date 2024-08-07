@@ -23,6 +23,8 @@ import com.ssafy.storyboat.domain.user.entity.Profile;
 import com.ssafy.storyboat.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -49,8 +51,8 @@ public class StoryService {
 
     @Transactional(readOnly = true)
     @StudioReadAuthorization
-    public List<StoryFindAllResponse> findByStudioId(Long studioId, Long userId) {
-        return studioStoryRepository.findDTOByStudioId(studioId);
+    public Page<StoryFindAllResponse> findByStudioId(Long studioId, Long userId, Pageable pageable) {
+        return studioStoryRepository.findDTOByStudioId(studioId, pageable);
     }
 
     @StudioWriteAuthorization
@@ -166,8 +168,8 @@ public class StoryService {
     }
 
     @StudioReadAuthorization
-    public List<Story> findStoryHistory(Long studioId, Long userId, Long studioStoryId) {
-        return storyRepository.findByStudioStoryIdOrderByDateDesc(studioStoryId);
+    public Page<Story> findStoryHistory(Long studioId, Long userId, Long studioStoryId, Pageable pageable) {
+        return storyRepository.findByStudioStoryIdOrderByDateDesc(studioStoryId, pageable);
     }
 
     @StudioReadAuthorization
