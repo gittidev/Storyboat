@@ -38,7 +38,7 @@ public class CharacterCommandService {
     private final AmazonS3 amazonS3;
     private final StudioService studioService;
 
-    @Value("${cloud.aws.s3.bucket}")
+    @Value("${cloud.aws.s3.bucket.character}")
     private String bucket;
 
     private String uploadFile(MultipartFile file) {

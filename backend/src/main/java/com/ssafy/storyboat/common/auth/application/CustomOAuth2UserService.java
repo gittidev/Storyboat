@@ -2,6 +2,7 @@ package com.ssafy.storyboat.common.auth.application;
 
 import com.ssafy.storyboat.common.auth.dto.*;
 import com.ssafy.storyboat.common.dto.Role;
+import com.ssafy.storyboat.common.s3.S3Repository;
 import com.ssafy.storyboat.domain.studio.entity.Studio;
 import com.ssafy.storyboat.domain.studio.entity.StudioUser;
 import com.ssafy.storyboat.domain.user.entity.Profile;
@@ -18,6 +19,7 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -33,11 +35,11 @@ import java.util.UUID;
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     private final EntityManagerFactory entityManagerFactory;
+    private final S3Repository s3Repository;
 
     @Override
     @Transactional
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
-
 
         OAuth2User oAuth2User = super.loadUser(userRequest);
         log.info("OAuth2User : {}", oAuth2User);
@@ -109,11 +111,14 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
                 entityManager.persist(joinUser);
 
+                // 1.5
+                String defaultProfileImageUrl = s3Repository.uploadDefaultProfileImage();
+
                 // 2. profile 생성해 persist
                 String DEFAULT_PEN_NAME = "익명의 작가";
                 Profile joinUserProfile = Profile.builder()
                         .penName(DEFAULT_PEN_NAME + "_" + customUUID)
-                        .imageUrl("")
+                        .imageUrl(defaultProfileImageUrl)
                         .introduction("")
                         .user(joinUser)  // 양방향 관계 설정
                         .build();

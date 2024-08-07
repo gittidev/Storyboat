@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -13,6 +14,5 @@ import java.util.List;
 public class ProfileUpdateRequest {
     private String penName;
     private String introduction;
-    private String imageUrl;
-    private List<ProfileTagUpdateRequest> tags;
+    private List<ProfileTagUpdateRequest> tags = new ArrayList<>();
 }
