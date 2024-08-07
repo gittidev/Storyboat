@@ -123,20 +123,21 @@ public class StoryController {
         return ResponseEntity.ok(ApiResponse.success("Upload Success"));
     }
 
-    @GetMapping("/{studioStoryId}/histories")
-    @Operation(
-            summary = "스토리 수정 이력 조회",
-            description = "특정 스토리의 수정 이력을 조회합니다."
-    )
-    public ResponseEntity<?> findHistories(
-            @PathVariable final Long studioId,
-            @PathVariable final Long studioStoryId,
-            @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
-        Long userId = customOAuth2User.getUserId();
-        List<Story> stories = storyService.findStoryHistory(studioId, userId, studioStoryId);
-        List<StoryHistoryFindAllResponse> result = storyService.findAllHistoryDTO(studioId, userId, stories);
-        return ResponseEntity.ok(ApiResponse.success(result, "히스토리 불러오기 성공"));
-    }
+//    @GetMapping("/{studioStoryId}/histories")
+//    @Operation(
+//            summary = "스토리 수정 이력 조회",
+//            description = "특정 스토리의 수정 이력을 조회합니다."
+//    )
+//    public ResponseEntity<?> findHistories(
+//            @PathVariable final Long studioId,
+//            @PathVariable final Long studioStoryId,
+//            @AuthenticationPrincipal CustomOAuth2User customOAuth2User,
+//            Pageable pageable) {
+//        Long userId = customOAuth2User.getUserId();
+//        Page<Story> stories = storyService.findStoryHistory(studioId, userId, studioStoryId, pageable);
+//        List<StoryHistoryFindAllResponse> result = storyService.findAllHistoryDTO(studioId, userId, stories);
+//        return ResponseEntity.ok(ApiResponse.success(result, "히스토리 불러오기 성공"));
+//    }
 
     @GetMapping("/{studioStoryId}/histories/{storyId}")
     @Operation(

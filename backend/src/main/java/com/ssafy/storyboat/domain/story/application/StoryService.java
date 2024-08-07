@@ -168,8 +168,8 @@ public class StoryService {
     }
 
     @StudioReadAuthorization
-    public List<Story> findStoryHistory(Long studioId, Long userId, Long studioStoryId) {
-        return storyRepository.findByStudioStoryIdOrderByDateDesc(studioStoryId);
+    public Page<Story> findStoryHistory(Long studioId, Long userId, Long studioStoryId, Pageable pageable) {
+        return storyRepository.findByStudioStoryIdOrderByDateDesc(studioStoryId, pageable);
     }
 
     @StudioReadAuthorization
