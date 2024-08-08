@@ -36,6 +36,7 @@ const App: React.FC = () => {
   const [refreshToken, setRefreshToken] = useRecoilState(refreshTokenState);
   console.log(accessToken)
   useEffect(() => {
+    console.log(refreshToken)
     const setTokens = (newAccessToken: string) => {
       localStorage.setItem('access', newAccessToken);
       setAccessToken(newAccessToken);
