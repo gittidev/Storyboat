@@ -31,16 +31,9 @@ public class S3Repository {
 
     private final AmazonS3 amazonS3;
 
-    @Value("${cloud.aws.s3.bucket.character}")
-    private String characterBucket;
-
-    @Value("${cloud.aws.s3.bucket.profile}")
-    private String profileBucket;
-
-    public String uploadFile(MultipartFile file, String bucket) {
-
+    public String uploadFile(MultipartFile file, Bucket bucket) {
         if (file.isEmpty()) {
-            throw new BadRequestException("업로드할 파일 없음");
+            throw new ResourceNotFoundException("업로드할 파일 없음");
         }
         try {
             ObjectMetadata objectMetadata = new ObjectMetadata();
@@ -49,14 +42,15 @@ public class S3Repository {
 
             String uniqueFileName = UUID.randomUUID() + "%" + file.getOriginalFilename();
 
-            amazonS3.putObject(profileBucket, uniqueFileName, file.getInputStream(), objectMetadata);
-            return amazonS3.getUrl(profileBucket, uniqueFileName).toString();
+            log.info("bukect" + bucket.getBucketName());
+            amazonS3.putObject(bucket.getBucketName(), uniqueFileName, file.getInputStream(), objectMetadata);
+            return amazonS3.getUrl(bucket.getBucketName(), uniqueFileName).toString();
         } catch (IOException e) {
             throw new InternalServerErrorException("S3 파일 업로드 중 오류가 발생");
         }
     }
 
-    public String uploadDefaultProfileImage() {
+    public String uploadDefaultProfileImage(Bucket bucket) {
         try {
             ClassPathResource imgFile = new ClassPathResource("/image/default_profile.png");
             byte[] bytes = StreamUtils.copyToByteArray(imgFile.getInputStream());
@@ -67,24 +61,24 @@ public class S3Repository {
                     "image/png",
                     bytes
             );
-            return uploadFile(multipartFile, profileBucket);
+            return uploadFile(multipartFile, bucket);
         } catch (IOException e) {
             throw new InternalServerErrorException("기본 프로필 이미지 로드 중 오류가 발생");
         }
     }
 
-    public void deleteFile(String imageUrl) {
+    public void deleteFile(String imageUrl, Bucket bucket) {
         String fileName = imageUrl.substring(imageUrl.lastIndexOf("%") + 1);
         try {
-            amazonS3.deleteObject(new DeleteObjectRequest(profileBucket, fileName));
+            amazonS3.deleteObject(new DeleteObjectRequest(bucket.getBucketName(), fileName));
         } catch (Exception e) {
             throw new ResourceNotFoundException("S3 파일 삭제 중 오류가 발생");
         }
     }
 
     @Transactional
-    public String updateFile(Long studioId, Long userId, MultipartFile file, String bucket) {
-        deleteFile(Objects.requireNonNull(file.getOriginalFilename()));
-        return uploadFile(file, profileBucket);
+    public String updateFile(Long studioId, Long userId, MultipartFile file, Bucket bucket) {
+        deleteFile(Objects.requireNonNull(file.getOriginalFilename()), bucket);
+        return uploadFile(file, bucket);
     }
 }

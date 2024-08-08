@@ -32,7 +32,8 @@ import java.io.IOException;
 public class UserController {
 
     private final UserService userService;
-    private final ObjectMapper objectMapper;
+    private final ObjectMapper objectMapper;  // JSON 파싱을 위한 ObjectMapper
+
 
     @GetMapping("/pen-names/{penName}")
     @Operation(
