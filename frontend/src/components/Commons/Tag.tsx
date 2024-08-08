@@ -123,9 +123,9 @@
 
 //build 위해 수정된 코드
 import React, { useState } from 'react';
-import styled from 'styled-components';
+import { styled } from '@mui/system';
 
-const TagsInput = styled.div`
+const TagsInput = styled('div')`
   display: flex;
   align-items: flex-start;
   flex-wrap: wrap;

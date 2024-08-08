@@ -1,11 +1,19 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100;300;400;500;700;900&display=swap');
+
 * { 
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  font-family: 'Noto Sans KR', sans-serif;
+}
+
+body{
+  margin: 0;
+  background-color: #ffffff;
 }
 
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: 'Noto Sans KR', Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   color-scheme: light dark;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -13,8 +21,11 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+
+
+/* 
 body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
-}
+} */

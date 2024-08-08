@@ -1,0 +1,405 @@
+/* src/MyChar/AIPaintingPage.css */
+
+.my-element1, .my-element2, .my-element3, .my-element4, .my-element5 {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.my-element1.show, .my-element2.show, .my-element3.show, .my-element4.show, .my-element5.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.my-element1, .my-element2 {
+    text-align: center; 
+  }
+  
+
+.my-image1, .my-image2, .my-image3, .my-image4, .my-image5 {
+    opacity: 0;
+    transition: opacity 0.6s ease;
+}
+
+.my-image1.show, .my-image2.show, .my-image3.show, .my-image4.show, .my-image5.show {
+    opacity: 1;
+}
+
+.initial-hide {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.initial-hide.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Additional Styles for Better Layout */
+.totalbody {
+    font-family: 'Arial', sans-serif;
+}
+
+.v-carousel {
+    position: relative;
+    width: 100%;
+    height: auto;
+}
+
+.v-carousel-item {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+.caro-item-text {
+    text-align: center;
+}
+
+.title p {
+    margin: 0;
+    font-size: 2rem;
+}
+
+.btn {
+    background-color: #007bff;
+    color: #fff;
+    padding: 10px 20px;
+    text-decoration: none;
+    border-radius: 5px;
+    display: inline-block;
+    margin-top: 20px;
+}
+
+.btn:hover {
+    background-color: #0056b3;
+}
+
+.back1-image {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 20px auto;
+}
+
+.container2, .container4, .container5 {
+    text-align: center;
+}
+
+h1, h2, h3, h4 {
+    margin: 0;
+    padding: 0;
+}
+
+h1 {
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+}
+
+h2 {
+    font-size: 2rem;
+    margin-bottom: 15px;
+}
+
+h3 {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+}
+
+h4 {
+    font-size: 1.25rem;
+    margin-bottom: 10px;
+}
+
+.pink-text {
+    color: #33c575;
+}
+
+.blue-text {
+    color:#007bff;
+}
+
+.pink-text2 {
+    color: #007bff;
+}
+
+
+/* AIPaintingPage.css */
+
+.scroll-arrow {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 40px;
+    height: 40px;
+    background: rgba(0, 0, 0, 0.3); /* 살짝 투명한 배경 */
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+  
+  .scroll-arrow:hover {
+    background: rgba(0, 0, 0, 0.5); /* 호버 시 더 어두운 배경 */
+  }
+  
+  .scroll-arrow::before {
+    content: '⬇️'; /* 화살표 아이콘 */
+    font-size: 24px;
+    color: white;
+  }
+  
+  html, body {
+    overflow: auto; /* 스크롤이 가능하도록 설정 */
+    height: 100%; /* 전체 높이를 차지하도록 설정 */
+  }
+
+  /* .togg {
+    padding-left: 60px;
+    padding-right: 60px;
+  } */
+
+
+  /* .glowing {
+    position: fixed;
+    min-width: 200px;
+    height: 200px;
+    margin: 0px;
+    transform-origin: right;
+    animation: colorChange 5s linear infinite; 
+    z-index: -1;
+  }
+  
+  @keyframes colorChange {
+    0% {
+      filter: hue-rotate(0deg);
+      transform: rotate(0deg);
+    }
+    100% {
+      filter: hue-rotate(360deg);
+      transform: rotate(360deg);
+    }
+  }
+  
+  .glowing:nth-child(even) {
+    transform-origin: left;
+  }
+  
+  .glowing span {
+    position: absolute;
+    top: calc(80px * var(--i));
+    left: calc(80px * var(--i));
+    bottom: calc(80px * var(--i));
+    right: calc(80px * var(--i));
+  }
+  
+  .glowing span::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: -8px;
+    width: 15px;
+    height: 15px;
+    background: #f00;
+    border-radius: 50%;
+  }
+  
+  .glowing span:nth-child(3n + 1)::before {
+    background: rgba(134, 255, 0, 1);
+    box-shadow: 0 0 20px rgba(134, 255, 0, 1),
+                0 0 40px rgba(134, 255, 0, 1),
+                0 0 60px rgba(134, 255, 0, 1),
+                0 0 80px rgba(134, 255, 0, 1),
+                0 0 0 8px rgba(134, 255, 0, .1);
+  }
+  
+  .glowing span:nth-child(3n + 2)::before {
+    background: rgba(255, 214, 0, 1);
+    box-shadow: 0 0 20px rgba(255, 214, 0, 1),
+                0 0 40px rgba(255, 214, 0, 1),
+                0 0 60px rgba(255, 214, 0, 1),
+                0 0 80px rgba(255, 214, 0, 1),
+                0 0 0 8px rgba(255, 214, 0, .1);
+  }
+  
+  .glowing span:nth-child(3n + 3)::before {
+    background: rgba(0, 226, 255, 1);
+    box-shadow: 0 0 20px rgba(0, 226, 255, 1),
+                0 0 40px rgba(0, 226, 255, 1),
+                0 0 60px rgba(0, 226, 255, 1),
+                0 0 80px rgba(0, 226, 255, 1),
+                0 0 0 8px rgba(0, 226, 255, .1);
+  }
+  
+  .glowing span:nth-child(3n + 1) {
+    animation: animate 10s alternate infinite; 
+  }
+  
+  .glowing span:nth-child(3n + 2) {
+    animation: animate-reverse 3s alternate infinite; 
+  }
+  
+  .glowing span:nth-child(3n + 3) {
+    animation: animate-reverse 8s alternate infinite;
+  }
+  
+  @keyframes animate {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+  
+  @keyframes animate-reverse {
+    0% {
+      transform: rotate(360deg);
+    }
+    100% {
+      transform: rotate(0deg);
+    }
+  }
+   */
+
+   .glowing {
+    position: relative;
+    min-width: 750px;
+    height: 750px;
+    margin: -150px;
+    transform-origin: right;
+    animation: colorChange 5s linear infinite;
+  }
+
+  .glowing2 {
+    position: fixed;
+    min-width: 300px;
+    height: 300px;
+    margin: -150px;
+    transform-origin: right;
+    animation: colorChange 5s linear infinite;
+  }
+  
+  @keyframes colorChange{
+    0%
+    {
+      filter: hue-rotate(0deg);
+      transform: rotate(0deg);
+    }
+    100%
+    {
+      filter: hue-rotate(360deg);
+      transform: rotate(360deg);
+    }
+  }
+  
+  .glowing:nth-chile(even), .glowing2:nth-chile(even)
+  {
+    transform-origin: left;
+  }
+  
+  .glowing span, .glowing2 span
+  {
+    position:absolute;
+    top: calc(80px * var(--i));
+    left: calc(80px * var(--i));
+    bottom: calc(80px * var(--i));
+    right: calc(80px * var(--i));
+  }
+  
+  .glowing span::before, .glowing2 span::before
+  {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: -8px;
+    width: 15px;
+    height: 15px;
+    background: #f00;
+    border-radius: 50%;
+  }
+
+.glowing2 span::before
+  {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: -8px;
+    width: 15px;
+    height: 15px;
+    background: #f00;
+    border-radius: 50%;
+  }
+  
+  .glowing span:nth-child(3n + 1):before, .glowing2 span:nth-child(3n + 1):before
+  {
+    background: rgba(134,255,0,1);
+    box-shadow: 0 0 20px rgba(134,255,0,1),
+                0 0 40px rgba(134,255,0,1),
+                0 0 60px rgba(134,255,0,1),
+                0 0 80px rgba(134,255,0,1),
+                0 0 0 8px rgba(134,255,0,.1);
+  }
+  
+  .glowing span:nth-child(3n + 2):before,   .glowing2 span:nth-child(3n + 2):before
+  {
+    background: rgba(255,214,0,1);
+    box-shadow: 0 0 20px rgba(255,214,0,1),
+                0 0 40px rgba(255,214,0,1),
+                0 0 60px rgba(255,214,0,1),
+                0 0 80px rgba(255,214,0,1),
+                0 0 0 8px rgba(255,214,0,.1);
+  }
+  
+  .glowing span:nth-child(3n + 3):before,   .glowing2 span:nth-child(3n + 3):before
+  {
+    background: rgba(0,226,255,1);
+    box-shadow: 0 0 20px rgba(0,226,255,1),
+                0 0 40px rgba(0,226,255,1),
+                0 0 60px rgba(0,226,255,1),
+                0 0 80px rgba(0,226,255,1),
+                0 0 0 8px rgba(0,226,255,.1);
+  }
+  
+  .glowing span:nth-child(3n + 1),   .glowing2 span:nth-child(3n + 1)
+  {
+    animation: animate 10s alternate infinite;
+  }
+  
+  .glowing span:nth-child(3n + 2),   .glowing2 span:nth-child(3n + 2)
+  {
+    animation: animate-reverse 3s alternate infinite;
+  }
+  
+  .glowing span:nth-child(3n + 3),   .glowing2 span:nth-child(3n + 3)
+  {
+    animation: animate-reverse 8s alternate infinite;
+  }
+  
+  @keyframes animate
+  {
+    0%
+    {
+      transform : rotate(0deg);
+    }
+    100%
+    {
+      transform: rotate(360deg);
+    }
+  }
+  
+  @keyframes animate-reverse
+  {
+    0%
+    {
+      transform : rotate(360deg);
+    }
+    100%
+    {
+      transform: rotate(0deg);
+    }
+  }

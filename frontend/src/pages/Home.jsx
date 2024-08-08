@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import ImageBox from "../components/ImageBox";
 import NavBar from "../components/NavBar";
 import { fetchImages } from "../services/model-api";
-import { getRandom, loaderMessages, promptIdeas } from "../utilities/utils";
+import { getRandom, loaderMessages, promptIdeas } from "../utils/utils";
 import ChooseResults from "../components/ChooseResults";
 import RecentResults from "../components/RecentResults";
 import "./Home.css"; 

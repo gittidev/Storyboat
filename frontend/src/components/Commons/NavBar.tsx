@@ -1,7 +1,7 @@
 import * as React from "react";
-import { Link as RouterLink } from "react-router-dom";
-import "../../assets/stylesheets/custom-scrollbar.css"
-import { styled,  Theme,  CSSObject } from "@mui/material/styles";
+import { Link } from "react-router-dom";
+import "../../assets/stylesheets/custom-scrollbar.css";
+import { styled, Theme, CSSObject } from "@mui/material/styles";
 import {
   FolderOpenRoundedIcon,
   AddReactionRoundedIcon,
@@ -12,7 +12,8 @@ import {
   BatchPredictionIcon,
   SettingsRoundedIcon,
   SailingRoundedIcon,
-  AccountCircleIcon
+  AccountCircleIcon,
+  BorderColorRoundedIcon,
 } from "./Icons";
 
 import {
@@ -21,30 +22,34 @@ import {
   Divider,
   ListItem,
   ListItemIcon,
+  ListItemButton,
   ListItemText,
   IconButton,
-  ListItemButton,
-  Typography
+  Typography,
 } from "@mui/material";
 
 import MuiDrawer from "@mui/material/Drawer";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import Logo from "../../assets/logo.png";
-import LongMenu from "./LongMenu";
 
-// import SelectStudio
-import { handleMenuClick } from "../../utils/menuUtils";
 import CustomButton from "./CustomButton";
+import StudioSelected from "../StudioSetting/StudioSelected";
+import useModal from "../../hooks/useModal";
+import CustomModal from "./CustomModal";
+import StudioForm from "../StudioSetting/StudioForm";
 
+//메뉴 핸들러
+//메뉴 핸들러
+import LongMenu from "./LongMenu";
+import { useRecoilValue } from "recoil";
+import { useNavigate } from "react-router-dom";
+import { accessTokenState } from "../../recoil/atoms/authAtom";
+import { logout } from "../../apis/auth";
 
-
-
-
-// 코드 작성 영역 ---------------------------------------------------------------------
 const drawerWidth = 220;
 
-const StyledLink = styled(RouterLink)`
+const StyledLink = styled(Link)`
   color: black;
   text-decoration: none;
 `;
@@ -59,207 +64,175 @@ const openedMixin = (theme: Theme): CSSObject => ({
   overflowX: "hidden",
 });
 
-
 const closedMixin = (theme: Theme): CSSObject => ({
   transition: theme.transitions.create("width", {
     easing: theme.transitions.easing.sharp,
     duration: theme.transitions.duration.leavingScreen,
   }),
   overflowX: "hidden",
-  width: `calc(${theme.spacing(6)} + 1px)`,
+  width: `calc(${theme.spacing(8)})`,
   [theme.breakpoints.up("sm")]: {
-    width: `calc(${theme.spacing(7)} + 1px)`,
+    width: `calc(${theme.spacing(8)})`,
+
   },
 });
 
-
-//Drawer 설정
 const Drawer = styled(MuiDrawer, {
   shouldForwardProp: (prop) => prop !== "open",
 })(({ theme, open }) => ({
+  
   width: drawerWidth,
   flexShrink: 0,
   whiteSpace: "nowrap",
   boxSizing: "border-box",
+
   ...(open && {
     ...openedMixin(theme),
-    "& .MuiDrawer-paper": openedMixin(theme),
+    "& .MuiDrawer-paper": openedMixin(theme),    
   }),
   ...(!open && {
     ...closedMixin(theme),
+
     "& .MuiDrawer-paper": closedMixin(theme),
   }),
 }));
 
+const CustomListItemButton = styled(ListItemButton)(({ theme }) => ({
+  fontWeight: 'bold',
+  "&:hover": {
+    backgroundColor: theme.palette.action.hover,
+    color: theme.palette.primary.main,
+  },
+  "&.Mui-selected": {
+    backgroundColor: theme.palette.action.selected,
+    color: theme.palette.primary.main,
+  },
+}));
 
-//프로필 longMenu용 옵션
-const menuOptions = ['logout'];
+const CustomListItem = styled(ListItem)(() => ({
+  fontWeight: 'bold',
+  "&:hover": {
+    background: 'linear-gradient(to left, #f2ffe4, #cce8ff)',
+  },
+}));
 
+const sections = [
+  {
+    title: "나만의 공간",
+    links: [
+      { to: "/storyboat/mystory", text: "나만의 스토리", icon: <FolderOpenRoundedIcon /> },
+      { to: "/storyboat/mystoryedit", text: "내 스토리 집필하기", icon: <BorderColorRoundedIcon /> },
+      { to: "/storyboat/mychar", text: "나만의 캐릭터", icon: <AddReactionRoundedIcon /> },
+      { to: "/storyboat/myidea", text: "나만의 아이디어", icon: <LightbulbIcon /> },
+    ],
+  },
+  {
+    title: "팀공간",
+    links: [
+      { to: "/storyboat/storybox", text: "Story Box", icon: <MediationRoundedIcon /> },
+      { to: "/storyboat/storyedit", text: "Story 집필하기", icon: <DriveFileRenameOutlineRoundedIcon /> },
+      { to: "/storyboat/charbox", text: "캐릭터 보관소", icon: <Face5Icon /> },
+      { to: "/storyboat/ideabox", text: "아이디어 보관소", icon: <BatchPredictionIcon /> },
+      { to: "/storyboat/studios", text: "스튜디오 설정", icon: <SettingsRoundedIcon /> },
+    ],
+  },
+  {
+    title: "팀찾기",
+    links: [{ to: "/storyboat/invitations", text: "팀 찾기", icon: <SailingRoundedIcon /> }],
+  },
+];
 
-//실제 렌더링 navbar 영역
+//네브바
 export default function NavBar() {
   const [open, setOpen] = React.useState(true);
-
+  // const setRefreshToken = useSetRecoilState(refreshTokenState)
+  const navigate = useNavigate();
 
   const toggleDrawer = () => {
     setOpen(!open);
   };
 
+  const { open: isModalOpen, handleOpen, handleClose } = useModal();
 
-  //렌더링 영역
+  const menuOptions = [
+    {label : '로그아웃', value :'logout', color : 'red',  }
+  ];
+  
+  const token = useRecoilValue(accessTokenState)
+  
+  const handleMenuClick = async (value: string) => {
+    switch (value) {
+      case 'logout':
+        await logout(token); // 로그아웃 함수 호출
+        // setRefreshToken(false); // 로그인 상태 업데이트
+        navigate('/'); // 로그아웃 후 홈으로 이동
+        break;
+      default:
+        console.log('알 수 없는 옵션 선택');
+    }
+  };
+
   return (
-    //상단 푸른색 툴바 영역
-    <Box sx={{ display: "flex" , margin:'0px'}} >
-
-      {/* duffuTdmfEo  */}
+    <Box sx={{ display: "flex", margin: "0px" }}>
       <Drawer variant="permanent" open={open}>
+        <CustomListItem disablePadding>
+          <CustomListItemButton sx={{ p: "3px 12px" }}>
+            <StyledLink to="/">
+              <ListItemIcon>
+                <img src={Logo} width={35} alt="Logo" />
+              </ListItemIcon>
+            </StyledLink>
+            <Typography variant="h5" component={"span"} fontFamily={"Arial"} fontWeight={"bold"}>
+              StoryBoat
+            </Typography>
+          </CustomListItemButton>
+          <IconButton onClick={toggleDrawer}>{open ? <ChevronLeftIcon /> : <ChevronRightIcon />}</IconButton>
+        </CustomListItem>
 
-            <ListItem disablePadding >
-                <ListItemButton sx={{p : '3px 16px' }}> 
-                <StyledLink to="/">  
-                  <ListItemIcon>
-                  <img src={Logo} width={35} alt="Logo" />
-                  </ListItemIcon>
-                </StyledLink>
+        <Divider />
 
-              <Typography variant="h5" component={'span'} fontFamily={'Arial'} fontWeight={'bold'} >
-                    StoryBoat
-              </Typography> 
-                </ListItemButton>
-                <IconButton onClick={toggleDrawer}>
-                {open ? <ChevronLeftIcon  /> : <ChevronRightIcon />}
-              </IconButton>
-              </ListItem>
-
-        <Divider /> 
-
-        {/* 참여중인 스튜디오 고르기 */}
-        <div style={{display : 'flex' , flexDirection : 'column', alignItems:'center', marginTop :'10px'}}>
-        <CustomButton content="스튜디오 생성하기" bgcolor="green" width="200px"/>
-        {/* <SelectStudio/> */}
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", margin: "10px", padding: "0px 16px" }}>
+          <CustomButton content= { open ? "스튜디오 생성하기" : "+"}  width={open ? "200px" : "40px"} onClick={handleOpen} />
+          <StudioSelected listopen={open} />
         </div>
 
-    
-        <Divider /> {/* 나만의 공간 */}
-        <List>
-        <StyledLink to="/storyboat/mystory">  
-            <ListItem disablePadding>
-                <ListItemButton sx={{p : '3px 16px' }}>
-                  <ListItemIcon>
-                    <FolderOpenRoundedIcon />
-                  </ListItemIcon>
-                  <ListItemText primary="나만의 스토리" />
-                </ListItemButton>
-              </ListItem>
-          </StyledLink>
-          <StyledLink to="/storyboat/mychar">  
-            <ListItem disablePadding>
-                <ListItemButton  sx={{p : '3px 16px' }}>
-                  <ListItemIcon>
-                    <AddReactionRoundedIcon/>
-                  </ListItemIcon>
-                  <ListItemText primary="나만의 캐릭터" />
-                </ListItemButton>
-              </ListItem>
-          </StyledLink>
-          <StyledLink to="/storyboat/myidea">  
-            <ListItem disablePadding sx={{m:0}}>
-                <ListItemButton  sx={{p : '3px 16px' }}>
-                  <ListItemIcon>
-                  <LightbulbIcon />
-                  </ListItemIcon>
-                  <ListItemText primary="나만의 아이디어" />
-                </ListItemButton>
-              </ListItem>
-          </StyledLink>  
-        </List>
+        <CustomModal open={isModalOpen} onClose={handleClose}>
+          <StudioForm onClose={handleClose} />
+        </CustomModal>
 
-        <Divider /> {/* 팀공간 */}
-        <List>
-        <StyledLink to="/storyboat/storybox">  
-            <ListItem disablePadding>
-                <ListItemButton sx={{p : '3px 16px' }}>
-                  <ListItemIcon>
-                      <MediationRoundedIcon />
-                  </ListItemIcon>
-                  <ListItemText primary="Story Box" />
-                </ListItemButton>
-              </ListItem>
-          </StyledLink>
+        {sections.map((section) => (
+          <React.Fragment key={section.title}>
+            <Divider />
+            <List>
+              {section.links.map((link) => (
+                <StyledLink to={link.to} key={link.to}>
+                  <CustomListItem disablePadding>
+                    <CustomListItemButton sx={{ p: "3px 16px" }}>
+                      <ListItemIcon>{link.icon}</ListItemIcon>
+                      <ListItemText primary={link.text} />
+                    </CustomListItemButton>
+                  </CustomListItem>
+                </StyledLink>
+              ))}
+            </List>
+          </React.Fragment>
+        ))}
 
-          <StyledLink to="/storyboat/storyedit">  
-            <ListItem disablePadding>
-                <ListItemButton sx={{p : '3px 16px' }}>
-                  <ListItemIcon>
-                    <DriveFileRenameOutlineRoundedIcon />
-                  </ListItemIcon>
-                  <ListItemText primary="Story 편집하기" />
-                </ListItemButton>
-              </ListItem>
-          </StyledLink>
-
-          <StyledLink to="/storyboat/charbox">  
-            <ListItem disablePadding>
-                <ListItemButton sx={{p : '3px 16px' }}>
-                  <ListItemIcon>
-                    <Face5Icon />
-                  </ListItemIcon>
-                  <ListItemText primary="캐릭터 보관소" />
-                </ListItemButton>
-              </ListItem>
-          </StyledLink>
-          <StyledLink to="/storyboat/ideabox">  
-            <ListItem disablePadding>
-                <ListItemButton sx={{p : '3px 16px' }}>
-                  <ListItemIcon>
-                  <BatchPredictionIcon />
-                  </ListItemIcon>
-                  <ListItemText primary="아이디어 보관소" />
-                </ListItemButton>
-              </ListItem>
-          </StyledLink>
-          <StyledLink to="/storyboat/studio">  
-            <ListItem disablePadding>
-                <ListItemButton sx={{p : '3px 16px' }}>
-                  <ListItemIcon>
-                  <SettingsRoundedIcon />
-                  </ListItemIcon >
-                  <ListItemText primary="스튜디오 설정" />
-                </ListItemButton>
-              </ListItem>
-          </StyledLink>
-        </List>
         <Divider />
-        <List>{/* 팀찾기 */}
-        <StyledLink to="/storyboat/findteam">  
-            <ListItem disablePadding>
-                <ListItemButton sx={{p : '3px 16px' }}>
-                  <ListItemIcon>
-                  <SailingRoundedIcon />
-                  </ListItemIcon>
-                  <ListItemText primary="팀 찾기" />
-                </ListItemButton>
-              </ListItem>
-          </StyledLink>
-        </List>
+        <ListItem sx={{ height: "200px" }} />
         <Divider />
-            <ListItem sx={{ height :'200px'}}/>
-        <Divider />
-
-        <StyledLink to="/storyboat/profile">  
-            <ListItem disablePadding>
-                <ListItemButton sx={{p : '3px 16px' }}>
-                  <ListItemIcon>
-                  <AccountCircleIcon />
-                  </ListItemIcon>
-                  <ListItemText primary="내 정보" />
-                  <LongMenu options={menuOptions} onClick={handleMenuClick} />
-                </ListItemButton>
-              </ListItem>
+        <CustomListItem disablePadding>
+          <StyledLink to="/storyboat/profile">
+            <CustomListItemButton sx={{ p: "3px 16px" }}>
+              <ListItemIcon>
+                <AccountCircleIcon />
+              </ListItemIcon>
+              <ListItemText primary="내 정보" />
+            </CustomListItemButton>
           </StyledLink>
+          <LongMenu options={menuOptions}  onClick={handleMenuClick}/>
+        </CustomListItem>
       </Drawer>
-      
     </Box>
   );
 }
-                                                                                                                                                                              

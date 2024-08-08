@@ -1,21 +1,20 @@
+import React from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
+import { useRecoilValue } from 'recoil';
+import { refreshTokenState } from './recoil/atoms/authAtom';
 
-export type ProtectedRouteProps = {
-  isAuthentication: boolean;
-  redirectPath?: string;
-};
-
-function ProtectedRoute({ 
-  isAuthentication,
-  redirectPath = "/",
-}: ProtectedRouteProps) {
-  if (!isAuthentication) {
-    // 유저 정보나 인증 정보가 없다면 리다이렉트
-    return <Navigate to={redirectPath} />;
-  }
-
-  // 유저 정보와 인증 정보가 있다면 자식 컴포넌트를 보여줌
-  return <Outlet />;
+interface ProtectedRouteProps {
+  // isAuthentication: boolean;
+  redirectPath: string;
 }
+
+const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ redirectPath }) => {
+ const refreshToken = useRecoilValue(refreshTokenState)
+  
+  if (!refreshToken) {
+    return <Navigate to={redirectPath} replace/>;
+  }
+  return <Outlet />;
+};
 
 export default ProtectedRoute;

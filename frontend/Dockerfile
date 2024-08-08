@@ -21,7 +21,7 @@ FROM nginx:alpine
 COPY --from=build /app/dist /usr/share/nginx/html
 
 # Nginx가 사용하는 포트 노출
-EXPOSE 5173
+EXPOSE 3000
 
 # Nginx 실행
 CMD ["nginx", "-g", "daemon off;"]

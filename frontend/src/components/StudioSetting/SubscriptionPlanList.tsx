@@ -1,4 +1,3 @@
-import React from 'react';
 import { Card, CardContent, Typography, List, ListItem, ListItemText, Box } from '@mui/material';
 import CustomButton from '../Commons/CustomButton';
 
