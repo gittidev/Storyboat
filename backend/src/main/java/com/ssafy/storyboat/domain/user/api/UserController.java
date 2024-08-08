@@ -1,8 +1,10 @@
 package com.ssafy.storyboat.domain.user.api;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.storyboat.common.dto.ApiResponse;
 import com.ssafy.storyboat.common.auth.dto.CustomOAuth2User;
 import com.ssafy.storyboat.common.dto.Role;
+import com.ssafy.storyboat.common.exception.InternalServerErrorException;
 import com.ssafy.storyboat.domain.character.dto.CharacterUpdateRequest;
 import com.ssafy.storyboat.domain.studio.dto.StudioResponse;
 import com.ssafy.storyboat.domain.studio.entity.Studio;
@@ -20,6 +22,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/users")
@@ -28,6 +32,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class UserController {
 
     private final UserService userService;
+    private final ObjectMapper objectMapper;
 
     @GetMapping("/pen-names/{penName}")
     @Operation(
@@ -60,12 +65,28 @@ public class UserController {
             summary = "유저 프로필 수정",
             description = "현재 로그인한 사용자의 프로필을 수정합니다."
     )
-    public ResponseEntity<?> updateUserProfile(ProfileUpdateRequest profileUpdateRequest,
+    public ResponseEntity<?> updateUserProfile(@RequestPart String data,
                                                @AuthenticationPrincipal CustomOAuth2User customOAuth2User,
-                                               @RequestPart MultipartFile imageUrl) {
-        log.info("ASD");
-        userService.updateUserProfile(customOAuth2User.getUserId(), profileUpdateRequest, imageUrl);
-        return ResponseEntity.ok().body(ApiResponse.success("Update Profile Success"));
+                                               @RequestPart(required = false) MultipartFile imageUrl) {
+        // JSON 문자열을 ProfileUpdateRequest 객체로 변환
+        ProfileUpdateRequest profileUpdateRequest;
+        try {
+            profileUpdateRequest = objectMapper.readValue(data, ProfileUpdateRequest.class);
+        } catch (IOException e) {
+            throw new InternalServerErrorException("데이터 변환 실패 JSON");
+        }
+
+        Long userId = customOAuth2User.getUserId();
+        log.info("Input: {}", profileUpdateRequest);
+        Profile profile = userService.updateUserProfile(userId, profileUpdateRequest, imageUrl);
+        StudioResponse privateStudio = userService.fetchPrivateStudio(userId);
+
+        ProfileFindResponse profileFindResponse = new ProfileFindResponse();
+        profileFindResponse.setDTO(profile);
+        profileFindResponse.setStudio(privateStudio);
+        profileFindResponse.setTags(userService.findTags(profile.getProfileId()));
+
+        return ResponseEntity.ok().body(ApiResponse.success(profileFindResponse, "Update Profile Success"));
     }
 
     @DeleteMapping

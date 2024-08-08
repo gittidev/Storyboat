@@ -78,21 +78,21 @@ public class UserService {
     }
 
     @Transactional
-    public void updateUserProfile(Long userId, ProfileUpdateRequest profileUpdateRequest, MultipartFile file) {
+    public Profile updateUserProfile(Long userId, ProfileUpdateRequest profileUpdateRequest, MultipartFile file) {
         // 1. 사용자 조회 및 존재 여부 확인
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("유저 조회 실패"));
 
         // 2. 프로필 조회
         Profile profile = profileRepository.findByUser(user);
         if (profile == null) {
-            throw new ResourceNotFoundException("Profile not found");
+            throw new ResourceNotFoundException("프로필 찾지 못함");
         }
 
         // 3. PenName 중복 확인
         if (!profile.getPenName().equals(profileUpdateRequest.getPenName())) {
             if (profileRepository.findByPenName(profileUpdateRequest.getPenName()) != null) {
-                throw new ConflictException("PenName already exists");
+                throw new ConflictException("필명 중복!");
             }
         }
 
@@ -134,6 +134,7 @@ public class UserService {
         profile.updateProfileTags(tagList);
 
         profileRepository.save(profile);
+        return profile;
     }
 
     @Transactional(readOnly = true)
