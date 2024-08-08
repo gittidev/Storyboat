@@ -4,6 +4,7 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.ssafy.storyboat.common.dto.Role;
 import com.ssafy.storyboat.common.exception.*;
+import com.ssafy.storyboat.common.s3.Bucket;
 import com.ssafy.storyboat.common.s3.S3Repository;
 import com.ssafy.storyboat.domain.character.dto.CharacterUpdateRequest;
 import com.ssafy.storyboat.domain.character.entity.StudioCharacter;
@@ -120,11 +121,11 @@ public class UserService {
         if (file != null && !file.isEmpty()) {
             // 기존 이미지 URL이 있는 경우 S3에서 삭제
             if (profile.getImageUrl() != null) {
-                s3Repository.deleteFile(profile.getImageUrl());
+                s3Repository.deleteFile(profile.getImageUrl(), Bucket.PROFILE);
             }
 
             // 새 이미지 S3에 업로드
-            String newImageUrl = s3Repository.uploadFile(file, "");
+            String newImageUrl = s3Repository.uploadFile(file, Bucket.PROFILE);
             profile.updateImageUrl(newImageUrl);
         }
 
