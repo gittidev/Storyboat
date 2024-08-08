@@ -1,217 +1,121 @@
 package com.ssafy.storyboat.common.webrtc;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
-@Slf4j
 @Component
 public class SignalingHandler extends TextWebSocketHandler {
 
-    private final SessionRepository sessionRepository;
-    private final ObjectMapper objectMapper;
-
-    public SignalingHandler(SessionRepository sessionRepository, ObjectMapper objectMapper) {
-        this.sessionRepository = sessionRepository;
-        this.objectMapper = objectMapper;
-    }
+    private static final Logger logger = LoggerFactory.getLogger(SignalingHandler.class);
+    private final Map<String, WebSocketSession> sessions = new ConcurrentHashMap<>();
+    private final Map<String, String> sessionToRoom = new ConcurrentHashMap<>();
+    private final Map<String, Map<String, WebSocketSession>> rooms = new ConcurrentHashMap<>();
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) {
-        log.info("새로운 WebSocket 연결 수립: 세션 ID = {}, 원격 주소 = {}", session.getId(), session.getRemoteAddress());
-        sessionRepository.addSessionToDefaultRoom(session);
+        logger.info("새로운 WebSocket 연결 수립: 세션 ID = {}", session.getId());
+        sessions.put(session.getId(), session);
     }
 
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
         String payload = message.getPayload();
-        log.debug("메시지 수신: 세션 ID = {}, 페이로드 = {}", session.getId(), payload);
+        logger.info("메시지 수신: 세션 ID = {}, 페이로드 = {}", session.getId(), payload);
 
         try {
-            WebSocketMessage webSocketMessage = objectMapper.readValue(payload, WebSocketMessage.class);
-            handleWebSocketMessage(session, webSocketMessage);
+            Map<String, Object> jsonMessage = objectMapper.readValue(payload, Map.class);
+            String type = (String) jsonMessage.get("type");
+            String roomId = (String) jsonMessage.get("roomId");
+
+            switch (type) {
+                case "join":
+                    handleJoinMessage(session, roomId);
+                    break;
+                case "offer":
+                case "answer":
+                case "candidate":
+                    forwardMessage(session, jsonMessage, roomId);
+                    break;
+                default:
+                    logger.warn("알 수 없는 메시지 타입: {}", type);
+            }
         } catch (IOException e) {
-            log.error("메시지 처리 중 오류 발생: 세션 ID = {}, 오류 = {}", session.getId(), e.getMessage(), e);
-            sendErrorMessage(session, "메시지 처리 실패: " + e.getMessage());
+            logger.error("메시지 처리 중 오류 발생", e);
         }
     }
 
-    private void handleWebSocketMessage(WebSocketSession session, WebSocketMessage message) throws IOException {
-        log.info("메시지 처리 시작: 타입 = {}, 세션 ID = {}", message.getType(), session.getId());
+    private void handleJoinMessage(WebSocketSession session, String roomId) throws IOException {
+        logger.info("세션 {} 이(가) 방 {} 에 참여", session.getId(), roomId);
+        sessionToRoom.put(session.getId(), roomId);
+        rooms.computeIfAbsent(roomId, k -> new ConcurrentHashMap<>()).put(session.getId(), session);
 
-        if (message.getRoomId() == null) {
-            message.setRoomId(sessionRepository.getRoomIdForSession(session).orElse(null));
-        }
-
-        switch (message.getType()) {
-            case "join":
-                handleJoinRoom(session, message);
-                break;
-            case "subscribe":
-                handleSubscribe(session, message);
-                break;
-            case "publish":
-                handlePublish(session, message);
-                break;
-            case "offer":
-            case "answer":
-            case "candidate":
-                handleMediaMessage(session, message);
-                break;
-            case "ping":
-                handlePing(session);
-                break;
-            default:
-                log.warn("알 수 없는 메시지 타입: 타입 = {}, 세션 ID = {}", message.getType(), session.getId());
-                sendErrorMessage(session, "알 수 없는 메시지 타입: " + message.getType());
-        }
-        log.info("메시지 처리 완료: 타입 = {}, 세션 ID = {}", message.getType(), session.getId());
-    }
-
-    private void handleJoinRoom(WebSocketSession session, WebSocketMessage message) throws IOException {
-        Long roomId = message.getRoomId();
-        if (roomId == null) {
-            roomId = sessionRepository.createNewRoom();
-        }
-        sessionRepository.moveSessionToRoom(session, roomId);
-
-        log.info("방 입장 처리: 룸 ID = {}, 세션 ID = {}", roomId, session.getId());
-
-        Map<String, WebSocketSession> clientList = sessionRepository.getClientList(roomId);
-        WebSocketMessage joinMessage = WebSocketMessage.builder()
-                .type("user-joined")
-                .sender(session.getId())
-                .roomId(roomId)
-                .allUsers(clientList.keySet().stream().filter(id -> !id.equals(session.getId())).toList())
-                .build();
-
-        for (WebSocketSession client : clientList.values()) {
-            if (client.isOpen() && !client.getId().equals(session.getId())) {
+        // 같은 방의 다른 참가자들에게 새 참가자 알림
+        for (WebSocketSession client : rooms.get(roomId).values()) {
+            if (!client.getId().equals(session.getId())) {
+                Map<String, Object> joinMessage = new ConcurrentHashMap<>();
+                joinMessage.put("type", "user-joined");
+                joinMessage.put("userId", session.getId());
+                joinMessage.put("roomId", roomId);
                 sendMessage(client, joinMessage);
             }
         }
     }
 
-    private void handleSubscribe(WebSocketSession session, WebSocketMessage message) {
-        Long roomId = message.getRoomId();
-        if (roomId == null) {
-            log.warn("구독 실패: 룸 ID가 null입니다. 세션 ID = {}", session.getId());
+    private void forwardMessage(WebSocketSession sender, Map<String, Object> jsonMessage, String roomId) throws IOException {
+        if (roomId == null || !rooms.containsKey(roomId)) {
+            logger.warn("세션 {}이(가) 존재하지 않는 방에 메시지 전송 시도", sender.getId());
             return;
         }
-        // 구독 로직 구현
-        log.info("구독 성공: 룸 ID = {}, 세션 ID = {}", roomId, session.getId());
-    }
 
-    private void handlePublish(WebSocketSession session, WebSocketMessage message) throws IOException {
-        Long roomId = message.getRoomId();
-        if (roomId == null) {
-            log.warn("발행 실패: 룸 ID가 null입니다. 세션 ID = {}", session.getId());
-            return;
-        }
-        // 발행 로직 구현
-        log.info("발행 성공: 룸 ID = {}, 세션 ID = {}", roomId, session.getId());
-    }
-
-    private void handleMediaMessage(WebSocketSession session, WebSocketMessage message) throws IOException {
-        log.info("미디어 메시지 처리: 타입 = {}, 발신자 = {}, 수신자 = {}", message.getType(), message.getSenderAsString(), message.getReceiver());
-        Long roomId = sessionRepository.getRoomIdForSession(session).orElse(null);
-        if (roomId != null) {
-            Map<String, WebSocketSession> clientList = sessionRepository.getClientList(roomId);
-            WebSocketSession receiverSession = clientList.get(message.getReceiver());
-            if (receiverSession != null && receiverSession.isOpen()) {
-                message.setSender(session.getId());
-                sendMessage(receiverSession, message);
-                log.info("미디어 메시지 전송 완료: 수신자 세션 ID = {}, 메시지 타입 = {}", receiverSession.getId(), message.getType());
-            } else {
-                log.warn("수신자를 찾을 수 없거나 연결되지 않음: 수신자 = {}", message.getReceiver());
+        for (WebSocketSession client : rooms.get(roomId).values()) {
+            if (!client.getId().equals(sender.getId())) {
+                sendMessage(client, jsonMessage);
             }
-        } else {
-            log.warn("세션이 어떤 방에도 속해있지 않음: 세션 ID = {}", session.getId());
         }
     }
 
-    private void handlePing(WebSocketSession session) throws IOException {
-        sessionRepository.getRoomIdForSession(session).ifPresentOrElse(
-                roomId -> {
-                    try {
-                        sendPongMessage(session);
-                    } catch (IOException e) {
-                        log.error("Pong 메시지 전송 실패: 세션 ID = {}, 오류 = {}", session.getId(), e.getMessage(), e);
-                    }
-                },
-                () -> {
-                    log.warn("세션에 대한 방을 찾을 수 없습니다: {}", session.getId());
-                    try {
-                        sendErrorMessage(session, "세션에 대한 방을 찾을 수 없습니다.");
-                    } catch (IOException e) {
-                        log.error("에러 메시지 전송 실패: 세션 ID = {}, 오류 = {}", session.getId(), e.getMessage(), e);
-                    }
-                }
-        );
+    private void sendMessage(WebSocketSession session, Map<String, Object> message) throws IOException {
+        String jsonMessage = objectMapper.writeValueAsString(message);
+        session.sendMessage(new TextMessage(jsonMessage));
+        logger.info("메시지 전송: 수신자 세션 ID = {}, 메시지 = {}", session.getId(), jsonMessage);
     }
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) {
-        log.info("WebSocket 연결 종료: 세션 ID = {}, 상태 = {}", session.getId(), status);
-        sessionRepository.getRoomIdForSession(session).ifPresent(roomId -> {
-            sessionRepository.removeSessionFromRoom(session, roomId);
+        logger.info("WebSocket 연결 종료: 세션 ID = {}, 상태 = {}", session.getId(), status);
+        String roomId = sessionToRoom.remove(session.getId());
+        sessions.remove(session.getId());
 
-            Map<String, WebSocketSession> clientList = sessionRepository.getClientList(roomId);
-            WebSocketMessage leaveMessage = WebSocketMessage.builder()
-                    .type("user-left")
-                    .sender(session.getId())
-                    .roomId(roomId)
-                    .build();
+        if (roomId != null && rooms.containsKey(roomId)) {
+            rooms.get(roomId).remove(session.getId());
+            if (rooms.get(roomId).isEmpty()) {
+                rooms.remove(roomId);
+            } else {
+                // 같은 방의 다른 참가자들에게 퇴장 알림
+                Map<String, Object> leaveMessage = new ConcurrentHashMap<>();
+                leaveMessage.put("type", "user-left");
+                leaveMessage.put("userId", session.getId());
+                leaveMessage.put("roomId", roomId);
 
-            clientList.values().forEach(client -> {
-                if (client.isOpen()) {
+                for (WebSocketSession client : rooms.get(roomId).values()) {
                     try {
                         sendMessage(client, leaveMessage);
-                        log.info("퇴장 메시지 전송: 수신자 세션 ID = {}, 룸 ID = {}", client.getId(), roomId);
                     } catch (IOException e) {
-                        log.error("퇴장 메시지 전송 중 오류 발생: 수신자 세션 ID = {}, 룸 ID = {}, 오류 = {}", client.getId(), roomId, e.getMessage(), e);
+                        logger.error("퇴장 메시지 전송 중 오류 발생: {}", e.getMessage());
                     }
                 }
-            });
-        });
-    }
-
-    private void sendMessage(WebSocketSession session, WebSocketMessage message) throws IOException {
-        // null이 아닌 필드만 포함하는 새로운 객체 생성
-        Map<String, Object> nonNullFields = new HashMap<>();
-        if (message.getType() != null) nonNullFields.put("type", message.getType());
-        if (message.getSender() != null) nonNullFields.put("sender", message.getSender());
-        if (message.getRoomId() != null) nonNullFields.put("roomId", message.getRoomId());
-        if (message.getAllUsers() != null) nonNullFields.put("allUsers", message.getAllUsers());
-
-        String json = objectMapper.writeValueAsString(nonNullFields);
-        session.sendMessage(new TextMessage(json));
-        log.debug("메시지 전송: 세션 ID = {}, 메시지 = {}", session.getId(), json);
-    }
-
-    private void sendPongMessage(WebSocketSession session) throws IOException {
-        WebSocketMessage pongMessage = WebSocketMessage.builder()
-                .type("pong")
-                .sender("server")
-                .build();
-        sendMessage(session, pongMessage);
-    }
-
-    private void sendErrorMessage(WebSocketSession session, String errorMessage) throws IOException {
-        WebSocketMessage errorMsg = WebSocketMessage.builder()
-                .type("error")
-                .sender("server")
-                .content(errorMessage)
-                .build();
-        sendMessage(session, errorMsg);
-        log.error("에러 메시지 전송: 세션 ID = {}, 에러 = {}", session.getId(), errorMessage);
+            }
+        }
     }
 }

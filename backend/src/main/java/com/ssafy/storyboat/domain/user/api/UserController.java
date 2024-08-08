@@ -76,10 +76,19 @@ public class UserController {
         } catch (IOException e) {
             throw new InternalServerErrorException("데이터 변환 실패 JSON");
         }
-        userService.updateUserProfile(customOAuth2User.getUserId(), profileUpdateRequest, imageUrl);
-        return ResponseEntity.ok().body(ApiResponse.success("Update Profile Success"));
-    }
 
+        Long userId = customOAuth2User.getUserId();
+        log.info("Input: {}", profileUpdateRequest);
+        Profile profile = userService.updateUserProfile(userId, profileUpdateRequest, imageUrl);
+        StudioResponse privateStudio = userService.fetchPrivateStudio(userId);
+
+        ProfileFindResponse profileFindResponse = new ProfileFindResponse();
+        profileFindResponse.setDTO(profile);
+        profileFindResponse.setStudio(privateStudio);
+        profileFindResponse.setTags(userService.findTags(profile.getProfileId()));
+
+        return ResponseEntity.ok().body(ApiResponse.success(profileFindResponse, "Update Profile Success"));
+    }
 
     @DeleteMapping
     @Operation(

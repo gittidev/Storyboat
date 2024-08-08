@@ -13,22 +13,15 @@ import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry
 @EnableWebSocket
 public class WebSocketConfig implements WebSocketConfigurer {
 
-    private final SessionRepository sessionRepository;
-    private final ObjectMapper objectMapper;
+    private final SignalingHandler signalingHandler;
 
-    public WebSocketConfig(SessionRepository sessionRepository, ObjectMapper objectMapper) {
-        this.sessionRepository = sessionRepository;
-        this.objectMapper = objectMapper;
+    public WebSocketConfig(SignalingHandler signalingHandler) {
+        this.signalingHandler = signalingHandler;
     }
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        registry.addHandler(signalingHandler(), "/signaling")
+        registry.addHandler(signalingHandler, "/signaling")
                 .setAllowedOrigins("*");
-    }
-
-    @Bean
-    public SignalingHandler signalingHandler() {
-        return new SignalingHandler(sessionRepository, objectMapper);
     }
 }
