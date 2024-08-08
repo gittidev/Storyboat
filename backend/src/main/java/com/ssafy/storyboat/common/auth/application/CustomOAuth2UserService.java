@@ -2,6 +2,7 @@ package com.ssafy.storyboat.common.auth.application;
 
 import com.ssafy.storyboat.common.auth.dto.*;
 import com.ssafy.storyboat.common.dto.Role;
+import com.ssafy.storyboat.common.s3.Bucket;
 import com.ssafy.storyboat.common.s3.S3Repository;
 import com.ssafy.storyboat.domain.studio.entity.Studio;
 import com.ssafy.storyboat.domain.studio.entity.StudioUser;
@@ -112,7 +113,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                 entityManager.persist(joinUser);
 
                 // 1.5
-                String defaultProfileImageUrl = s3Repository.uploadDefaultProfileImage();
+                String defaultProfileImageUrl = s3Repository.uploadDefaultProfileImage(Bucket.PROFILE);
 
                 // 2. profile 생성해 persist
                 String DEFAULT_PEN_NAME = "익명의 작가";

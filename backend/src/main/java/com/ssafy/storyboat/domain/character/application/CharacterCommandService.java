@@ -5,9 +5,10 @@ import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.ssafy.storyboat.common.exception.BadRequestException;
-import com.ssafy.storyboat.common.exception.ForbiddenException;
 import com.ssafy.storyboat.common.exception.InternalServerErrorException;
 import com.ssafy.storyboat.common.exception.ResourceNotFoundException;
+import com.ssafy.storyboat.common.s3.Bucket;
+import com.ssafy.storyboat.common.s3.S3Repository;
 import com.ssafy.storyboat.domain.character.dto.CharacterCreateRequest;
 import com.ssafy.storyboat.domain.character.dto.CharacterUpdateRequest;
 import com.ssafy.storyboat.domain.character.entity.StudioCharacter;
@@ -19,14 +20,9 @@ import com.ssafy.storyboat.domain.studio.entity.StudioUser;
 import com.ssafy.storyboat.domain.studio.repository.StudioRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -35,28 +31,10 @@ public class CharacterCommandService {
 
     private final StudioRepository studioRepository;
     private final CharacterRepository characterRepository;
-    private final AmazonS3 amazonS3;
+//    private final AmazonS3 amazonS3;
+    private final S3Repository s3Repository;
     private final StudioService studioService;
-
-    @Value("${cloud.aws.s3.bucket.character}")
-    private String bucket;
-
-    private String uploadFile(MultipartFile file) {
-        if (file.isEmpty())
-            throw new BadRequestException("업로드할 파일 없음");
-        try {
-            ObjectMetadata objectMetadata = new ObjectMetadata();
-            objectMetadata.setContentType(file.getContentType());
-            objectMetadata.setContentLength(file.getSize());
-
-            String uniqueFileName = UUID.randomUUID()+file.getOriginalFilename();
-
-            amazonS3.putObject(bucket, uniqueFileName, file.getInputStream(), objectMetadata);
-            return amazonS3.getUrl(bucket, uniqueFileName).toString();
-        } catch (IOException e) {
-            throw new InternalServerErrorException("S3 파일 업로드 중 오류가 발생");
-        }
-    }
+    private final Bucket bucket = Bucket.CHARACTER;
 
     @Transactional
     @StudioWriteAuthorization
@@ -64,7 +42,7 @@ public class CharacterCommandService {
         Studio studio = studioRepository.findById(studioId)
                 .orElseThrow(() -> new ResourceNotFoundException("해당 스튜디오 존재하지 않음"));
 
-        String imageUrl = uploadFile(file);
+        String imageUrl = s3Repository.uploadFile(file, bucket);
         StudioCharacter studioCharacter = StudioCharacter.builder()
                 .studio(studio)
                 .name(characterCreateRequest.getName())
@@ -78,7 +56,9 @@ public class CharacterCommandService {
 
     @StudioWriteAuthorization
     @Transactional
-    public void updateCharacter(Long studioId, Long userId, Long characterId, CharacterUpdateRequest updateRequest, MultipartFile file) {
+    public void updateCharacter(Long studioId, Long userId,
+                                Long characterId, CharacterUpdateRequest updateRequest,
+                                MultipartFile file) {
         // 엔티티 조회
         StudioCharacter character = characterRepository.findById(characterId)
                 .orElseThrow(() -> new ResourceNotFoundException("찾을 수 없는 캐릭터입니다"));
@@ -87,18 +67,11 @@ public class CharacterCommandService {
         if (file != null && !file.isEmpty()) {
             // 기존 이미지 URL이 있는 경우 S3에서 삭제
             if (character.getImageUrl() != null) {
-                String oldImageKey = character.getImageUrl().substring(character.getImageUrl().lastIndexOf('/') + 1);
-                amazonS3.deleteObject(bucket, oldImageKey);
+                s3Repository.deleteFile(character.getImageUrl(), bucket);
             }
 
             // 새 이미지 S3에 업로드
-            String newImageKey = file.getOriginalFilename(); // 파일 이름을 키로 사용
-            try {
-                amazonS3.putObject(new PutObjectRequest(bucket, newImageKey, file.getInputStream(), null));
-            } catch (IOException e) {
-                throw new InternalServerErrorException("S3 파일 업로드 중 오류가 발생했습니다.");
-            }
-            String newImageUrl = amazonS3.getUrl(bucket, newImageKey).toString();
+            String newImageUrl = s3Repository.uploadFile(file, bucket);
             character.updateImageUrl(newImageUrl);
         }
 
@@ -123,8 +96,7 @@ public class CharacterCommandService {
 
         // S3에서 이미지 삭제
         if (character.getImageUrl() != null) {
-            String imageKey = character.getImageUrl().substring(character.getImageUrl().lastIndexOf('/') + 1);
-            amazonS3.deleteObject(new DeleteObjectRequest(bucket, imageKey));
+            s3Repository.deleteFile(character.getImageUrl(), bucket);
         }
 
         // 데이터베이스에서 엔티티 삭제
