@@ -27,7 +27,7 @@ const LoginLoadingPage: React.FC = () => {
         }
       } catch (error) {
         console.error('Failed to verify refresh token:', error); // 에러 로그
-        setRefreshToken('');
+        setRefreshToken(false);
         console.log('Navigating to /login'); // 네비게이션 로그
         navigate('/login', { replace: true });
       }

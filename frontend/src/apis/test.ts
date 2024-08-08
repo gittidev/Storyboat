@@ -43,7 +43,7 @@ api.interceptors.response.use(
       } catch (refreshError) {
         console.error('Failed to refresh token', refreshError);
         setRecoil(accessTokenState, '');
-        setRecoil(refreshTokenState, '');
+        setRecoil(refreshTokenState, false);
         window.location.href = '/login';
       }
     } else if ([400, 404, 409].includes(status)) {

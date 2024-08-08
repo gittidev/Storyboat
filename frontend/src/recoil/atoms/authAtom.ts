@@ -11,16 +11,16 @@ export const accessTokenState = atom<string>({
 });
 
 // 리프레쉬 토큰==로그인 상태
-export const refreshTokenState = atom<string>({
-  key: 'refreshTokenState',
-  default: '',
-  effects_UNSTABLE: [persistAtom],
-});
-// export const refreshTokenState = atom<boolean>({
+// export const refreshTokenState = atom<string>({
 //   key: 'refreshTokenState',
-//   default: false,
+//   default: '',
 //   effects_UNSTABLE: [persistAtom],
 // });
+export const refreshTokenState = atom<boolean>({
+  key: 'refreshTokenState',
+  default: false,
+  effects_UNSTABLE: [persistAtom],
+});
 
 // 권한 상태(승인)
 export const authState = atom<boolean>({
