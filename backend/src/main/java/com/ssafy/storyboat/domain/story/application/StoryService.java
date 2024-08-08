@@ -1,5 +1,6 @@
 package com.ssafy.storyboat.domain.story.application;
 
+import com.ssafy.storyboat.common.dto.PageResponse;
 import com.ssafy.storyboat.common.dto.Role;
 import com.ssafy.storyboat.common.exception.ForbiddenException;
 import com.ssafy.storyboat.common.exception.InternalServerErrorException;
@@ -23,6 +24,8 @@ import com.ssafy.storyboat.domain.user.entity.Profile;
 import com.ssafy.storyboat.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -49,8 +52,8 @@ public class StoryService {
 
     @Transactional(readOnly = true)
     @StudioReadAuthorization
-    public List<StoryFindAllResponse> findByStudioId(Long studioId, Long userId) {
-        return studioStoryRepository.findDTOByStudioId(studioId);
+    public Page<StoryFindAllResponse> findByStudioId(Long studioId, Long userId, Pageable pageable) {
+        return studioStoryRepository.findDTOByStudioId(studioId, pageable);
     }
 
     @StudioWriteAuthorization
@@ -166,12 +169,12 @@ public class StoryService {
     }
 
     @StudioReadAuthorization
-    public List<Story> findStoryHistory(Long studioId, Long userId, Long studioStoryId) {
-        return storyRepository.findByStudioStoryIdOrderByDateDesc(studioStoryId);
+    public Page<Story> findStoryHistory(Long studioId, Long userId, Long studioStoryId, Pageable pageable) {
+        return storyRepository.findByStudioStoryIdOrderByDateDesc(studioStoryId, pageable);
     }
 
     @StudioReadAuthorization
-    public List<StoryHistoryFindAllResponse> findAllHistoryDTO(Long studioId, Long userId, List<Story> stories) {
+    public PageResponse findAllHistoryDTO(Long studioId, Long userId, Page<Story> stories) {
         List<Profile> profiles = studioService.findStudioUser(studioId, userId);
         HashMap<Long, Profile> profileMap = new HashMap<>();
         for (Profile profile : profiles) {
@@ -179,7 +182,7 @@ public class StoryService {
             profileMap.put(profile.getUser().getUserId(), profile);
         }
         List<StoryHistoryFindAllResponse> responses = new ArrayList<>();
-        for (Story story : stories) {
+        for (Story story : stories.getContent()) {
             log.info("story.id={}, story.userId={}", story.getStoryId(), story.getUserId());
             Profile profile = profileMap.get(story.getUserId());
             log.info("profile.penName={}", profile.getPenName());
@@ -191,7 +194,12 @@ public class StoryService {
                     .build();
             responses.add(tmp);
         }
-        return responses;
+        PageResponse result = new PageResponse();
+        result.setContent(responses);
+        result.setSize(stories.getSize());
+        result.setTotalElements(stories.getTotalElements());
+        result.setTotalPages(stories.getTotalPages());
+        return result;
     }
 
     @StudioReadAuthorization

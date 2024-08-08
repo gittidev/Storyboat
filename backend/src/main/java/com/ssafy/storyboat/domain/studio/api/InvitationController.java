@@ -2,6 +2,7 @@ package com.ssafy.storyboat.domain.studio.api;
 
 import com.ssafy.storyboat.common.auth.dto.CustomOAuth2User;
 import com.ssafy.storyboat.common.dto.ApiResponse;
+import com.ssafy.storyboat.common.dto.PageResponse;
 import com.ssafy.storyboat.domain.studio.application.InvitationService;
 import com.ssafy.storyboat.domain.studio.application.StudioService;
 import com.ssafy.storyboat.domain.studio.dto.Invitation.InvitationFindAllResponse;
@@ -9,9 +10,11 @@ import com.ssafy.storyboat.domain.studio.dto.Invitation.InvitationFindOneRespons
 import com.ssafy.storyboat.domain.studio.dto.Invitation.InvitationSaveRequest;
 import com.ssafy.storyboat.domain.studio.entity.Invitation;
 import com.ssafy.storyboat.domain.studio.entity.InvitationCode;
-import com.ssafy.storyboat.domain.tag.dto.ProfileTagUpdateRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -35,11 +38,16 @@ public class InvitationController {
      * @return
      */
     @GetMapping
-    public ResponseEntity<?> findAllInvitations() {
-        List<Invitation> invitations = invitationService.findAll();
-        List<InvitationFindAllResponse> result = invitations.stream()
+    public ResponseEntity<?> findAllInvitations(Pageable pageable) {
+        Page<Invitation> invitations = invitationService.findAll(pageable);
+
+        List<InvitationFindAllResponse> responseList = invitations.stream()
                 .map(InvitationFindAllResponse::new)
-                .toList();
+                .collect(Collectors.toList());
+        //Page<InvitationFindAllResponse> result = new PageImpl<>(responseList, pageable, invitations.getTotalElements());
+        Page<InvitationFindAllResponse> pages = new PageImpl<>(responseList, pageable, invitations.getTotalElements());
+        PageResponse result = new PageResponse(pages);
+
         return ResponseEntity.ok().body(ApiResponse.success(result, "모집글 전체 조회"));
     }
 
@@ -145,9 +153,16 @@ public class InvitationController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<?> search(@RequestParam String category, @RequestParam String keyword) {
+    public ResponseEntity<?> search(@RequestParam String category, @RequestParam String keyword, Pageable pageable) {
         // category = studioName or title // or tag
-        List<InvitationFindAllResponse> result = invitationService.searchInvitation(category, keyword);
+        Page<Invitation> invitations = invitationService.searchInvitation(category, keyword, pageable);
+
+        List<InvitationFindAllResponse> responseList = invitations.stream()
+                .map(InvitationFindAllResponse::new)
+                .collect(Collectors.toList());
+        Page<InvitationFindAllResponse> pages = new PageImpl<>(responseList, pageable, invitations.getTotalElements());
+        PageResponse result = new PageResponse(pages);
+
         return ResponseEntity.ok(ApiResponse.success(result, "모집글 검색 성공"));
     }
 }
