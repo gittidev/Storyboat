@@ -27,4 +27,3 @@ EXPOSE 5173
 
 # Nginx 실행
 CMD ["nginx", "-g", "daemon off;"]
-
