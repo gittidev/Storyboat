@@ -4,6 +4,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 @Builder
@@ -12,9 +14,9 @@ public class CharacterResponse {
     private String name;
     private String description;
     private String imageUrl;
-    private String tags;
+    private List<String> tags;
 
-    public CharacterResponse(Long id, String name, String description, String imageUrl, String tags) {
+    public CharacterResponse(Long id, String name, String description, String imageUrl, List<String> tags) {
         this.id = id;
         this.name = name;
         this.description = description;
