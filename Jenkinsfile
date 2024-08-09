@@ -6,24 +6,24 @@ pipeline {
     }
     // test
     stages {
-        // stage('Start Notification') {
-        //     steps {
-        //         script {
-        //             def gitCommitterName = sh(script: "git log -1 --pretty=format:'%an'", returnStdout: true).trim()
-        //             def gitCommitMessage = sh(script: "git log -1 --pretty=%B", returnStdout: true).trim()
+        stage('Start Notification') {
+            steps {
+                script {
+                    def gitCommitterName = sh(script: "git log -1 --pretty=format:'%an'", returnStdout: true).trim()
+                    def gitCommitMessage = sh(script: "git log -1 --pretty=%B", returnStdout: true).trim()
                     
-        //             mattermostSend(
-        //                 color: 'warning',
-        //                 message: """젠킨스 시작: ${env.JOB_NAME} #${env.BUILD_NUMBER}
-        //                 커밋 작성자: ${gitCommitterName}
-        //                 커밋 메시지: ${gitCommitMessage}
-        //                 (<${env.BUILD_URL}|Details>)""",
-        //                 endpoint: 'https://meeting.ssafy.com/hooks/1psxfrtocfyubrb6jrpd7daoay',
-        //                 channel: 'Jenkins---C107'
-        //             )
-        //         }
-        //     }
-        // }
+                    mattermostSend(
+                        color: 'warning',
+                        message: """젠킨스 시작: ${env.JOB_NAME} #${env.BUILD_NUMBER}
+                        커밋 작성자: ${gitCommitterName}
+                        커밋 메시지: ${gitCommitMessage}
+                        (<${env.BUILD_URL}|Details>)""",
+                        endpoint: 'https://meeting.ssafy.com/hooks/1psxfrtocfyubrb6jrpd7daoay',
+                        channel: 'Jenkins---C107'
+                    )
+                }
+            }
+        }
 
         stage('Checkout') {
             steps {
@@ -103,39 +103,39 @@ pipeline {
         }
     }
 
-    // post {
-    //     success {
-    //         script {
-    //             def gitCommitterName = sh(script: "git log -1 --pretty=format:'%an'", returnStdout: true).trim()
-    //             def gitCommitMessage = sh(script: "git log -1 --pretty=%B", returnStdout: true).trim()
+    post {
+        success {
+            script {
+                def gitCommitterName = sh(script: "git log -1 --pretty=format:'%an'", returnStdout: true).trim()
+                def gitCommitMessage = sh(script: "git log -1 --pretty=%B", returnStdout: true).trim()
                 
-    //             mattermostSend(
-    //                 color: 'good',
-    //                 message: """빌드 성공: ${env.JOB_NAME} #${env.BUILD_NUMBER}
-    //                 커밋 작성자: ${gitCommitterName}
-    //                 커밋 메시지: ${gitCommitMessage}
-    //                 (<${env.BUILD_URL}|Details>)""",
-    //                 endpoint: 'https://meeting.ssafy.com/hooks/1psxfrtocfyubrb6jrpd7daoay',
-    //                 channel: 'Jenkins---C107'
-    //             )
-    //         }
-    //     }
-    //     failure {
-    //         script {
-    //             def gitCommitterName = sh(script: "git log -1 --pretty=format:'%an'", returnStdout: true).trim()
-    //             def gitCommitMessage = sh(script: "git log -1 --pretty=%B", returnStdout: true).trim()
+                mattermostSend(
+                    color: 'good',
+                    message: """빌드 성공: ${env.JOB_NAME} #${env.BUILD_NUMBER}
+                    커밋 작성자: ${gitCommitterName}
+                    커밋 메시지: ${gitCommitMessage}
+                    (<${env.BUILD_URL}|Details>)""",
+                    endpoint: 'https://meeting.ssafy.com/hooks/1psxfrtocfyubrb6jrpd7daoay',
+                    channel: 'Jenkins---C107'
+                )
+            }
+        }
+        failure {
+            script {
+                def gitCommitterName = sh(script: "git log -1 --pretty=format:'%an'", returnStdout: true).trim()
+                def gitCommitMessage = sh(script: "git log -1 --pretty=%B", returnStdout: true).trim()
                 
-    //             mattermostSend(
-    //                 color: 'danger',
-    //                 message: """빌드 실패: ${env.JOB_NAME} #${env.BUILD_NUMBER}
-    //                 커밋 작성자: ${gitCommitterName}
-    //                 커밋 메시지: ${gitCommitMessage}
-    //                 (<${env.BUILD_URL}|Details>)""",
-    //                 endpoint: 'https://meeting.ssafy.com/hooks/1psxfrtocfyubrb6jrpd7daoay',
-    //                 channel: 'Jenkins---C107',
-    //                 failOnError: true
-    //             )
-    //         }
-    //     }
-    // }
+                mattermostSend(
+                    color: 'danger',
+                    message: """빌드 실패: ${env.JOB_NAME} #${env.BUILD_NUMBER}
+                    커밋 작성자: ${gitCommitterName}
+                    커밋 메시지: ${gitCommitMessage}
+                    (<${env.BUILD_URL}|Details>)""",
+                    endpoint: 'https://meeting.ssafy.com/hooks/1psxfrtocfyubrb6jrpd7daoay',
+                    channel: 'Jenkins---C107',
+                    failOnError: true
+                )
+            }
+        }
+    }
 }
