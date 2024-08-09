@@ -20,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -58,7 +59,9 @@ public class StoryController {
             @RequestBody Map<String, Object> payload,
             @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
         storyService.makeStory(studioId, customOAuth2User.getUserId(), (String) payload.get("title"));
-        return ResponseEntity.ok(ApiResponse.success("스토리 생성 성공"));
+        Map<String, String> data = new HashMap<>();
+        data.put("title", (String) payload.get("title"));
+        return ResponseEntity.ok(ApiResponse.success(data, "스토리 생성 성공"));
     }
 
     @DeleteMapping("/{studioStoryId}")
