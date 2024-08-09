@@ -130,7 +130,7 @@ public class StoryService {
     }
 
     @StudioWriteAuthorization
-    public void uploadStory(Long userId, LastStory story, Long toStudioId, Long studioStoryId) {
+    public void uploadStory(Long toStudioId, Long userId, LastStory story, Long studioStoryId) {
 
         StudioStory studioStory = studioStoryRepository.findById(studioStoryId)
                 .orElseThrow(() -> new ResourceNotFoundException("스토리 찾을 수 없음"));
@@ -147,7 +147,7 @@ public class StoryService {
         studioStoryRepository.save(saveStudioStory);
 
         LastStory copyStory = LastStory.builder()
-                .studioStoryId(toStudioId)
+                .studioStoryId(saveStudioStory.getStudioStoryId())
                 .userId(userId)
                 .date(LocalDateTime.now())
                 .storyData(story.getStoryData())
@@ -171,14 +171,11 @@ public class StoryService {
         List<Profile> profiles = studioService.findStudioUser(studioId, userId);
         HashMap<Long, Profile> profileMap = new HashMap<>();
         for (Profile profile : profiles) {
-            log.info("id={}, profile.penName: {}", profile.getUser().getUserId(), profile.getPenName());
             profileMap.put(profile.getUser().getUserId(), profile);
         }
         List<StoryHistoryFindAllResponse> responses = new ArrayList<>();
         for (Story story : stories.getContent()) {
-            log.info("story.id={}, story.userId={}", story.getStoryId(), story.getUserId());
             Profile profile = profileMap.get(story.getUserId());
-            log.info("profile.penName={}", profile.getPenName());
             StoryHistoryFindAllResponse tmp = StoryHistoryFindAllResponse.builder()
                     .storyId(story.getStoryId())
                     .dateTime(story.getDate())
@@ -207,6 +204,6 @@ public class StoryService {
     @Transactional(readOnly = true)
     public LastStory findLastStory(Long studioId, Long userId,  Long studioStoryId) {
         return lastStoryRepository.findLastStoryByStudioStoryId(studioStoryId)
-                .orElseThrow(() -> new ResourceNotFoundException("스토리 조회 실패"));
+                .orElseThrow(() -> new ResourceNotFoundException("스토리 저장 내용 없음"));
     }
 }

@@ -116,13 +116,15 @@ public class StoryController {
     )
     public ResponseEntity<?> uploadStory(
             @PathVariable final Long studioId,
-            @PathVariable final Long toStudioId,
             @PathVariable final Long studioStoryId,
+            @PathVariable final Long toStudioId,
             @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
         Long userId = customOAuth2User.getUserId();
-        LastStory story = storyService.findLastStory(studioId, userId, studioStoryId);
 
-        storyService.uploadStory(userId, story, toStudioId, studioStoryId);
+        log.info("studioId={}, studioStoryId={}, toStudioId={}", studioId, studioStoryId, toStudioId);
+
+        LastStory story = storyService.findLastStory(studioId, userId, studioStoryId);
+        storyService.uploadStory(toStudioId, userId, story, studioStoryId);
         return ResponseEntity.ok(ApiResponse.success("Upload Success"));
     }
 
