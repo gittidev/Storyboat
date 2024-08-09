@@ -4,14 +4,20 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 
+export interface Option {
+  label: string;
+  value: string;
+  color?: string; // 글자 색상 속성 추가
+}
+
 interface OptionProps {
-  options: string[];
-  onClick: (option: string) => void;
+  options: Option[];
+  onClick: (value: string) => void;
 }
 
 const ITEM_HEIGHT = 48;
 
-const LongMenu: React.FC<OptionProps> = ({ options, onClick }) => {
+const LongMenu: React.FC<OptionProps> = ({ options, onClick }) => { // onClick 핸들러 추가
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 
@@ -21,6 +27,11 @@ const LongMenu: React.FC<OptionProps> = ({ options, onClick }) => {
 
   const handleClose = () => {
     setAnchorEl(null);
+  };
+
+  const handleMenuItemClick = (value: string) => {
+    onClick(value);
+    handleClose();
   };
 
   return (
@@ -52,13 +63,11 @@ const LongMenu: React.FC<OptionProps> = ({ options, onClick }) => {
       >
         {options.map((option) => (
           <MenuItem
-            key={option}
-            onClick={() => {
-              onClick(option);
-              handleClose();
-            }}
+            key={option.value}
+            onClick={() => handleMenuItemClick(option.value)}
+            style={{ color: option.color || 'black' }} // 기본 색상 블랙
           >
-            {option}
+            {option.label}
           </MenuItem>
         ))}
       </Menu>

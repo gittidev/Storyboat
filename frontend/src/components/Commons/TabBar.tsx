@@ -43,9 +43,10 @@ function a11yProps(index: number) {
 interface TabBarTestProps {
   labels: string[];
   childrenComponents: React.ReactNode[];
+  width?: string;
 }
 
-const TabBar: React.FC<TabBarTestProps> = ({ labels, childrenComponents }) => {
+const TabBar: React.FC<TabBarTestProps> = ({ labels, childrenComponents, width }) => {
   const theme = useTheme();
   const [value, setValue] = React.useState(0);
 
@@ -54,7 +55,7 @@ const TabBar: React.FC<TabBarTestProps> = ({ labels, childrenComponents }) => {
   };
 
   return (
-    <Box sx={{ width: '100%' }}>
+    <Box sx={{ width: width || '100%' }}>
       <Paper elevation={0} sx={{ borderRadius: '10px', p: 1, bgcolor: 'grey.300' }}>
         <Tabs
           value={value}

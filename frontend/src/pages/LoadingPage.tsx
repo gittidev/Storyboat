@@ -1,15 +1,9 @@
-// import styled from "styled-components"
+// import React from 'react'
 
 const LoadingPage = () => {
-    return (
-        <>
-        로딩페이지
-        
-        </>
-    )
-
-
+  return (
+    <div>LoadingPage</div>
+  )
 }
 
 export default LoadingPage
-

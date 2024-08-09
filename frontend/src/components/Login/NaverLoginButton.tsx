@@ -1,35 +1,41 @@
 import React from 'react';
-// import { getNaverAuthToken } from '../../apis/auth'
+import { Button } from '@mui/material';
+import { styled } from '@mui/system'
 
-// const NaverLoginButton: React.FC = () => {
-//   const handleLogin = async () => {
-//     try {
-//       const token = await getNaverAuthToken();
-//       console.log('Received token:', token);
-//       // 여기서 토큰을 저장하거나 다른 작업을 수행
-//     } catch (error) {
-//       console.error('Failed to login with Naver:', error);
-//     }
-//   };
+const StyledButton = styled(Button)`
+  border-radius: 20.997px;
+  background:  #03C75A;
+  box-shadow: 0px 20px 20px 0px rgba(0, 0, 0, 0.07);
+  display: flex;
+  width: 400px;
+  height: 200x;
+  padding: 31.495px;
+  align-items: flex-start;
+  gap: 31.495px;
+  flex-shrink: 0;
+  color : #ffffff;
+  :hover {
+    background:  #03C75A;
+    color : #000000;
+  }
+`
 
-//   return (
-//     <button className='naver-btn' onClick={handleLogin}>
-//       Sign in with Naver
-//     </button>
-//   );
-// };
 
-// export default NaverLoginButton;
+const svURL = import.meta.env.VITE_SERVER_URL;
+
+
+
 
 const NaverLoginButton: React.FC = () => {
   const handleLogin = () => {
-    window.location.href = 'https://i11c107.p.ssafy.io/api/oauth2/authorization/naver';
+    window.location.href = `${svURL}/api/oauth2/authorization/naver`;
   };
 
+  
   return (
-    <button onClick={handleLogin}>
+    <StyledButton onClick={handleLogin}>
         네이버로 로그인
-    </button>
+    </StyledButton>
   );
 };
 

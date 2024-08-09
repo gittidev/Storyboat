@@ -2,6 +2,8 @@
 # Node.js 기반의 이미지를 사용
 FROM node:20 AS build
 
+ENV NODE_OPTIONS=--max_old_space_size=1600
+
 # 작업 디렉토리 설정
 WORKDIR /app
 

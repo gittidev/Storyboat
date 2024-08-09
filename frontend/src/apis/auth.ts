@@ -1,48 +1,81 @@
-// import axios from 'axios';
+import axios from 'axios';
+import Cookies from 'js-cookie';
+import api from './api';
 
-// const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8080';
 
-// export const getGoogleAuthToken = async (): Promise<string> => {
+// 로그아웃
+export const logout = async (token : string) => {
+  console.log(token)
+  try {
+    const response = await api.post('/api/logout', {}, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': token
+      },
+
+
+    });
+
+    if (response.status === 200 ) {
+      console.log('로그아웃 성공');
+      Cookies.remove('refresh');
+      localStorage.removeItem('recoil-persist'); 
+      localStorage.clear()
+
+    } else {
+      console.error('로그아웃 실패:', response.data.message);
+    }
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      console.error('로그아웃 실패:', error.message);
+    } else {
+      console.error('Unexpected error:', error);
+    }
+  }
+};
+
+
+// // 회원 탈퇴
+// export const deleteAccount = async () => {
 //   try {
-//     const response = await axios.get(`${backendUrl}/oauth2/authorization/google`, {
-//       withCredentials: true, // 필요한 경우 쿠키를 포함
+//     const response = await api.delete('/api/users', {
+//       headers: {
+//         'Content-Type': 'application/json',
+//       },
 //     });
-//     return response.data.token; // 서버에서 토큰을 이렇게 보내준다고 가정
+
+//     if (response.status === 200) {
+//       console.log('회원 탈퇴 성공');
+//       await logout();
+//     } else {
+//       console.error('회원 탈퇴 실패:', response.data.message);
+//     }
 //   } catch (error) {
-//     console.error('Error fetching Google auth token:', error);
-//     throw error;
+//     if (axios.isAxiosError(error)) {
+//       console.error('회원 탈퇴 실패:', error.message);
+//     } else {
+//       console.error('Unexpected error:', error);
+//     }
 //   }
 // };
 
-// export const getKaKaoAuthToken = async (): Promise<string> => {
-//     try {
-//       const response = await axios.get(`${backendUrl}/oauth2/authorization/kakao`, {
-//         withCredentials: true, // 필요한 경우 쿠키를 포함
-//       });
-//       return response.data.token; // 서버에서 토큰을 이렇게 보내준다고 가정
-//     } catch (error) {
-//       console.error('Error fetching KaKao auth token:', error);
-//       throw error;
-//     }
-//   };
-// export const getNaverAuthToken = async (): Promise<string> => {
-//     try {
-//       const response = await axios.get(`${backendUrl}/oauth2/authorization/naver`, {
-//         withCredentials: true, // 필요한 경우 쿠키를 포함
-//       });
-//       return response.data.token; // 서버에서 토큰을 이렇게 보내준다고 가정
-//     } catch (error) {
-//       console.error('Error fetching Naver auth token:', error);
-//       throw error;
-//     }
-//   };
+// src/api/auth.ts
+export const verifyRefreshToken = async () => {
+  try {
+    const response = await api.post('/api/reissue', {}, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
 
-import Cookies from 'js-cookie'
-
-export const getRefreshToken = (): string | undefined => {
-  const refreshToken = Cookies.get('refresh_token');
-  console.log(refreshToken)
-  return refreshToken;
+    if (response.status === 200) {
+      const newAccessToken = response.headers.authorization.split(' ')[1];// 'Bearer' 제거
+      console.log(response.headers)
+      return newAccessToken;
+    } else {
+      throw new Error('Failed to refresh token');
+    }
+  } catch (error) {
+    throw new Error;
+  }
 };
-
-export const OAuthUrl = `${import.meta.env.VITE_API_BASE_URL}/api/oauth2/authorization`;

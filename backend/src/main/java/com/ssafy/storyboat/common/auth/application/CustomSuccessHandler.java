@@ -35,11 +35,11 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         String userName = customUserDetails.getUsername();
         String role = customUserDetails.getAuthorities().iterator().next().getAuthority();
 
-        log.info("username={} role={}", userName, role);
+//        log.info("username={} role={}", userName, role);
 
         // Refresh Token 생성
         String refreshToken = jwtUtil.createJwt("refresh", userName, role, 7 * 24 * 60 * 60 * 1000L); // 7일 유효
-        log.info("Refresh Token: {}", refreshToken);
+//        log.info("Refresh Token: {}", refreshToken);
 
         // RefreshToken 저장
         saveRefreshToken(userName, refreshToken);
@@ -49,7 +49,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
         // 로그인/회원가입 성공 시 리다이렉트
         response.addHeader("SignupState",customUserDetails.getJoinStatus() + "");
-        response.sendRedirect("http://localhost:5173/login/loading");
+        response.sendRedirect("https://i11c107.p.ssafy.io/login/loading");
     }
 
     private void saveRefreshToken(String userName, String refreshToken) {
@@ -76,10 +76,10 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
             if (entityManager.getTransaction().isActive()) {
                 entityManager.getTransaction().rollback();
             }
-            log.error("Persistence error: {}", e.getMessage());
+//            log.error("Persistence error: {}", e.getMessage());
             throw new RuntimeException("Error during user registration", e);
         } catch (Exception e) {
-            log.error("Unexpected error: {}", e.getMessage());
+//            log.error("Unexpected error: {}", e.getMessage());
             throw new RuntimeException("Unexpected error", e);
         } finally {
             if (entityManager.isOpen()) {

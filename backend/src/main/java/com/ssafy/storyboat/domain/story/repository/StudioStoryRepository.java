@@ -8,12 +8,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.util.List;
-
 public interface StudioStoryRepository extends JpaRepository<StudioStory, Long> {
 
-    @Query("SELECT new com.ssafy.storyboat.domain.story.dto.StoryFindAllResponse(s.studioStoryId, s.title) FROM StudioStory s WHERE s.studio.studioId = :studioId")
+    @Query("SELECT new com.ssafy.storyboat.domain.story.dto.StoryFindAllResponse(s.studioStoryId, s.title, s.lastModifiedDate) FROM StudioStory s WHERE s.studio.studioId = :studioId")
     Page<StoryFindAllResponse> findDTOByStudioId(@Param("studioId") Long studioId, Pageable pageable);
-
-
 }

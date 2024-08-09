@@ -1,14 +1,12 @@
 package com.ssafy.storyboat.domain.user.application;
 
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.ssafy.storyboat.common.dto.Role;
-import com.ssafy.storyboat.common.exception.*;
+import com.ssafy.storyboat.common.exception.ConflictException;
+import com.ssafy.storyboat.common.exception.ForbiddenException;
+import com.ssafy.storyboat.common.exception.ResourceNotFoundException;
+import com.ssafy.storyboat.common.exception.UnauthorizedException;
 import com.ssafy.storyboat.common.s3.Bucket;
 import com.ssafy.storyboat.common.s3.S3Repository;
-import com.ssafy.storyboat.domain.character.dto.CharacterUpdateRequest;
-import com.ssafy.storyboat.domain.character.entity.StudioCharacter;
-import com.ssafy.storyboat.domain.studio.application.authorization.StudioWriteAuthorization;
 import com.ssafy.storyboat.domain.studio.dto.StudioResponse;
 import com.ssafy.storyboat.domain.studio.repository.StudioUserRepository;
 import com.ssafy.storyboat.domain.tag.application.TagService;
@@ -16,7 +14,6 @@ import com.ssafy.storyboat.domain.tag.dto.ProfileTagUpdateRequest;
 import com.ssafy.storyboat.domain.tag.dto.TagRequest;
 import com.ssafy.storyboat.domain.tag.entity.ProfileTag;
 import com.ssafy.storyboat.domain.tag.entity.Tag;
-import com.ssafy.storyboat.domain.tag.repository.ProfileTagRepository;
 import com.ssafy.storyboat.domain.tag.repository.TagRepository;
 import com.ssafy.storyboat.domain.user.dto.ProfileUpdateRequest;
 import com.ssafy.storyboat.domain.user.dto.UserProfileFindDTO;
@@ -30,7 +27,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -44,7 +40,6 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final ProfileRepository profileRepository;
-    private final ProfileTagRepository profileTagRepository;
     private final TagRepository tagRepository;
     private final StudioUserRepository studioUserRepository;
     private final TagService tagService;
@@ -148,7 +143,7 @@ public class UserService {
     public void deleteUser(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
-        userRepository.deleteById(userId);
+        userRepository.delete(user);
     }
 
     @Transactional(readOnly = true)

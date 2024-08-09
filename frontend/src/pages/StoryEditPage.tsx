@@ -47,18 +47,11 @@ const StoryEditPage: React.FC = () => {
 
   return (
     <>
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          width: "100%",
-          padding: "10px",
-        }}
-      >
+    
+    <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", width: "100%", padding: "0px 20px 20px 20px"}}>
         <Box sx={{ flexGrow: 1 }}>
           <SubTopBar
-            title={"스튜디오's STORY 편집하기"}
+            title={"스튜디오 STORY 집필하기"}
             content="작성된 story의 메인플롯을 집필해보세요"
           />
         </Box>

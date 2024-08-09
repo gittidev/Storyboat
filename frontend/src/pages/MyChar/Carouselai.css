@@ -1,0 +1,55 @@
+
+.Carouselai-container {
+  position: relative;
+  width: 80%;
+  height: 1000px;
+  /* overflow: hidden; */
+  padding: 0 16px; 
+}
+
+
+.Carouselai-inner {
+  display: flex;
+  transition: transform 0.5s ease-in-out;
+}
+
+
+.Carouselai-slide {
+  min-width: 33.33%; 
+  height: 800px; 
+  background-color: #f5f5f5; 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px; 
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2); 
+  padding: 16px; 
+}
+
+
+.Carouselai-button {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  background-color: #1976d2; 
+  color: #fff; 
+  border: none;
+  padding: 8px 16px;
+  cursor: pointer;
+  border-radius: 4px; 
+  font-size: 16px;
+}
+
+.Carouselai-button:hover {
+  background-color: #115293; 
+}
+
+
+.Carouselai-button-prev {
+  left: 0;
+}
+
+.Carouselai-button-next {
+  right: 0;
+}

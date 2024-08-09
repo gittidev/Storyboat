@@ -1,4 +1,5 @@
 // 아이콘들
+import Diversity2Icon from '@mui/icons-material/Diversity2';
 import FolderOpenRoundedIcon from '@mui/icons-material/FolderOpenRounded';
 import AddReactionRoundedIcon from '@mui/icons-material/AddReactionRounded';
 import LightbulbIcon from '@mui/icons-material/Lightbulb';
@@ -11,7 +12,6 @@ import BatchPredictionIcon from '@mui/icons-material/BatchPrediction';
 
 import SettingsRoundedIcon from '@mui/icons-material/SettingsRounded';
 import SailingRoundedIcon from '@mui/icons-material/SailingRounded';
-
 
 import PlaylistAddRoundedIcon from '@mui/icons-material/PlaylistAddRounded';
 import AddCircleOutlineRoundedIcon from '@mui/icons-material/AddCircleOutlineRounded';
@@ -27,11 +27,13 @@ import MicIcon from '@mui/icons-material/Mic';
 import MicOffIcon from '@mui/icons-material/MicOff';
 import TipsAndUpdatesIcon from '@mui/icons-material/TipsAndUpdates';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-
+import BorderColorRoundedIcon from '@mui/icons-material/BorderColorRounded';
 
 
 export {
+    Diversity2Icon,//스튜디오
     FolderOpenRoundedIcon,//나만의 스토리
+    BorderColorRoundedIcon,//나만의 스토리 편집
     AddReactionRoundedIcon,//나만의 캐릭터
     LightbulbIcon, //나만의 아이디어
     MediationRoundedIcon,//Story Box

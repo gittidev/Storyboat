@@ -1,0 +1,132 @@
+/* Huggingwrite.css */
+
+.huggingwrite-container {
+    display: flex;
+    height: 60vh; 
+    border: 4px solid rgb(173,216,230);
+    border-radius: 10px;
+    margin: 30px;
+    padding: 30px;
+    box-sizing: border-box;
+}
+
+.mid1, .mid2 {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+}
+
+.mid1 {
+    width: 50%; /* 50% width for .mid1 */
+    margin-right: 20px;
+}
+
+.mid2 {
+    width: 50%; /* 50% width for .mid2 */
+    display: flex;
+    flex-direction: column;
+}
+
+.midbox1 {
+    border: 4px solid rgb(173,216,230) !important;
+    border-radius: 8px;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-bottom: 10px;
+    box-sizing: border-box;
+    flex: 1; 
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.midbox2 {
+    border: 4px solid rgb(173,216,230) !important;
+    border-radius: 8px;
+    padding: 10px;
+    box-sizing: border-box;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start; /* Changed to flex-start */
+    max-height: calc(100% - 20px); /* Adjusted to fit within parent */
+    overflow: auto; /* Allows scrolling if content overflows */
+}
+
+.huggingwrite-title {
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+.huggingwrite-textarea {
+    width: 100%;
+    max-width: 600px;
+    height: 90%; 
+    border: 1px solid white;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-bottom: 10px;
+    resize: none; 
+    box-sizing: border-box;
+}
+
+.huggingwrite-textarea:focus {
+    border-color: white; 
+    outline: none;
+}
+
+.huggingwrite-button {
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: rgb(144, 238, 144);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: background-color 0.3s ease;
+}
+
+.huggingwrite-button:hover {
+    background-color: rgb(124, 218, 124);
+}
+
+.huggingwrite-button.loading {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.huggingwrite-story-container {
+    margin-top: 5px;
+    text-align: center;
+    overflow-y: auto;
+    max-height: 300px; 
+    width: 100%; 
+    box-sizing: border-box;
+    font-size: 20px;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    padding: 10px;
+    border-radius: 8px; 
+}
+
+.language-selection {
+    display: flex;
+    justify-content: flex-end; 
+    margin-bottom: 1rem; 
+    padding-right: 100px;
+}
+  
+.language-label {
+    display: flex;
+    align-items: center; 
+    gap: 1rem; 
+}
+  
+.language-dropdown {
+    padding: 0.5rem; 
+    font-size: 16px; 
+}

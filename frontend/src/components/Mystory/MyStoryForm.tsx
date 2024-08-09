@@ -3,26 +3,23 @@ import CustomButton from '../Commons/CustomButton';
 import TextField from '@mui/material/TextField';
 
 interface MyStoryFormProps {
-  onSave: (mystory: MyStory) => void;
+  onSubmit: (title: string) => void;
   onClose: () => void;
 }
 
-export interface MyStory {
-  title: string;
-  description: string;
-}
-
-const MyStoryForm: React.FC<MyStoryFormProps> = ({ onSave, onClose }) => {
+const MyStoryForm: React.FC<MyStoryFormProps> = ({ onSubmit}) => {
   const [title, setTitle] = useState<string>('');
-  const [description, setDescription] = useState<string>('');
+  const [loading, setLoading] = useState(false);  
+  console.log(loading)
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-    const mystory: MyStory = { title, description };
-    onSave(mystory);
-    setTitle('');
-    setDescription('');
-    onClose();
+    setLoading(true);
+
+    onSubmit(title)
+    
+    setLoading(false);
+    setTitle('')
   };
 
   return (
@@ -34,17 +31,6 @@ const MyStoryForm: React.FC<MyStoryFormProps> = ({ onSave, onClose }) => {
           value={title}
           label="제목"
           onChange={(e) => setTitle(e.target.value)}
-        />
-      </div>
-      <div style={{ marginBottom: '1rem' }}>
-        <TextField
-          fullWidth
-          required
-          value={description}
-          label="개요"
-          placeholder="개요를 입력하세요"
-          onChange={(e) => setDescription(e.target.value)}
-          multiline
         />
       </div>
       <CustomButton type="submit" content='저장하기' bgcolor='green' width='100%'/>

@@ -1,0 +1,125 @@
+.home-container {
+  font-family: Arial, sans-serif;
+}
+
+.split-container {
+  display: flex;
+  width: 100%;
+}
+
+.leftpart {
+  flex: 1;
+  /* padding: 0 5px; */
+}
+
+.rightpart {
+  flex: 1;
+  padding: 0 10px;
+  text-align: center;
+}
+
+.rightpart img {
+  max-width: 100%;
+  height: auto;
+}
+
+.inputboxdesign {
+  border-radius: 10px;
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 10px;
+}
+
+.text {
+  width: 100%;
+  height: 200px;
+  box-sizing: border-box;
+  overflow: auto;
+  white-space: pre-wrap;
+  resize: none;
+}
+
+.second {
+  border: 4px solid rgb(173,216,230);
+  border-radius: 10px;
+  padding-left: 40px;
+  padding-right: 40px;
+  padding-top: 40px;
+  /* padding: 40px; */
+  margin-top: 40px;
+  margin-left: 40px;
+  margin-right: 40px;
+  margin-bottom: 40px;
+
+}
+
+.formBox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.mid {
+  display: flex;
+  align-items: center; /* Align items horizontally */
+  gap: 20px; /* Space between items */
+}
+
+.formValue {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.select-dropdown {
+  width: 120px; /* Adjust width as needed */
+}
+
+.promptInput {
+  width: calc(100%);
+  padding: 10px;
+  margin: 5px 0;
+}
+
+.promptInput.text {
+  height: 250px;
+}
+
+.buttonContainer {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.buttonContainer button {
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  cursor: pointer;
+  margin: 0 10px;
+  transition: background-color 0.3s ease;
+}
+
+.buttonContainer button:hover {
+  background-color: #0056b3;
+}
+
+.buttonContainer button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.first {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.slideShowMessage {
+  text-align: center;
+  margin: 20px 0;
+}

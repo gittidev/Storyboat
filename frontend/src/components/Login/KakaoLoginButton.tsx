@@ -1,35 +1,36 @@
 import React from 'react';
-// import { getKaKaoAuthToken } from '../../apis/auth'
+import { Button } from '@mui/material';
+import { styled } from '@mui/system'
 
-// const KaKaoLoginButton: React.FC = () => {
-//   const handleLogin = async () => {
-//     try {
-//       const token = await getKaKaoAuthToken();
-//       console.log('Received token:', token);
-//       // 여기서 토큰을 저장하거나 다른 작업을 수행
-//     } catch (error) {
-//       console.error('Failed to login with KaKao:', error);
-//     }
-//   };
 
-//   return (
-//     <button className='kakao-btn' onClick={handleLogin}>
-//       Sign in with KaKao
-//     </button>
-//   );
-// };
+const svURL = import.meta.env.VITE_SERVER_URL;
 
-// export default KaKaoLoginButton;
+
+const StyledButton = styled(Button)`
+  border-radius: 20.997px;
+  background:  #FEE500;
+  box-shadow: 0px 20px 20px 0px rgba(0, 0, 0, 0.07);
+  display: flex;
+  width: 400px;
+  height: 200x;
+  padding: 31.495px;
+  align-items: flex-start;
+  gap: 31.495px;
+  flex-shrink: 0;
+  color : black;
+  
+`
+
 
 const KaKaoLoginButton: React.FC = () => {
   const handleLogin = () => {
-    window.location.href = 'https://i11c107.p.ssafy.io/api/oauth2/authorization/kakao';
+    window.location.href = `${svURL}/api/oauth2/authorization/kakao`;
   };
 
   return (
-    <button onClick={handleLogin}>
+    <StyledButton onClick={handleLogin}>
         카카오로 로그인
-    </button>
+    </StyledButton>
   );
 };
 

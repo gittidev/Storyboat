@@ -7,7 +7,10 @@ import com.ssafy.storyboat.domain.studio.application.authorization.StudioReadAut
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -24,7 +27,9 @@ public class CharacterQueryService {
                         .name(character.getName())
                         .description(character.getDescription())
                         .imageUrl(character.getImageUrl())
-                        .tags(character.getTags())
+                        .tags(Optional.ofNullable(character.getTags())
+                                .map(tagsStr -> Arrays.stream(tagsStr.replace(" ", "").split(",")).toList())
+                                .orElse(Collections.emptyList()))
                         .build())
                 .collect(Collectors.toList());
     }

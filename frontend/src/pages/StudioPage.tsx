@@ -20,8 +20,7 @@ const StudioPage = () => {
     return (
         <> 
 
-
-        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%", padding: "10px" }}>
+            <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", width: "100%", padding: "0px 20px 20px 20px"}}>
             <Box sx={{ flexGrow: 1}}>
                 <SubTopBar title={"스튜디오 설정하기"} content='스튜디오 정보를 관리하세요'/>
             </Box>
