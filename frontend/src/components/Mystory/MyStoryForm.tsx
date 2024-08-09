@@ -1,29 +1,25 @@
 import React, { useState } from 'react';
 import CustomButton from '../Commons/CustomButton';
 import TextField from '@mui/material/TextField';
-import { StoryType } from '../../types/StudioType';
 
 interface MyStoryFormProps {
-  onSave: (mystory: StoryType) => void;
+  onSubmit: (title: string) => void;
   onClose: () => void;
-  nextstoryid: number; // 추가된 부분
 }
 
-const MyStoryForm: React.FC<MyStoryFormProps> = ({ onSave, onClose, nextstoryid }) => {
+const MyStoryForm: React.FC<MyStoryFormProps> = ({ onSubmit}) => {
   const [title, setTitle] = useState<string>('');
-  const [lastmodified, setModified] = useState<string>('')
+  const [loading, setLoading] = useState(false);  
+  console.log(loading)
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-    const mystory: StoryType = { 
-      storyid: nextstoryid, // 추가된 부분
-      title, 
-      lastmodified 
-    };
-    onSave(mystory);
-    setTitle('');
-    setModified('');
-    onClose();
+    setLoading(true);
+
+    onSubmit(title)
+    
+    setLoading(false);
+    setTitle('')
   };
 
   return (
