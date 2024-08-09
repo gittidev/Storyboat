@@ -1,53 +1,41 @@
-import React from "react"
+import React, { useState } from "react";
+import { Box, TextField, Button, MenuItem, Select, InputLabel, FormControl } from "@mui/material";
 
 interface SearchBarProps {
-    value? : string;
-    onChange? : (event : React.ChangeEvent<HTMLInputElement>) => void 
+    onSearch: (category: string, query: string) => void;
 }
 
-export function SearchBar({value, onChange} : SearchBarProps){
+export const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
+    const [keyword, setKeyword] = useState("");
+    const [category, setCategory] = useState("title"); // 기본 카테고리는 title로 설정
+
+    const handleSearch = () => {
+        onSearch(category, keyword);
+    };
+
     return (
-        <>
-        <input
-        type="search"
-        placeholder="검색하기"
-        value={value}
-        onChange={onChange}
-        />
-        </>
-    )
-}
-
-
-interface Country {
-    code: string;
-    en: string;
-    ko: string;
-}
-
-interface SearchResultsProps {
-    countries: Country[];
-    searching: boolean;
-}
-
-
-export function SearchResults({ countries, searching }: SearchResultsProps) {
-    return (
-        <article aria-busy={searching}>
-            {searching ? (
-                "잠시만 기다려주세요. 국가를 검색하고 있습니다."
-            ) : (
-                <>
-                    <header>총 {countries.length}개의 국가가 검색되었습니다.</header>
-                    <ul>
-                        {countries.map(({ code, en, ko }) => (
-                            <li key={code}>
-                                {ko} ({en})
-                            </li>
-                        ))}
-                    </ul>
-                </>
-            )}
-        </article>
+        <Box sx={{ display: "flex", alignItems: "center", marginBottom: "20px" }}>
+            <FormControl sx={{ minWidth: 120, marginRight: "10px" }}>
+                <InputLabel>카테고리</InputLabel>
+                <Select
+                    value={category}
+                    onChange={(e) => setCategory(e.target.value as string)}
+                    label="카테고리"
+                >
+                    <MenuItem value="title">제목</MenuItem>
+                    <MenuItem value="category">카테고리</MenuItem>
+                </Select>
+            </FormControl>
+            <TextField
+                variant="outlined"
+                label="검색어 입력"
+                value={keyword}
+                onChange={(e) => setKeyword(e.target.value)}
+                sx={{ marginRight: "10px" }}
+            />
+            <Button variant="contained" color="primary" onClick={handleSearch}>
+                검색
+            </Button>
+        </Box>
     );
-}
+};

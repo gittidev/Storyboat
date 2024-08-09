@@ -1,20 +1,19 @@
-import React, { useEffect, useState } from "react"
-import { SearchBar } from "../components/Commons/SearchBar"
-import { FindteamBox } from "../components/FindTeam/FindTeamBox"
-import CustomButton from "../components/Commons/CustomButton"
-import SubTopBar from "../components/Commons/SubTopBar"
-import { BorderBox } from "../components/Commons/BorderBox"
-import { Box, Pagination, Chip } from "@mui/material"
-import useModal from "../hooks/useModal"
-import CustomModal from '../components/Commons/CustomModal'
-import { FindteamBoxProps } from "../components/FindTeam/FindTeamBox"
-import FindTeamForm from "../components/FindTeam/FindTeamForm"
-import { useRecoilValue, useRecoilState } from "recoil"
-import { findTeamState, selectedStudioState } from "../recoil/atoms/studioAtom"
-import { FindTeamType } from "../types/StudioType"
-import { accessTokenState } from "../recoil/atoms/authAtom"
-// import { fetchRefreshToken } from "../apis/auth"
-import axios from "axios"
+import React, { useEffect, useState } from "react";
+import { SearchBar } from "../components/Commons/SearchBar";
+import { FindteamBox } from "../components/FindTeam/FindTeamBox";
+import CustomButton from "../components/Commons/CustomButton";
+import SubTopBar from "../components/Commons/SubTopBar";
+import { BorderBox } from "../components/Commons/BorderBox";
+import { Box, Pagination } from "@mui/material";
+import useModal from "../hooks/useModal";
+import CustomModal from '../components/Commons/CustomModal';
+import { FindteamBoxProps } from "../components/FindTeam/FindTeamBox";
+import FindTeamForm from "../components/FindTeam/FindTeamForm";
+import { useRecoilValue, useRecoilState } from "recoil";
+import { findTeamState, selectedStudioState } from "../recoil/atoms/studioAtom";
+import { FindTeamType } from "../types/StudioType";
+import { accessTokenState } from "../recoil/atoms/authAtom";
+import axios from "axios";
 
 const svURL = import.meta.env.VITE_SERVER_URL;
 
@@ -59,12 +58,37 @@ const FindTeamPage: React.FC = () => {
 
     const handleSave = (findTeam: FindteamBoxProps) => {
         console.log('팀 저장됨:', findTeam);
-        // setFindTeams((prevfindTeams) => [...prevfindTeams, findTeam]);
         handleClose();
     };
 
     const handlePageChange = (_event: React.ChangeEvent<unknown>, value: number) => {
         setPage(value - 1); // MUI Pagination은 1부터 시작하므로 0 기반 인덱스로 변환
+    };
+
+    const handleSearch = async (category: string, keyword: string) => {
+        try {
+            const response = await axios.get(`${svURL}/api/invitations/search`, {
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`,
+                },
+                params: {
+                    category,
+                    keyword,
+                    page: page,
+                    size: itemsPerPage
+                }
+            });
+
+            if (response.data.data && Array.isArray(response.data.data.content)) {
+                setFindTeams(response.data.data.content);
+                setTotalPages(response.data.data.totalPages);
+            } else {
+                console.error('데이터가 배열이 아닙니다:', response.data.data);
+                setFindTeams([]);
+            }
+        } catch (error) {
+            console.error('검색 실패:', error);
+        }
     };
 
     return (
@@ -84,56 +108,34 @@ const FindTeamPage: React.FC = () => {
 
             {/* 화면에 들어갈 내역 */}
             <BorderBox>
-                <SearchBar />
-                <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", width: "100%", padding: "10px" }}>
+                {/* SearchBar를 중앙에 배치 */}
+                <Box sx={{ paddingTop: "20px", display: "flex", justifyContent: "center" }}>
+                    <SearchBar onSearch={handleSearch} />
+                </Box>
+                
+                {/* FindTeamBox를 왼쪽 정렬 */}
+                <Box sx={{ display: "flex", flexDirection: "column", alignItems: "flex-start", width: "100%", padding: "10px 20px" }}>
                     {findTeams.map((findTeam, index) => (
-                        <Box 
+                        <FindteamBox
                             key={index}
-                            sx={{
-                                display: "flex",
-                                flexDirection: "column",
-                                alignItems: "flex-start",
-                                justifyContent: "center",
-                                width: "90%",
-                                padding: "20px",
-                                marginBottom: "20px",
-                                border: "1px solid #ddd",
-                                borderRadius: "8px",
-                                boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)"
-                            }}
-                        >
-                            <FindteamBox
-                                title={findTeam.title}
-                                description={findTeam.description}
-                                studioId={findTeam.studioId}
-                            />
-                            <Box sx={{ display: "flex", flexWrap: "wrap", marginTop: "10px" }}>
-                                {findTeam.tags.map((tag, tagIndex) => (
-                                    <Chip 
-                                        key={tagIndex} 
-                                        label={tag.name} 
-                                        sx={{ 
-                                            backgroundColor: tag.color,
-                                            color: "white", 
-                                            marginRight: "8px", 
-                                            marginBottom: "8px" 
-                                        }} 
-                                    />
-                                ))}
-                            </Box>
-                        </Box>
+                            title={findTeam.title}
+                            description={findTeam.description}
+                            studioId={findTeam.studioId}
+                            tags={findTeam.tags}  // tags를 FindteamBox로 전달
+                        />
                     ))}
-                    <Pagination 
-                        count={totalPages} 
-                        page={page + 1} // 0 기반 인덱스를 1 기반 인덱스로 변환하여 MUI Pagination에 전달
-                        onChange={handlePageChange} 
-                        color="primary"
-                        sx={{ marginTop: "20px" }}
-                    />
+                    <Box sx={{ alignSelf: "center", marginTop: "20px" }}>
+                        <Pagination 
+                            count={totalPages} 
+                            page={page + 1} // 0 기반 인덱스를 1 기반 인덱스로 변환하여 MUI Pagination에 전달
+                            onChange={handlePageChange} 
+                            color="primary"
+                        />
+                    </Box>
                 </Box>
             </BorderBox>
         </>
-    )
+    );
 }
 
-export default FindTeamPage
+export default FindTeamPage;
