@@ -4,6 +4,7 @@ import com.ssafy.storyboat.common.auth.dto.*;
 import com.ssafy.storyboat.common.dto.Role;
 import com.ssafy.storyboat.common.s3.Bucket;
 import com.ssafy.storyboat.common.s3.S3Repository;
+import com.ssafy.storyboat.domain.character.entity.StudioCharacter;
 import com.ssafy.storyboat.domain.studio.entity.Studio;
 import com.ssafy.storyboat.domain.studio.entity.StudioUser;
 import com.ssafy.storyboat.domain.user.entity.Profile;
@@ -141,6 +142,12 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                         .createdAt(LocalDateTime.now())
                         .build();
 
+                // 5. 기본 캐릭터 생성해 영속
+                StudioCharacter studioCharacter = makeDefaultCharacter(studio);
+                entityManager.persist(studioCharacter);
+
+                entityManager.getTransaction().commit();  // 트랜잭션 커밋
+
                 entityManager.persist(studioUser);
                 entityManager.getTransaction().commit();  // 트랜잭션 커밋
 
@@ -193,5 +200,18 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException("SHA-1 algorithm not found", e);
         }
+    }
+
+    private StudioCharacter makeDefaultCharacter(Studio studio) {
+        return StudioCharacter.builder()
+                .name("히카리")
+                .description("히카리는 순수한 마음을 가진 초등학생으로, 피아노 연주를 사랑하는 소녀입니다. " +
+                        "음악에 대한 깊은 애정과 천부적인 재능을 가지고 있습니다. 그녀는 연주로 사람들의 마음을 감동시킵니다. " +
+                        "성격은 밝고 친절하며, 친구들과의 관계를 소중히 여기고 있습니다. 히카리는 매일 연습을 통해 더욱 뛰어난 피아니스트가 되기를 꿈꾸며, " +
+                        "그녀의 음악은 듣는 이들에게 평화와 행복을 가져다줍니다. 그녀의 순수함과 열정은 주변 사람들에게 긍정적인 영향을 미칩니다.")
+                .tags("피아노, 순수, 음악")
+                .imageUrl("https://storyboat-character.s3.ap-northeast-2.amazonaws.com/img1.jpg")
+                .studio(studio)
+                .build();
     }
 }
