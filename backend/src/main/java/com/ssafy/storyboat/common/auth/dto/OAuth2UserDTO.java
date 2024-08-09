@@ -1,10 +1,8 @@
 package com.ssafy.storyboat.common.auth.dto;
 
 import com.ssafy.storyboat.common.auth.application.CustomJoinStatus;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 
 @Getter @Setter
 public class OAuth2UserDTO {

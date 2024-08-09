@@ -40,7 +40,7 @@ public class JWTUtil {
                     .getExpiration()
                     .before(new Date());
 
-            log.info("만료x");
+//            log.info("만료x");
             return false;
         } catch (Exception e) {
             log.info("만료");

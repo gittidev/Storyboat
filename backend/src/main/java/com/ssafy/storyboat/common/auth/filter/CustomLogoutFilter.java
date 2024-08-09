@@ -85,7 +85,7 @@ public class CustomLogoutFilter extends GenericFilterBean {
             return;
         }
 
-        log.info("로그아웃 로직");
+//        log.info("로그아웃 로직");
         String userName = jwtUtil.getUsername(refresh);
         String[] providers = userName.split(" ");
 
@@ -99,7 +99,7 @@ public class CustomLogoutFilter extends GenericFilterBean {
                     .setParameter("provider", providers[1])
                     .getSingleResult();
 
-            log.info("User found: {}", queriedUser);
+//            log.info("User found: {}", queriedUser);
 
             boolean tokenFound = removeExpiredOrMatchingTokens(queriedUser, refresh);
 
@@ -115,14 +115,14 @@ public class CustomLogoutFilter extends GenericFilterBean {
             setErrorResponse(response, HttpServletResponse.SC_BAD_REQUEST, "User not found");
             return;
         } catch (PersistenceException e) {
-            log.error("Persistence error: " + e.getMessage());
+//            log.error("Persistence error: " + e.getMessage());
             if (entityManager.getTransaction().isActive()) {
                 entityManager.getTransaction().rollback();  // 트랜잭션 롤백
             }
             setErrorResponse(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Persistence error");
             return;
         } catch (Exception e) {
-            log.error("Unexpected error: " + e.getMessage());
+//            log.error("Unexpected error: " + e.getMessage());
             setErrorResponse(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Unexpected error");
             return;
         } finally {
@@ -151,16 +151,16 @@ public class CustomLogoutFilter extends GenericFilterBean {
 
         while (iterator.hasNext()) {
             RefreshToken token = iterator.next();
-            log.info("Comparing token: {}", token.getRefreshToken());
+//            log.info("Comparing token: {}", token.getRefreshToken());
 
             if (token.getRefreshToken().equals(refresh)) {
-                log.info("Deleting RefreshToken");
-                log.info("tokenID: {}, token: {}, user: {}", token.getRefreshTokenId(), token.getRefreshToken(), token.getUser());
+//                log.info("Deleting RefreshToken");
+//                log.info("tokenID: {}, token: {}, user: {}", token.getRefreshTokenId(), token.getRefreshToken(), token.getUser());
 
                 iterator.remove(); // 부모 엔티티의 컬렉션에서 제거
                 result = true;
             } else if (jwtUtil.isExpired(token.getRefreshToken())) {
-                log.info("Removing expired RefreshToken");
+//                log.info("Removing expired RefreshToken");
                 iterator.remove(); // 부모 엔티티의 컬렉션에서 제거
             }
         }

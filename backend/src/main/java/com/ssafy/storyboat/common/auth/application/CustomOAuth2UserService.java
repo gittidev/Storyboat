@@ -20,7 +20,6 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -43,7 +42,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
 
         OAuth2User oAuth2User = super.loadUser(userRequest);
-        log.info("OAuth2User : {}", oAuth2User);
+//        log.info("OAuth2User : {}", oAuth2User);
 
         OAuth2Response oAuth2Response = null;
         String registrationId = userRequest.getClientRegistration().getRegistrationId();
@@ -70,7 +69,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         try {
             entityManager.getTransaction().begin();  // 트랜잭션 시작
 
-            log.info("providerId={} and provider={} and email={}", providerId, provider, email);
+//            log.info("providerId={} and provider={} and email={}", providerId, provider, email);
 
             User queriedUser = entityManager.createQuery("select m from User m where m.providerId = :providerId and m.provider = :provider", User.class)
                     .setParameter("providerId", providerId)

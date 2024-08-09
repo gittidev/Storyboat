@@ -61,7 +61,7 @@ public class ReissueController {
         String userName = jwtUtil.getUsername(refreshToken);
         String[] providers = userName.split(" ");
 
-        log.info("catagory: {}, providerId: {}, provider: {}", category, providers[0], providers[1]);
+//        log.info("category: {}, providerId: {}, provider: {}", category, providers[0], providers[1]);
 
         if (!category.equals("refresh")) {
             return new ResponseEntity<>("invalid refresh token", HttpStatus.BAD_REQUEST);
@@ -102,7 +102,7 @@ public class ReissueController {
             }
 
             if (!tokenFound) {
-                log.info("refresh token can not find");
+//                log.info("refresh token can not find");
                 return new ResponseEntity<>("invalid refresh token", HttpStatus.BAD_REQUEST);
             }
 
@@ -113,10 +113,10 @@ public class ReissueController {
             if (entityManager.getTransaction().isActive()) {
                 entityManager.getTransaction().rollback();
             }
-            log.error("Persistence error: " + e.getMessage());
+//            log.error("Persistence error: " + e.getMessage());
             return new ResponseEntity<>("internal server error", HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (Exception e) {
-            log.error("Unexpected error: " + e.getMessage());
+//            log.error("Unexpected error: " + e.getMessage());
             return new ResponseEntity<>("internal server error", HttpStatus.INTERNAL_SERVER_ERROR);
         } finally {
             if (entityManager.isOpen()) {
@@ -125,15 +125,5 @@ public class ReissueController {
         }
 
         return new ResponseEntity<>("invalid refresh token", HttpStatus.BAD_REQUEST);
-    }
-
-    private Cookie createCookie(String key, String value) {
-        Cookie cookie = new Cookie(key, value);
-        cookie.setMaxAge(24 * 60 * 60);
-        //cookie.setSecure(true);
-        cookie.setPath("/");
-        cookie.setHttpOnly(true);
-
-        return cookie;
     }
 }
