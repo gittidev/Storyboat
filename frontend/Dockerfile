@@ -11,9 +11,12 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install --production
 
-# 소스 코드 복사 및 빌드
+# 소스 코드 복사 및 빌드..
 COPY . .
 RUN npm run build
+
+# 최후의 방법 사용후 바로 삭제
+# RUN rm -rf node_modules
 
 # Step 2: Production Stage
 # Nginx를 사용하여 정적 파일을 서빙
