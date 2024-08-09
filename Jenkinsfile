@@ -110,7 +110,7 @@ def buildBackend() {
 
 def buildDockerImage(String dirPath, String imageName) {
     dir(dirPath) {
-        sh "docker build -t ${imageName} ."
+        sh "docker build --no-cache -t ${imageName} ."
     }
 }
 
