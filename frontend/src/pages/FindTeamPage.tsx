@@ -19,45 +19,47 @@ const svURL = import.meta.env.VITE_SERVER_URL;
 
 const FindTeamPage: React.FC = () => {
     const { open, handleOpen, handleClose } = useModal();
-    const [findTeams, setFindTeams] = useRecoilState<FindTeamType[]>(findTeamState);
+    const [findTeams, setFindTeams] = useRecoilState<FindTeamType[]>(findTeamState || []);
     const studioId = useRecoilValue(selectedStudioState);
     const accessToken = useRecoilValue(accessTokenState);
     const [page, setPage] = useState(0); // 페이지를 0부터 시작하도록 수정
     const [totalPages, setTotalPages] = useState(1);
     const itemsPerPage = 4; // 페이지 당 항목 수 설정
 
-    useEffect(() => {
-        const fetchFindTeams = async () => {
-            try {
-                const response = await axios.get(`${svURL}/api/invitations`, {
-                    headers: {
-                        'Authorization': `Bearer ${accessToken}`,
-                    },
-                    params: {
-                        page: page, // API 요청에 페이지 번호 전달
-                        size: itemsPerPage
-                    }
-                });
-
-                console.log(response.data); // 응답 데이터 구조 확인을 위해 콘솔에 출력
-
-                if (response.data.data && Array.isArray(response.data.data.content)) {
-                    setFindTeams(response.data.data.content);
-                    setTotalPages(response.data.data.totalPages);
-                } else {
-                    console.error('데이터가 배열이 아닙니다:', response.data.data);
-                    setFindTeams([]);
+    const fetchFindTeams = async () => {
+        try {
+            const response = await axios.get(`${svURL}/api/invitations`, {
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`,
+                },
+                params: {
+                    page: page, // API 요청에 페이지 번호 전달
+                    size: itemsPerPage
                 }
-            } catch (error) {
-                console.error('팀 찾기 데이터를 가져오지 못했습니다:', error);
+            });
+
+            console.log(response.data); // 응답 데이터 구조 확인을 위해 콘솔에 출력
+
+            if (response.data.data && Array.isArray(response.data.data.content)) {
+                setFindTeams(response.data.data.content);
+                setTotalPages(response.data.data.totalPages);
+            } else {
+                console.error('데이터가 배열이 아닙니다:', response.data.data);
+                setFindTeams([]);  // 예상치 못한 데이터가 올 경우 빈 배열로 설정
             }
-        };
+        } catch (error) {
+            console.error('팀 찾기 데이터를 가져오지 못했습니다:', error);
+            setFindTeams([]);  // 에러가 발생한 경우 빈 배열로 설정
+        }
+    };
+    useEffect(() => {
 
         fetchFindTeams();
     }, [studioId, setFindTeams, accessToken, page]);
 
     const handleSave = (findTeam: FindteamBoxProps) => {
         console.log('팀 저장됨:', findTeam);
+        fetchFindTeams()
         handleClose();
     };
 
@@ -84,10 +86,11 @@ const FindTeamPage: React.FC = () => {
                 setTotalPages(response.data.data.totalPages);
             } else {
                 console.error('데이터가 배열이 아닙니다:', response.data.data);
-                setFindTeams([]);
+                setFindTeams([]);  // 예상치 못한 데이터가 올 경우 빈 배열로 설정
             }
         } catch (error) {
             console.error('검색 실패:', error);
+            setFindTeams([]);  // 에러가 발생한 경우 빈 배열로 설정
         }
     };
 
@@ -115,15 +118,19 @@ const FindTeamPage: React.FC = () => {
                 
                 {/* FindTeamBox를 왼쪽 정렬 */}
                 <Box sx={{ display: "flex", flexDirection: "column", alignItems: "flex-start", width: "100%", padding: "10px 20px" }}>
-                    {findTeams.map((findTeam, index) => (
-                        <FindteamBox
-                            key={index}
-                            title={findTeam.title}
-                            description={findTeam.description}
-                            studioId={findTeam.studioId}
-                            tags={findTeam.tags}  // tags를 FindteamBox로 전달
-                        />
-                    ))}
+                    {Array.isArray(findTeams) && findTeams.length > 0 ? (
+                        findTeams.map((findTeam, index) => (
+                            <FindteamBox
+                                key={index}
+                                title={findTeam.title}
+                                description={findTeam.description}
+                                studioId={findTeam.studioId}
+                                tags={findTeam.tags}
+                            />
+                        ))
+                    ) : (
+                        <p>No teams found.</p>
+                    )}
                     <Box sx={{ alignSelf: "center", marginTop: "20px" }}>
                         <Pagination 
                             count={totalPages} 

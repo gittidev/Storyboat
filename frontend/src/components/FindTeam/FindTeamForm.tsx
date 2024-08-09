@@ -1,29 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import CustomButton from '../Commons/CustomButton';
-import { TextField, FormControl, InputLabel, Select, MenuItem, Box, Chip } from '@mui/material';
+import { TextField, FormControl, InputLabel, Select, MenuItem, Box, Chip, SelectChangeEvent } from '@mui/material';
 import { FindTeamType } from '../../types/StudioType';
-import { useRecoilState, useRecoilValue } from 'recoil';
-import { findTeamState } from '../../recoil/atoms/studioAtom';
+import { useRecoilValue } from 'recoil';
+// import { findTeamState } from '../../recoil/atoms/studioAtom';
 import axios from 'axios';
-import { fetchFindteams } from '../../utils/studioUtils';
 import { selectedStudioState } from '../../recoil/atoms/studioAtom';
 import { accessTokenState } from '../../recoil/atoms/authAtom';
 
 const svURL = import.meta.env.VITE_SERVER_URL;
 
 interface FindTeamFormProps {
-  findTeam: FindTeamType;
+  // findTeam: FindTeamType;
   onSave: (findteam: FindTeamType) => void;
   onClose: () => void;
 }
 
-const FindTeamForm: React.FC<FindTeamFormProps> = ({ findTeam = { tags: [] }, onSave, onClose }) => {
-  const [findTeamList, setfindTeamList] = useRecoilState<FindTeamType[]>(findTeamState);
-  const [title, setTitle] = useState<string>(findTeam.title || '');
-  const [description, setDescription] = useState<string>(findTeam.description || '');
+const FindTeamForm: React.FC<FindTeamFormProps> = ({ onSave, onClose }) => {
+  // const [findTeamList, setfindTeamList] = useRecoilState<FindTeamType[]>(findTeamState);
+  const [title, setTitle] = useState<string>('');
+  const [description, setDescription] = useState<string>('');
   const [tags, setTags] = useState<{ tagId: number, name: string, color: string }[]>([]);
   const [loading, setLoading] = useState(false);
-  const [selectedTagIds, setSelectedTagIds] = useState<number[]>(findTeam.tags ? findTeam.tags.map(tag => tag.tagId) : []);
+  const [selectedTagIds, setSelectedTagIds] = useState<number[]>([]);
 
   const studioId = useRecoilValue(selectedStudioState);
   const accessToken = useRecoilValue(accessTokenState);
@@ -47,7 +46,7 @@ const FindTeamForm: React.FC<FindTeamFormProps> = ({ findTeam = { tags: [] }, on
     fetchTags();
   }, [accessToken]);
 
-  const handleTagChange = (event: React.ChangeEvent<{ value: unknown }>) => {
+  const handleTagChange = (event: SelectChangeEvent<number[]>) => {
     setSelectedTagIds(event.target.value as number[]);
   };
 
@@ -72,13 +71,13 @@ const FindTeamForm: React.FC<FindTeamFormProps> = ({ findTeam = { tags: [] }, on
 
       const data = response.data;
 
-      setfindTeamList([...findTeamList, data]);
+      // setfindTeamList([...findTeamList, data]);
 
       if (onSave) {
         onSave(data.data);
       }
 
-      fetchFindteams(accessToken, setfindTeamList);
+      // fetchFindteams(accessToken, setfindTeamList);
 
       onClose();
     } catch (error) {
