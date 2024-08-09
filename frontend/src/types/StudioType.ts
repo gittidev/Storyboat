@@ -37,9 +37,10 @@ export interface MemberType {
 // export type TranslatedRole = '팀장' | '팀원' | '편집자' | '참여 요청';
 
 export interface StoryType {
-  storyid : number;
-  title: string;
-  lastmodified: string;
+  storyId : number;
+  content: string;
+  title:string;
+  lastModified: string | null;
 }
 
 export interface IdeaType {
