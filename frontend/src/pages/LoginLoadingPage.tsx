@@ -19,7 +19,7 @@ const LoginLoadingPage: React.FC = () => {
         console.log('New Access Token:', newAccessToken); // 확인용 로그
         if (newAccessToken) {
           setAccessToken(newAccessToken);
-          // setRefreshToken(true);
+          setRefreshToken(true);
           console.log('Navigating to /storyboat/profile'); // 네비게이션 로그
           navigate('/storyboat/profile', { replace: true });
         } else {
