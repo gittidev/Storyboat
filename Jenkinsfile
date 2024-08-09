@@ -3,24 +3,17 @@ pipeline {
 
     environment {
         DOCKERHUB_CREDENTIALS = credentials('docker-hub-credentials')
+        MATTERMOST_ENDPOINT = 'https://meeting.ssafy.com/hooks/1psxfrtocfyubrb6jrpd7daoay'
+        MATTERMOST_CHANNEL = 'Jenkins---C107'
+        BACKEND_IMAGE = 'siokim002/jenkins_backend'
+        FRONTEND_IMAGE = 'siokim002/jenkins_frontend'
     }
-    // test
+
     stages {
         stage('Start Notification') {
             steps {
                 script {
-                    def gitCommitterName = sh(script: "git log -1 --pretty=format:'%an'", returnStdout: true).trim()
-                    def gitCommitMessage = sh(script: "git log -1 --pretty=%B", returnStdout: true).trim()
-                    
-                    mattermostSend(
-                        color: 'warning',
-                        message: """젠킨스 시작: ${env.JOB_NAME} #${env.BUILD_NUMBER}
-                        커밋 작성자: ${gitCommitterName}
-                        커밋 메시지: ${gitCommitMessage}
-                        (<${env.BUILD_URL}|Details>)""",
-                        endpoint: 'https://meeting.ssafy.com/hooks/1psxfrtocfyubrb6jrpd7daoay',
-                        channel: 'Jenkins---C107'
-                    )
+                    sendNotification('warning', '젠킨스 시작')
                 }
             }
         }
@@ -36,10 +29,7 @@ pipeline {
                 changeset "**/backend/**"
             }
             steps {
-                dir('backend') {
-                    sh 'chmod +x ./gradlew'
-                    sh './gradlew clean build'
-                }
+                buildBackend()
             }
         }
 
@@ -48,9 +38,7 @@ pipeline {
                 changeset "**/backend/**"
             }
             steps {
-                dir('backend') {
-                    sh 'docker build -t siokim002/jenkins_backend .'
-                }
+                buildDockerImage('backend', BACKEND_IMAGE)
             }
         }
 
@@ -59,22 +47,8 @@ pipeline {
                 changeset "**/backend/**"
             }
             steps {
-                script {
-                    sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
-                    sh 'docker push siokim002/jenkins_backend'
-                    sh 'ssh deployuser@i11c107.p.ssafy.io "bash /home/deployuser/deploy_back.sh"'
-                }
-            }
-        }
-
-        stage('Build Frontend') {
-            when {
-                changeset "**/frontend/**"
-            }
-            steps {
-                dir('frontend') {
-                    sh 'npm install'
-                }
+                pushDockerImage(BACKEND_IMAGE)
+                deployBackend()
             }
         }
 
@@ -83,9 +57,7 @@ pipeline {
                 changeset "**/frontend/**"
             }
             steps {
-                dir('frontend') {
-                    sh 'docker build -t siokim002/jenkins_frontend .'
-                }
+                buildDockerImage('frontend', FRONTEND_IMAGE)
             }
         }
 
@@ -94,11 +66,8 @@ pipeline {
                 changeset "**/frontend/**"
             }
             steps {
-                script {
-                    sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
-                    sh 'docker push siokim002/jenkins_frontend'
-                    sh 'ssh deployuser@i11c107.p.ssafy.io "bash /home/deployuser/deploy_front.sh"'
-                }
+                pushDockerImage(FRONTEND_IMAGE)
+                deployFrontend()
             }
         }
     }
@@ -106,36 +75,54 @@ pipeline {
     post {
         success {
             script {
-                def gitCommitterName = sh(script: "git log -1 --pretty=format:'%an'", returnStdout: true).trim()
-                def gitCommitMessage = sh(script: "git log -1 --pretty=%B", returnStdout: true).trim()
-                
-                mattermostSend(
-                    color: 'good',
-                    message: """빌드 성공: ${env.JOB_NAME} #${env.BUILD_NUMBER}
-                    커밋 작성자: ${gitCommitterName}
-                    커밋 메시지: ${gitCommitMessage}
-                    (<${env.BUILD_URL}|Details>)""",
-                    endpoint: 'https://meeting.ssafy.com/hooks/1psxfrtocfyubrb6jrpd7daoay',
-                    channel: 'Jenkins---C107'
-                )
+                sendNotification('good', '빌드 성공')
             }
         }
         failure {
             script {
-                def gitCommitterName = sh(script: "git log -1 --pretty=format:'%an'", returnStdout: true).trim()
-                def gitCommitMessage = sh(script: "git log -1 --pretty=%B", returnStdout: true).trim()
-                
-                mattermostSend(
-                    color: 'danger',
-                    message: """빌드 실패: ${env.JOB_NAME} #${env.BUILD_NUMBER}
-                    커밋 작성자: ${gitCommitterName}
-                    커밋 메시지: ${gitCommitMessage}
-                    (<${env.BUILD_URL}|Details>)""",
-                    endpoint: 'https://meeting.ssafy.com/hooks/1psxfrtocfyubrb6jrpd7daoay',
-                    channel: 'Jenkins---C107',
-                    failOnError: true
-                )
+                sendNotification('danger', '빌드 실패')
             }
         }
     }
+}
+
+def sendNotification(String color, String status) {
+    def gitCommitterName = sh(script: "git log -1 --pretty=format:'%an'", returnStdout: true).trim()
+    def gitCommitMessage = sh(script: "git log -1 --pretty=%B", returnStdout: true).trim()
+    
+    mattermostSend(
+        color: color,
+        message: """${status}: StoryBoat #${env.BUILD_NUMBER}
+        커밋 작성자: ${gitCommitterName}
+        커밋 메시지: ${gitCommitMessage}
+        (<${env.BUILD_URL}|Details>)""",
+        endpoint: MATTERMOST_ENDPOINT,
+        channel: MATTERMOST_CHANNEL
+    )
+}
+
+def buildBackend() {
+    dir('backend') {
+        sh 'chmod +x ./gradlew'
+        sh './gradlew clean build'
+    }
+}
+
+def buildDockerImage(String dirPath, String imageName) {
+    dir(dirPath) {
+        sh "docker build -t ${imageName} ."
+    }
+}
+
+def pushDockerImage(String imageName) {
+    sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
+    sh "docker push ${imageName}"
+}
+
+def deployBackend() {
+    sh 'ssh deployuser@i11c107.p.ssafy.io "bash /home/deployuser/deploy_back.sh"'
+}
+
+def deployFrontend() {
+    sh 'ssh deployuser@i11c107.p.ssafy.io "bash /home/deployuser/deploy_front.sh"'
 }
