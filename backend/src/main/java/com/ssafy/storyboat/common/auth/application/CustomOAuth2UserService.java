@@ -114,7 +114,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
                 // 1.5
                 String defaultProfileImageUrl = s3Repository.uploadDefaultProfileImage(Bucket.PROFILE);
-
                 // 2. profile 생성해 persist
                 String DEFAULT_PEN_NAME = "익명의 작가";
                 Profile joinUserProfile = Profile.builder()
@@ -143,18 +142,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                         .createdAt(LocalDateTime.now())
                         .build();
 
-
                 entityManager.persist(studioUser);
-
-                // Repository 생성해서 User-Repository 추가하기!
-
-//                // 1. StudioUser Entity 생성
-//                StudioUser studioUser = StudioUser.builder()
-//                        .user(joinUser)
-//                        .role("ROLE_PRIVATE")
-//                        .build();
-
-
                 entityManager.getTransaction().commit();  // 트랜잭션 커밋
 
                 OAuth2UserDTO userDTO = new OAuth2UserDTO();
