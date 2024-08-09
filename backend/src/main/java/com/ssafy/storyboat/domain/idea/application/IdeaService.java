@@ -31,7 +31,7 @@ public class IdeaService {
     }
 
     @StudioWriteAuthorization
-    public void createIdea(Long studioId, Long userId, IdeaCreateRequest ideaCreateRequest) {
+    public IdeaResponse createIdea(Long studioId, Long userId, IdeaCreateRequest ideaCreateRequest) {
         Studio studio = studioRepository.findById(studioId)
                 .orElseThrow(() -> new ResourceNotFoundException("Studio 없음"));
         StudioIdea studioIdea = StudioIdea.builder()
@@ -40,12 +40,6 @@ public class IdeaService {
                 .content(ideaCreateRequest.getContent())
                 .build();
         studioIdeaRepository.save(studioIdea);
-    }
-
-    @StudioReadAuthorization
-    public IdeaResponse viewIdea(Long studioId, Long userId, Long ideaId) {
-        StudioIdea studioIdea = studioIdeaRepository.findById(ideaId)
-                .orElseThrow(() -> new ResourceNotFoundException("아이디어 존재하지 않음"));
         return new IdeaResponse(studioIdea.getStudioIdeaId(), studioIdea.getTitle(), studioIdea.getContent());
     }
 

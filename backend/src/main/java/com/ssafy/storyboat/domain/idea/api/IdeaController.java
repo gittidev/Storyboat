@@ -48,22 +48,23 @@ public class IdeaController {
             @AuthenticationPrincipal CustomOAuth2User customOAuth2User,
             @PathVariable Long studioId,
             @RequestBody IdeaCreateRequest ideaCreateRequest) {
-        ideaService.createIdea(studioId, customOAuth2User.getUserId(), ideaCreateRequest);
-        return ResponseEntity.ok().body(ApiResponse.success("아이디어 생성 성공"));
+
+        IdeaResponse ideaResponse = ideaService.createIdea(studioId, customOAuth2User.getUserId(), ideaCreateRequest);
+        return ResponseEntity.ok().body(ApiResponse.success(ideaResponse, "아이디어 생성 성공"));
     }
 
-    @GetMapping("/{ideaId}")
-    @Operation(
-            summary = "아이디어 조회",
-            description = "특정 아이디어의 세부 정보를 조회합니다."
-    )
-    public ResponseEntity<?> viewIdea(
-            @AuthenticationPrincipal CustomOAuth2User customOAuth2User,
-            @PathVariable Long studioId,
-            @PathVariable Long ideaId) {
-        IdeaResponse ideaResponse = ideaService.viewIdea(studioId, customOAuth2User.getUserId(), ideaId);
-        return ResponseEntity.ok().body(ApiResponse.success(ideaResponse, "아이디어 조회 성공"));
-    }
+//    @GetMapping("/{ideaId}")
+//    @Operation(
+//            summary = "아이디어 조회",
+//            description = "특정 아이디어의 세부 정보를 조회합니다."
+//    )
+//    public ResponseEntity<?> viewIdea(
+//            @AuthenticationPrincipal CustomOAuth2User customOAuth2User,
+//            @PathVariable Long studioId,
+//            @PathVariable Long ideaId) {
+//        IdeaResponse ideaResponse = ideaService.viewIdea(studioId, customOAuth2User.getUserId(), ideaId);
+//        return ResponseEntity.ok().body(ApiResponse.success(ideaResponse, "아이디어 조회 성공"));
+//    }
 
     @PutMapping("/{ideaId}")
     @Operation(
