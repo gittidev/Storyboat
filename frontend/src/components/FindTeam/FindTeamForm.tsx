@@ -1,75 +1,95 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react';
 import CustomButton from '../Commons/CustomButton';
-import { TextField } from '@mui/material';
+import { TextField, FormControl, InputLabel, Select, MenuItem, Box, Chip, SelectChangeEvent } from '@mui/material';
 import { FindTeamType } from '../../types/StudioType';
-import { useRecoilState, useRecoilValue } from 'recoil';
-import { findTeamState } from '../../recoil/atoms/studioAtom';
-// import { fetchRefreshToken } from '../../apis/auth';
+import { useRecoilValue } from 'recoil';
+// import { findTeamState } from '../../recoil/atoms/studioAtom';
 import axios from 'axios';
-import { fetchFindteams } from '../../utils/studioUtils';
 import { selectedStudioState } from '../../recoil/atoms/studioAtom';
 import { accessTokenState } from '../../recoil/atoms/authAtom';
-// import { Tag } from './Tag'
+
 const svURL = import.meta.env.VITE_SERVER_URL;
+
 interface FindTeamFormProps {
-  onSave : (findteam : FindTeamType) => void;
+  // findTeam: FindTeamType;
+  onSave: (findteam: FindTeamType) => void;
   onClose: () => void;
 }
 
 const FindTeamForm: React.FC<FindTeamFormProps> = ({ onSave, onClose }) => {
-  const [findTeamList, setfindTeamList] = useRecoilState<FindTeamType[]>(findTeamState)
-  const [title, setTitle] = useState<string>("")
-  const [description, setDescription] = useState<string>("")
-  const [tags, setTags] = useState<string>("")
+  // const [findTeamList, setfindTeamList] = useRecoilState<FindTeamType[]>(findTeamState);
+  const [title, setTitle] = useState<string>('');
+  const [description, setDescription] = useState<string>('');
+  const [tags, setTags] = useState<{ tagId: number, name: string, color: string }[]>([]);
   const [loading, setLoading] = useState(false);
+  const [selectedTagIds, setSelectedTagIds] = useState<number[]>([]);
 
-  // const setFindteams = useSetRecoilState(findTeamState)
-  const studioId = useRecoilState(selectedStudioState)[0];
+  const studioId = useRecoilValue(selectedStudioState);
   const accessToken = useRecoilValue(accessTokenState);
+
+  useEffect(() => {
+    const fetchTags = async () => {
+      try {
+        const response = await axios.get(`${svURL}/api/tags`, {
+          headers: {
+            'Authorization': `Bearer ${accessToken}`,
+          },
+        });
+        if (response.status === 200) {
+          setTags(response.data.data); // 태그 목록 저장
+        }
+      } catch (error) {
+        console.error('태그를 가져오는 데 실패했습니다:', error);
+      }
+    };
+
+    fetchTags();
+  }, [accessToken]);
+
+  const handleTagChange = (event: SelectChangeEvent<number[]>) => {
+    setSelectedTagIds(event.target.value as number[]);
+  };
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    setLoading(true)
+    setLoading(true);
+
     const newFindteam = {
       title,
       description,
-      tags,
-      studioId
+      tags: selectedTagIds.map(tagId => ({ tagId })),
+      studioId,
     };
 
     try {
-      console.log('findteam access:', accessToken)
-      console.log(studioId)
-
       const response = await axios.post(`${svURL}/api/invitations/${studioId}`, newFindteam, {
         headers: {
+          'Authorization': `Bearer ${accessToken}`,
           'Content-Type': 'application/json',
-          'Authorization':  `Bearer ${accessToken}`
-        }
-      })
+        },
+      });
 
       const data = response.data;
 
-      setfindTeamList([...findTeamList, data])
+      // setfindTeamList([...findTeamList, data]);
 
       if (onSave) {
-        onSave(data);
+        onSave(data.data);
       }
 
-      fetchFindteams(accessToken, setfindTeamList)
+      // fetchFindteams(accessToken, setfindTeamList);
 
-      onClose()
-    }catch(error){
-      console.error('팀찾기 게시글 생성 중 오류 발생')
+      onClose();
+    } catch (error) {
+      console.error('팀찾기 게시글 생성 중 오류 발생', error);
     }
-    setLoading(false);
 
+    setLoading(false);
   };
 
   return (
     <form onSubmit={handleSubmit} style={{ maxWidth: '400px', margin: '0 auto' }}>
       <div style={{ marginBottom: '1rem' }}>
-
         <TextField
           required
           id="outlined-required"
@@ -82,17 +102,27 @@ const FindTeamForm: React.FC<FindTeamFormProps> = ({ onSave, onClose }) => {
         />
       </div>
       <div style={{ marginBottom: '1rem' }}>
-
-        <TextField
-          required
-          id="outlined-required"
-          label="태그"
-          placeholder='태그를 작성하세요'
-          sx={{ marginBottom: '15px', width: '100%' }}
-          type="text"
-          value={tags}
-          onChange={(e) => setTags(e.target.value)}
-        />
+        <FormControl fullWidth>
+          <InputLabel>태그 선택</InputLabel>
+          <Select
+            multiple
+            value={selectedTagIds}
+            onChange={handleTagChange}
+            renderValue={(selected) => (
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+                {tags.filter(tag => selected.includes(tag.tagId)).map(tag => (
+                  <Chip key={tag.tagId} label={tag.name} sx={{ backgroundColor: tag.color, color: '#fff' }} />
+                ))}
+              </Box>
+            )}
+          >
+            {tags.map(tag => (
+              <MenuItem key={tag.tagId} value={tag.tagId}>
+                {tag.name}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
       </div>
       <div style={{ marginBottom: '1rem' }}>
         <TextField
@@ -108,14 +138,12 @@ const FindTeamForm: React.FC<FindTeamFormProps> = ({ onSave, onClose }) => {
         />
       </div>
       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-
-        <CustomButton type="submit" content="생성하기" bgcolor='lightgreen' hoverBgColor='green' disabled={loading} width='' />
+        <CustomButton type="submit" content="생성하기" bgcolor='lightgreen' hoverBgColor='green' disabled={loading} />
         <CustomButton type="button" content="취소하기" bgcolor='gray' hoverBgColor='red' onClick={onClose} />
         {loading && <p>저장 중...</p>}
       </div>
-
     </form>
-  )
-}
+  );
+};
 
-export default FindTeamForm
+export default FindTeamForm;
