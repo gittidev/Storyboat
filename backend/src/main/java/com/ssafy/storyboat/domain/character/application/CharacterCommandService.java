@@ -94,8 +94,8 @@ public class CharacterCommandService {
         StudioCharacter character = characterRepository.findById(characterId)
                 .orElseThrow(() -> new ResourceNotFoundException("캐릭터 존재하지 않음"));
 
-        // S3에서 이미지 삭제
-        if (character.getImageUrl() != null) {
+        // S3에서 이미지 삭제 -> default 캐릭터 검증 추가 필요
+        if (character.getImageUrl() != null && !character.getImageUrl().equals("https://storyboat-character.s3.ap-northeast-2.amazonaws.com/img1.jpg")) {
             s3Repository.deleteFile(character.getImageUrl(), bucket);
         }
 
