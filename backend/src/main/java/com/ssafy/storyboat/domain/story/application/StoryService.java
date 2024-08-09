@@ -13,15 +13,14 @@ import com.ssafy.storyboat.domain.story.entity.StudioStory;
 import com.ssafy.storyboat.domain.story.repository.LastStoryRepository;
 import com.ssafy.storyboat.domain.story.repository.StoryRepository;
 import com.ssafy.storyboat.domain.story.repository.StudioStoryRepository;
-import com.ssafy.storyboat.domain.studio.application.authorization.StudioReadAuthorization;
 import com.ssafy.storyboat.domain.studio.application.StudioService;
+import com.ssafy.storyboat.domain.studio.application.authorization.StudioReadAuthorization;
 import com.ssafy.storyboat.domain.studio.application.authorization.StudioWriteAuthorization;
 import com.ssafy.storyboat.domain.studio.entity.Studio;
 import com.ssafy.storyboat.domain.studio.entity.StudioUser;
 import com.ssafy.storyboat.domain.studio.repository.StudioRepository;
 import com.ssafy.storyboat.domain.studio.repository.StudioUserRepository;
 import com.ssafy.storyboat.domain.user.entity.Profile;
-import com.ssafy.storyboat.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -47,8 +46,6 @@ public class StoryService {
     private final StoryRepository storyRepository;
     private final StudioService studioService;
     private final LastStoryRepository lastStoryRepository;
-    private final UserRepository userRepository;
-
 
     @Transactional(readOnly = true)
     @StudioReadAuthorization
@@ -63,6 +60,7 @@ public class StoryService {
         StudioStory studioStory = StudioStory.builder()
                 .studio(studio)
                 .title(title)
+                .lastModifiedDate(LocalDateTime.now())
                 .build();
 
         studioStoryRepository.save(studioStory);
@@ -85,16 +83,6 @@ public class StoryService {
         studioStoryRepository.delete(studioStory);
     }
 
-//    @Transactional(readOnly = true)
-//    @StudioReadAuthorization
-//    public LastStory findStories(Long studioId, Long userId, Long studioStoryId) {
-////        return storyRepository.findTopByStudioStoryIdOrderByDateDesc(studioStoryId)
-////                .orElseThrow(() -> new ResourceNotFoundException("스토리 조회 실패"));
-//
-//        return lastStoryRepository.findLastStoryByStudioStoryId(studioStoryId)
-//                .orElseThrow(() -> new ResourceNotFoundException("스토리 조회 실패"));
-//    }
-
     @StudioWriteAuthorization
     public void saveStory(Long studioId, Long userId, Long studioStoryId, String storyData) {
         StudioUser studioUser = studioUserRepository.findByStudio_StudioIdAndUser_UserId(studioId, userId)
@@ -103,9 +91,14 @@ public class StoryService {
             throw new ForbiddenException("권한 없음");
         }
 
+        StudioStory studioStory = studioStoryRepository.findById(studioStoryId)
+                .orElseThrow(() -> new ResourceNotFoundException("해당 스토리 없음"));
+
+        studioStory.updateLastModified(LocalDateTime.now());
+        studioStoryRepository.save(studioStory);
+
         // 1. LastStory 조회
         Optional<LastStory> lastStory = lastStoryRepository.findLastStoryByStudioStoryId(studioStoryId);
-                //.orElseThrow(() -> new ResourceNotFoundException("스토리 조회 실패"));
 
         try {
             // 최신 수정본이 존재한다면 해당 최신 수정본 TTL 적용
@@ -147,6 +140,7 @@ public class StoryService {
 
         StudioStory saveStudioStory = StudioStory.builder()
                 .studio(studio)
+                .lastModifiedDate(LocalDateTime.now())
                 .title(studioStory.getTitle())
                 .build();
 
@@ -158,7 +152,6 @@ public class StoryService {
                 .date(LocalDateTime.now())
                 .storyData(story.getStoryData())
                 .build();
-
         try {
             // MongoDB에 저장
             lastStoryRepository.save(copyStory);

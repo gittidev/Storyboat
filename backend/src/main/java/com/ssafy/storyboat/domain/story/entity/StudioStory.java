@@ -7,8 +7,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "studio_story")
@@ -27,5 +26,12 @@ public class StudioStory {
     @JoinColumn(name = "studio_id")
     private Studio studio;
 
+    @Column(name = "last_modified")
+    private LocalDateTime lastModifiedDate;
+
     private String title;
+
+    public void updateLastModified(LocalDateTime lastModifiedDate) {
+        this.lastModifiedDate = lastModifiedDate;
+    }
 }
