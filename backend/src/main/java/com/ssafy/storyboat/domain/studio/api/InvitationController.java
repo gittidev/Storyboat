@@ -19,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,7 +31,6 @@ import java.util.stream.Collectors;
 public class InvitationController {
 
     private final InvitationService invitationService;
-    private final StudioService studioService;
 
     /**
      * Studio 모집글 전체 조회
@@ -68,16 +68,18 @@ public class InvitationController {
      * @param studioId
      * @return
      */
+    //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     @PostMapping("/{studioId}")
     public ResponseEntity<?> createInvitation(@AuthenticationPrincipal final CustomOAuth2User user, @PathVariable Long studioId, @RequestBody InvitationSaveRequest invitationSaveRequest) {
         Long userId = user.getUserId();
         Invitation invitation = Invitation.builder()
                 .title(invitationSaveRequest.getTitle())
                 .description(invitationSaveRequest.getDescription())
+                .invitationTags(new ArrayList<>())
                 .build();
 
-        invitationService.InvitationSave(studioId, userId, invitation, invitationSaveRequest.getTags());
-        return ResponseEntity.ok().body(ApiResponse.success("모집글 생성 성공"));
+        InvitationFindAllResponse result = invitationService.InvitationSave(studioId, userId, invitation, invitationSaveRequest.getTags());
+        return ResponseEntity.ok().body(ApiResponse.success(result, "모집글 생성 성공"));
     }
 
     /**
@@ -87,6 +89,7 @@ public class InvitationController {
      * @param invitationSaveRequest
      * @return
      */
+    //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     @PutMapping("/{studioId}")
     public ResponseEntity<?> updateInvitation(@AuthenticationPrincipal final CustomOAuth2User user, @PathVariable Long studioId, @RequestBody InvitationSaveRequest invitationSaveRequest) {
         Long userId = user.getUserId();
@@ -95,8 +98,8 @@ public class InvitationController {
                 .description(invitationSaveRequest.getDescription())
                 .build();
 
-        invitationService.updateInvitation(studioId, userId, invitation, invitationSaveRequest.getTags());
-        return ResponseEntity.ok().body(ApiResponse.success("모집글 수정 성공"));
+        InvitationFindAllResponse result = invitationService.updateInvitation(studioId, userId, invitation, invitationSaveRequest.getTags());
+        return ResponseEntity.ok().body(ApiResponse.success(result, "모집글 수정 성공"));
     }
 
     /**
@@ -116,7 +119,7 @@ public class InvitationController {
     public ResponseEntity<?> makeInvitationCode(@AuthenticationPrincipal final CustomOAuth2User user, @PathVariable Long studioId) {
         Long userId = user.getUserId();
         String code = invitationService.makeInvitationCode(studioId, userId);
-        return ResponseEntity.ok(ApiResponse.success("http://localhost:8080/api/invitations/code/join/" + code, "모집 코드 생성 성공"));
+        return ResponseEntity.ok(ApiResponse.success("https://i11c107.p.ssafy.io/api/invitations/code/join/" + code, "모집 코드 생성 성공"));
 
     }
 
@@ -125,7 +128,7 @@ public class InvitationController {
         Long userId = user.getUserId();
 
         InvitationCode invitationCode = invitationService.findInvitationCode(studioId, userId);
-        return ResponseEntity.ok(ApiResponse.success("http://localhost:8080/api/invitations/code/join/" + invitationCode.getCode(), "모집 코드 조회 성공"));
+        return ResponseEntity.ok(ApiResponse.success("https://i11c107.p.ssafy.io/api/invitations/code/join/" + invitationCode.getCode(), "모집 코드 조회 성공"));
     }
 
     @DeleteMapping("/code/{studioId}")
@@ -143,7 +146,7 @@ public class InvitationController {
         log.info("들어옴");
 
         if (user == null) {
-            log.info("유저 널");
+            // 처리 필요
             return ResponseEntity.ok(ApiResponse.success("Asdfadsf"));
         }
 

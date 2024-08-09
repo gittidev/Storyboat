@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -30,7 +31,7 @@ public class Invitation {
     private String description;
 
     @OneToMany(mappedBy = "invitation", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<InvitationTag> invitationTags;
+    private List<InvitationTag> invitationTags = new ArrayList<>();
 
     public void updateTitle(String title) {
         this.title = title;
