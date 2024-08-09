@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Box, Typography, Button, Card, CardContent, CardActions, IconButton } from '@mui/material';
@@ -13,12 +13,14 @@ const svURL = import.meta.env.VITE_SERVER_URL;
 const FindTeamDetail: React.FC = () => {
   const { studioId } = useParams<{ studioId: string }>();
   const [detail, setDetail] = useRecoilState<FindTeamType>(findTeamDetailState);
+  const [userRole, setUserRole] = useState<string | null>(null); // 사용자의 역할을 저장할 상태
   const accessToken = useRecoilValue(accessTokenState);
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchDetail = async () => {
       try {
+        // 팀 세부 정보 가져오기
         const response = await axios.get(`${svURL}/api/invitations/${studioId}`, {
           headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -30,7 +32,22 @@ const FindTeamDetail: React.FC = () => {
       }
     };
 
+    const fetchUserRole = async () => {
+      try {
+        // 사용자의 역할 가져오기
+        const response = await axios.get(`${svURL}/api/studios/${studioId}/my`, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+        setUserRole(response.data.data); // 응답에서 역할을 설정
+      } catch (error) {
+        console.error('Failed to fetch user role:', error);
+      }
+    };
+
     fetchDetail();
+    fetchUserRole();
   }, [studioId, accessToken, setDetail]);
 
   const handleBackClick = () => {
@@ -108,12 +125,16 @@ const FindTeamDetail: React.FC = () => {
 
         <CardActions sx={{ justifyContent: 'space-between', padding: '0 16px 16px 16px' }}>
           <Box>
-            <IconButton onClick={handleEdit} color="primary">
-              <EditIcon />
-            </IconButton>
-            <IconButton onClick={handleDelete} color="error">
-              <DeleteIcon />
-            </IconButton>
+            {userRole === 'ROLE_OWNER' && (
+              <>
+                <IconButton onClick={handleEdit} color="primary">
+                  <EditIcon />
+                </IconButton>
+                <IconButton onClick={handleDelete} color="error">
+                  <DeleteIcon />
+                </IconButton>
+              </>
+            )}
           </Box>
           <Button
             variant="contained"
