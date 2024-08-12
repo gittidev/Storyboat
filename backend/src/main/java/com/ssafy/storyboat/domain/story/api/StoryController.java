@@ -8,6 +8,7 @@ import com.ssafy.storyboat.domain.story.dto.StoryFindAllResponse;
 import com.ssafy.storyboat.domain.story.dto.StoryHistoryFindAllResponse;
 import com.ssafy.storyboat.domain.story.entity.LastStory;
 import com.ssafy.storyboat.domain.story.entity.Story;
+import com.ssafy.storyboat.domain.story.entity.StudioStory;
 import com.ssafy.storyboat.domain.studio.dto.Invitation.InvitationFindAllResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -58,9 +59,13 @@ public class StoryController {
             @PathVariable final Long studioId,
             @RequestBody Map<String, Object> payload,
             @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
-        storyService.makeStory(studioId, customOAuth2User.getUserId(), (String) payload.get("title"));
-        Map<String, String> data = new HashMap<>();
-        data.put("title", (String) payload.get("title"));
+        StudioStory studioStory = storyService.makeStory(studioId, customOAuth2User.getUserId(), (String) payload.get("title"));
+
+        StoryFindAllResponse data = new StoryFindAllResponse();
+        data.setStoryId(studioStory.getStudioStoryId());
+        data.setTitle(studioStory.getTitle());
+        data.setLastModified(studioStory.getLastModifiedDate());
+
         return ResponseEntity.ok(ApiResponse.success(data, "스토리 생성 성공"));
     }
 
