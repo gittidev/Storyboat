@@ -19,6 +19,7 @@ import { myStoryState } from '../recoil/atoms/studioAtom';
 import { accessTokenState } from '../recoil/atoms/authAtom';
 import { myStudioState } from '../recoil/atoms/studioAtom';
 import axios from 'axios';
+import api from '../apis/api';
 
 const svURL = import.meta.env.VITE_SERVER_URL;
 
@@ -38,11 +39,13 @@ const MyStoryPage: React.FC = () => {
   const [selectedStoryId, setSelectedStoryId] = useState<number | null>(null); // 선택된 스토리 ID 상태 추가
   const navigate = useNavigate();
   console.log(selectedStudioId)
+  console.log(myStudioId)
+
   useEffect(() => {
     const fetchStory = async () => {
       try {
-        const response = await axios.get(
-          `${svURL}/api/studios/${myStudioId}/stories`,
+        const response = await api.get(
+          `/api/studios/${myStudioId}/stories`,
           {
             headers: {
               'Authorization': `Bearer ${accessToken}`,

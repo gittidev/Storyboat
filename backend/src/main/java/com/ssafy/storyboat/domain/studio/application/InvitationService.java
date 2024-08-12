@@ -75,7 +75,7 @@ public class InvitationService {
      * @param invitation
      */
     @StudioOwnerAuthorization
-    public void InvitationSave(Long studioId, Long userId, Invitation invitation, List<ProfileTagUpdateRequest> tagRequests) {
+    public InvitationFindAllResponse InvitationSave(Long studioId, Long userId, Invitation invitation, List<ProfileTagUpdateRequest> tagRequests) {
         Optional<Invitation> savedInvitation = invitationRepository.findByStudio_studioId(studioId);
 
         if (savedInvitation.isPresent()) {
@@ -91,7 +91,7 @@ public class InvitationService {
         }
 
         invitation.updateStudio(studio);
-        invitationRepository.save(invitation);
+        List<InvitationTag> tags = new ArrayList<>();
 
         // 중복된 태그 제거
         Set<Long> uniqueTagIds = tagRequests.stream()
@@ -105,8 +105,12 @@ public class InvitationService {
                     .tag(tag)
                     .invitation(invitation)
                     .build();
-            invitationTagRepository.save(invitationTag);
+            tags.add(invitationTag);
         }
+        invitation.setInvitationTags(tags);
+        invitationRepository.save(invitation);
+
+        return new InvitationFindAllResponse(invitation);
     }
 
     /**
@@ -117,7 +121,7 @@ public class InvitationService {
      */
     @Transactional
     @StudioOwnerAuthorization
-    public void updateInvitation(Long studioId, Long userId, Invitation invitation, List<ProfileTagUpdateRequest> tagRequests) {
+    public InvitationFindAllResponse updateInvitation(Long studioId, Long userId, Invitation invitation, List<ProfileTagUpdateRequest> tagRequests) {
         Invitation oldInvitation = invitationRepository.findByStudio_studioId(studioId)
                 .orElseThrow(() -> new ResourceNotFoundException("수정할 모집글 없음"));
 
@@ -146,6 +150,7 @@ public class InvitationService {
         oldInvitation.setInvitationTags(tags);
 
         invitationRepository.save(oldInvitation);
+        return new InvitationFindAllResponse(oldInvitation);
     }
 
     /**

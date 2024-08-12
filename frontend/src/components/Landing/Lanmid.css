@@ -1,0 +1,21 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center; 
+  align-items: center; 
+  height: 43vh; 
+  text-align: center;
+  margin: 20px;
+  border-radius: 8px; 
+  padding: 20px;
+}
+
+.heading {
+
+  margin-bottom: 10px;
+}
+
+.subheading {
+  color: #555; 
+}
+

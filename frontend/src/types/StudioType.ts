@@ -64,5 +64,9 @@ export interface FindTeamType {
   studioId:number;
   title : string;
   description : string;
-  tags: { name: string; color: string }[];
+  tags: {
+    tagId: number;
+    name: string;
+    color: string;
+  }[];
 }

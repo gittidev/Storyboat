@@ -1,0 +1,13 @@
+/* styles.css */
+.move_container1_parent {
+  height: 70vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 5%;
+}
+
+.move_container1 {
+  width: 100%;
+  max-width: 1200px; /* Adjust as needed */
+}

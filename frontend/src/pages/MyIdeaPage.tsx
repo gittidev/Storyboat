@@ -142,15 +142,16 @@ const MyIdeaPage: React.FC = () => {
         {myIdeas.length === 0 ? (
           <Typography variant="body1">아이디어가 없습니다. 새 아이디어를 추가해보세요!</Typography>
         ) : (
-          <Grid container spacing={2} sx={{ justifyContent: 'center' }}>
+          <Grid container spacing={2}>
             {myIdeas.map((idea) => (
-              <Grid item xs={12} sm={6} md={4} key={idea.ideaId}>
+              <Grid item xs={12} sm={6} key={idea.ideaId}>
                 <CustomCard 
                   ideaId={idea.ideaId} 
                   title={idea.title} 
                   content={idea.content} 
                   menuOptions={generateMenuOptions()} 
                   onMenuClick={handleMenuClick} 
+                  width="90%"  // 카드가 가로로 꽉 차도록 설정
                 />
               </Grid>
             ))}

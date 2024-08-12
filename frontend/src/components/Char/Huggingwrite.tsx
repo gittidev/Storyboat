@@ -25,13 +25,13 @@ interface SpeechSynthesisVoice {
 
 const Huggingwrite: React.FC = () => {
   const [inputText, setInputText] = useState<string>('');
-  const [story, setStory] = useState<string | null>(null); 
+  // const [story, setStory] = useState<string | null>(null); 
   const [loading, setLoading] = useState<boolean>(false);
   const [translatedStory, setTranslatedStory] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [selectedLanguage, setSelectedLanguage] = useState<string>('ko'); 
   const [isSpeaking, setIsSpeaking] = useState<boolean>(false); 
-  console.log(story)
+
   const { speak, cancel, voices } = useSpeechSynthesis();
 
   const handleInputChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -64,7 +64,7 @@ const Huggingwrite: React.FC = () => {
 
       const cleanedStory = result.generated_text.replace(/(\r\n|\n|\r)/g, ' ');
       console.log('Generated Story in English:', cleanedStory);
-      setStory(cleanedStory);
+      // setStory(cleanedStory);
 
       if (selectedLanguage !== 'en') {
         console.log('Translating generated story to selected language...');

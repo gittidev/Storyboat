@@ -121,10 +121,10 @@ const Home: React.FC = () => {
 
       <div className="second">
         <div className="split-container">
-          <div className="leftpart">
+          <div className="leftpart_home">
             <div className="inputboxdesign">
               <div className="formBox">
-                <div className="mid">
+                <div className="mid_home">
                   <div className="formValue">
                     <label style={{ fontSize: '15px' }}>화풍</label>
                     <select
@@ -221,7 +221,7 @@ const Home: React.FC = () => {
             </div>
           </div>
 
-          <div className="rightpart">
+          <div className="leftpart_home">
             {showLoader ? (
               <div style={{
                 margin: '0 auto',

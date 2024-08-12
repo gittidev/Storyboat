@@ -1,10 +1,11 @@
 import React, { useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { createTheme, ThemeProvider } from '@mui/material';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 import { refreshTokenState, accessTokenState } from './recoil/atoms/authAtom';
+import { myStudioState } from './recoil/atoms/studioAtom';
 import api from './apis/api';
-
+// import axios from 'axios';
 // Import pages
 import MainPage from './pages/MainPage';
 import LandingPage from './pages/LandingPage/LandingPage';
@@ -30,11 +31,35 @@ import StoryDetail from './components/Plot/StoryDetail';
 
 // 로그인 상태관리
 import ProtectedRoute from './ProtecedRoute';
+// const svURL = import.meta.env.VITE_SERVER_URL;
 
 const App: React.FC = () => {
   const [accessToken, setAccessToken] = useRecoilState(accessTokenState);
   const [refreshToken, setRefreshToken] = useRecoilState(refreshTokenState);
   console.log(accessToken)
+  const setStudioId = useSetRecoilState(myStudioState);
+
+  const fetchProfile = async () => {
+    try {
+      const response = await api.get(`/api/users/profiles`, {
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+        }
+      });
+
+      if (response.status === 200) {
+        const { data } = response.data;
+        if (data && data.privateStudio && data.privateStudio.studioId) {
+          setStudioId(data.privateStudio.studioId);
+        }
+      } else {
+        throw new Error('프로필 정보를 가져오는데 실패했습니다.');
+      }
+    } catch (error) {
+      console.error('프로필 정보를 가져오는데 오류가 발생했습니다:', error);
+    } 
+  };
+
   useEffect(() => {
     console.log(refreshToken)
     const setTokens = (newAccessToken: string) => {
@@ -85,6 +110,7 @@ const App: React.FC = () => {
         return Promise.reject(error);
       }
     );
+    fetchProfile();
   }, [setAccessToken, setRefreshToken]);
 
   const theme = createTheme({
