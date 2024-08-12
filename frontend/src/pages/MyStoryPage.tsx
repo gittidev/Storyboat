@@ -190,10 +190,10 @@ const MyStoryPage: React.FC = () => {
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell>번호</TableCell> {/* 인덱스 표시 */}
-                <TableCell>스토리 제목</TableCell>
-                <TableCell>최종 수정일</TableCell>
-                <TableCell>작업</TableCell> {/* 삭제 및 내보내기 버튼 추가 */}
+                <TableCell align="center">번호</TableCell> {/* 인덱스 표시 */}
+                <TableCell align="center">스토리 제목</TableCell>
+                <TableCell align="center">최종 수정일</TableCell>
+                <TableCell align="center">작업</TableCell> {/* 삭제 및 내보내기 버튼 추가 */}
               </TableRow>
             </TableHead>
             <TableBody>

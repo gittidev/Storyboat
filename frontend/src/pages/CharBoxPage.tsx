@@ -259,7 +259,7 @@ const CharBoxPage: React.FC = () => {
     return (
         <>
             <MakingCharacterteam />
-            <SubTopBarteam />
+            {/* <SubTopBarteam /> */}
 
             {/* Search Input */}
             <Box sx={{ padding: 2 }}>

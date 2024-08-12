@@ -111,7 +111,7 @@ const MyCharPage: React.FC = () => {
     return (
         <>
             <MakingCharacter />
-            <SubTopBar />
+            {/* <SubTopBar /> */}
             {/* Search Input */}
             <Box sx={{ padding: 2 }}>
                 <input
