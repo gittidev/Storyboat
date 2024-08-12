@@ -193,6 +193,7 @@ const MakingCharacter: React.FC = () => {
       >
         <DialogTitle>캐릭터 생성</DialogTitle>
         <DialogContent>
+          <br/>
           <Box component="form" sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
             <TextField 
               label="캐릭터 이름" 

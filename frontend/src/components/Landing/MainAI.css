@@ -1,0 +1,14 @@
+.MainAimid {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 60vh; /* 화면 높이 전체를 사용하고 싶다면 */
+  overflow: hidden;
+}
+
+.MainAimid video {
+  width: auto;
+  height: 57vh; 
+  max-width: 100%;
+}

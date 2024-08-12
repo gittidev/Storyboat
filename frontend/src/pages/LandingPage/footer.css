@@ -1,8 +1,9 @@
 .footer-container {
-  /* background-color: #f8f8f8;  */
+  background-color: rgb(25,118,210);
   padding: 40px 20px;
   text-align: center;
-  /* border-top: 2px solid #e0e0e0; */
+  color: white;
+  height: 50vh;
 }
 
 .footer-content {
@@ -16,6 +17,15 @@
   margin-bottom: 20px;
 }
 
+.logo-image {
+  width: 40px;
+  height: 40px;
+}
+
+.logo {
+  margin: 0; /* 기본 margin 제거 */
+}
+
 .nav {
   margin-bottom: 20px;
 }
@@ -23,7 +33,7 @@
 .nav-link {
   margin: 0 10px;
   text-decoration: none;
-  color: #333;
+  color: white;
   font-size: 1rem;
 }
 
@@ -38,7 +48,7 @@
 .social-media-icons a {
   margin: 0 10px;
   text-decoration: none;
-  color: #333;
+  color:  white;
   font-size: 1.2rem;
 }
 
@@ -47,7 +57,7 @@
 }
 
 .contact-info a, .legal-links a, .partner-links a {
-  color: #333;
+  color: white;
   text-decoration: none;
 }
 
@@ -79,7 +89,7 @@
 
 .footer-content {
   font-size: 0.9rem;
-  color: #666;
+  color:  white;
 }
 
 .last{

@@ -1,0 +1,20 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* 수직 중앙 정렬 */
+  align-items: center; /* 수평 중앙 정렬 */
+  height: 43vh; /* 원하는 높이 설정 */
+  text-align: center;
+  margin: 20px;
+  border-radius: 8px; /* 선택적으로 둥근 모서리 추가 */
+  padding: 20px; /* 선택적으로 내부 여백 추가 */
+}
+
+.heading {
+
+  margin-bottom: 10px;
+}
+
+.subheading {
+  color: #555; /* 선택적인 색상 변경 */
+}
