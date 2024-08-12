@@ -54,7 +54,7 @@ public class StoryService {
     }
 
     @StudioWriteAuthorization
-    public void makeStory(Long studioId, Long userId, String title) {
+    public StudioStory makeStory(Long studioId, Long userId, String title) {
         Studio studio = studioRepository.findById(studioId)
                 .orElseThrow(() -> new ResourceNotFoundException("스튜디오 찾을 수 없음"));
         StudioStory studioStory = StudioStory.builder()
@@ -64,6 +64,7 @@ public class StoryService {
                 .build();
 
         studioStoryRepository.save(studioStory);
+        return studioStory;
     }
 
     @StudioWriteAuthorization

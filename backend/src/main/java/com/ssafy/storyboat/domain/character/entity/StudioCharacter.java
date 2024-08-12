@@ -54,4 +54,9 @@ public class StudioCharacter {
         this.imageUrl = studioCharacter.imageUrl;
         this.tags = studioCharacter.tags;
     }
+
+    public void updateStudio(Studio studio) {
+        this.studio = studio;
+        studio.addStudioCharacter(this);
+    }
 }
