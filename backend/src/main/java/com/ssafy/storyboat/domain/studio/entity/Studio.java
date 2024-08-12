@@ -53,4 +53,8 @@ public class Studio {
     public void updateStudioDescription(String description) {
         this.description = description;
     }
+
+    public void addStudioCharacter(StudioCharacter studioCharacters) {
+        this.studioCharacters.add(studioCharacters);
+    }
 }

@@ -41,7 +41,7 @@ public class User {
 
     // Profile 테이블과 매핑, 1:1 즉시 로딩, 영속성 전이
     @Setter
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Profile profile;
     // User <-> Profile 까지만 매핑되어 있음
 
@@ -53,5 +53,10 @@ public class User {
 
     public void revokeUser() {
         this.isDeleted = false;
+    }
+
+    public void updateProfile(Profile profile) {
+        this.profile = profile;
+        profile.setUser(this);
     }
 }
