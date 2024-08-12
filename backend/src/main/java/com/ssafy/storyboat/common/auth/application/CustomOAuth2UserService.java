@@ -145,10 +145,8 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                 // 5. 기본 캐릭터 생성해 영속
                 StudioCharacter studioCharacter = makeDefaultCharacter(studio);
                 entityManager.persist(studioCharacter);
-
-                entityManager.getTransaction().commit();  // 트랜잭션 커밋
-
                 entityManager.persist(studioUser);
+
                 entityManager.getTransaction().commit();  // 트랜잭션 커밋
 
                 OAuth2UserDTO userDTO = new OAuth2UserDTO();
