@@ -1,4 +1,3 @@
-// src/pages/LandingPage/LandingNav.tsx
 import React, { useState, useEffect } from 'react';
 import {
     AppBar,
@@ -65,10 +64,17 @@ const LandingNav: React.FC = () => {
 
     return (
         <AppBar 
-            position="static" 
+            position="fixed" 
             elevation={0} 
-            // sx={{ height: navHeight, backgroundColor: 'rgb(43,126,255)' }}
-            sx={{ height: navHeight, backgroundColor: 'rgb(0,0,0)' }}
+            sx={{
+                height: navHeight, 
+                backgroundColor: 'rgba(0, 0, 0, 0)',  // Transparent background
+                // backdropFilter: 'blur(10px)', 
+                top: 0,
+                left: 0,
+                right: 0,
+                zIndex: theme.zIndex.drawer + 1  // Ensure it floats above other content
+            }}
         >
             <Toolbar>
                 <img src={logo} alt="로고" style={{ width: 40, height: 40, marginRight: 16 }} />
@@ -138,4 +144,3 @@ const LandingNav: React.FC = () => {
 };
 
 export default LandingNav;
-

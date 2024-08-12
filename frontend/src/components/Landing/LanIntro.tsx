@@ -36,12 +36,13 @@ const LanIntro: React.FC = () => {
       className="background-wrapper"
     >
       <div className="container">
-        <h1 className="heading">웹소설 작가를 위한 <br />종합 창작 플랫폼 StoryBoat!</h1>
+        <h1 className="heading">웹소설 작가를 위한 <br />종합 창작 플랫폼 <span>"StoryBoat"</span></h1>
         <br />
         <p className="subheading">동료 작가들과 협력하여 <br />보다 편리하게 멋진 원고를 작성해보세요 😊</p>
       </div>
     </Box>
   );
 };
+// <span style={{ color: 'black' }}>"StoryBoat"</span>
 
 export default LanIntro;
