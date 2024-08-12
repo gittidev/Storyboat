@@ -1,0 +1,112 @@
+/* Container for the FAQ */
+.Faqbody {
+  padding-left: 15%;
+  padding-right: 15%;
+  padding-bottom: 10%;
+}
+
+/* Remove fixed height from .Faqbody to allow dynamic height adjustment */
+.faq-container {
+  padding: 20px;
+  margin-top: 20px;
+  /* Ensure the container height is flexible */
+}
+
+/* Title style */
+.faq-title {
+  font-size: 30px;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+/* Individual FAQ item style */
+.faq-item {
+  margin-bottom: 20px;
+}
+
+/* FAQ question style */
+.faq-item h4 {
+  font-size: 23px;
+  font-weight: bold;
+  margin: 10px 0;
+  line-height: 1.8;
+  cursor: pointer;
+}
+
+/* FAQ answer style */
+.faq-item p {
+  font-size: 16px;
+  line-height: 1.8;
+  margin: 10px 0;
+}
+
+/* Horizontal line style */
+hr {
+  border: 0;
+  height: 1px;
+  background: #ccc;
+  margin: 20px 0;
+}
+
+/* Responsive styles */
+@media (max-width: 1200px) {
+  .faq-title {
+    font-size: 25px;
+  }
+
+  .faq-item h4 {
+    font-size: 16px;
+  }
+
+  .faq-item p {
+    font-size: 15px;
+  }
+}
+
+@media (max-width: 992px) {
+  .faq-title {
+    font-size: 25px;
+  }
+
+  .faq-item h4 {
+    font-size: 20px;
+  }
+
+  .faq-item p {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 768px) {
+  .faq-title {
+    font-size: 20px;
+  }
+
+  .faq-item h4 {
+    font-size: 14px;
+  }
+
+  .faq-item p {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 576px) {
+  .faq-title {
+    font-size: 16px;
+  }
+
+  .faq-item h4 {
+    font-size: 13px;
+  }
+
+  .faq-item p {
+    font-size: 12px;
+  }
+
+  /* Adjust padding for smaller screens */
+  .faq-container {
+    padding: 10px;
+  }
+}
