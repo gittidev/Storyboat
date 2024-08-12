@@ -84,7 +84,7 @@ const MyStoryPage: React.FC = () => {
         {
           headers: {
             'Authorization': `Bearer ${accessToken}`,
-          },
+          },    
         }
       );
       const updatedData = {
