@@ -86,19 +86,23 @@ input[type="radio"]:checked + label {
 }
 
 input[type="radio"]#radio_red:checked + label {
-  border-right: 5px solid blue; /* Border color for radio_red */
+  /* border-right: 5px solid blue;  */
+  border-right: 5px solid red; 
 }
 
 input[type="radio"]#radio_orange:checked + label {
-  border-right: 5px solid green; /* Border color for radio_orange */
+  /* border-right: 5px solid green;  */
+  border-right: 5px solid orange; 
 }
 
 input[type="radio"]#radio_green:checked + label {
-  border-right: 5px solid orange; /* Border color for radio_green */
+  /* border-right: 5px solid orange;  */
+  border-right: 5px solid green;
 }
 
 input[type="radio"]#radio_blue:checked + label {
-  border-right: 5px solid red; /* Border color for radio_blue */
+  /* border-right: 5px solid red;  */
+  border-right: 5px solid blue; 
 }
 
 .radio-wrapper {
@@ -192,23 +196,27 @@ input[type="radio"]#radio_blue:checked + label {
 .large-text1 {
   font-size: 2em;
   font-weight: bold;
-  color: blue;
+  /* color: blue; */
+  color: red;
 }
 
 .large-text2 {
   font-size: 2em;
   font-weight: bold;
-  color: green;
+  /* color: green; */
+  color: orange;
 }
 
 .large-text3 {
   font-size: 2em;
   font-weight: bold;
-  color: orange;
+  /* color: orange; */
+  color: green;
 }
 
 .large-text4 {
   font-size: 2em;
   font-weight: bold;
-  color: red;
+  /* color: red; */
+  color: blue;
 }

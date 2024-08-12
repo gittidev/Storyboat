@@ -5,7 +5,6 @@ import MicIcon from '@mui/icons-material/Mic';
 import MenuBookIcon from '@mui/icons-material/MenuBook';
 import TipsAndUpdatesIcon from '@mui/icons-material/TipsAndUpdates';
 
-
 import MediationIcon2 from '@mui/icons-material/Mediation';
 import MicIcon2 from '@mui/icons-material/Mic';
 import MenuBookIcon2 from '@mui/icons-material/MenuBook';
@@ -22,10 +21,10 @@ const MidMenu: React.FC = () => {
 
     // Define inline styles for each color
     const labelStyles = {
-        red: { color: 'blue' },
-        orange: { color: 'green' },
-        green: { color:'orange' },
-        blue: { color:'red' }
+        red: { color: 'red' },
+        orange: { color: 'orange' },
+        green: { color:'green' },
+        blue: { color:'blue' }
     };
 
     return (
