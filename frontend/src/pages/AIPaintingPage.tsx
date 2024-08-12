@@ -550,9 +550,9 @@ const AIPaintingPage: React.FC = () => {
           height: '75px', // Adjust height to be 1.5 times larger
           padding: '10px',
           backgroundColor: 'transparent', // Change background to transparent
-          color: 'rgba(0, 0, 0, 0.5)', // Set icon color to light gray
-          // border: '2px solid rgba(0, 0, 0, 0.5)', // Add border with light gray color
-          borderRadius: '50%',
+          // color: 'rgba(0, 0, 0, 0.5)', // Set icon color to light gray
+          border: '2px solid rgba(0, 0, 0, 0)',
+          // borderRadius: '50%',
           cursor: 'pointer',
           zIndex: 1000,
           display: 'flex',

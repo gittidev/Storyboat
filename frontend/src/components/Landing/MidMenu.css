@@ -1,0 +1,213 @@
+/* Base styles */
+.total_mid {
+  background: linear-gradient(to bottom, rgb(10,120,241), rgb(251, 251, 251));
+  height: 75vh;  
+  display: flex;
+  align-items: center;
+}
+
+#scene {
+  border-radius: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: 1000px;
+  height: 400px;
+  margin: auto;
+  background-color: #fff;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+  overflow: hidden;
+  padding: 40px;
+}
+
+#left-zone {
+  background: #fff;
+  height: 100%;
+  width: 350px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  padding-left: 10px;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  list-style: none;
+  padding: 0;
+  width: 100%;
+}
+
+.list li {
+  width: 100%; /* Full width for list items */
+  margin-bottom: 10px;
+  margin-left: 0; /* Adjust if necessary */
+}
+
+input[type="radio"] {
+  display: none;
+}
+
+input[type="radio"] + label {
+  display: block; /* Ensure label takes full width */
+  width: 100%; /* Full width for labels */
+  opacity: 0.5;
+  height: 50px;
+  text-align: left;
+  line-height: 50px;
+  cursor: pointer;
+  transition: opacity 0.3s, border-right 0.3s;
+  font-size: 23px;
+  color: #000;
+  position: relative;
+  padding-left: 10px;
+  padding-right: 20px;
+  box-sizing: border-box; /* Include padding in width calculation */
+}
+
+input[type="radio"] + label::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 20px;
+  height: 100%;
+  background-color: transparent;
+  transition: background-color 0.3s;
+}
+
+/* Add styles for the border color when radio buttons are selected */
+input[type="radio"]:checked + label {
+  border-right: 5px solid; /* Default border color (transparent) */
+  opacity: 1; 
+}
+
+input[type="radio"]#radio_red:checked + label {
+  border-right: 5px solid blue; /* Border color for radio_red */
+}
+
+input[type="radio"]#radio_orange:checked + label {
+  border-right: 5px solid green; /* Border color for radio_orange */
+}
+
+input[type="radio"]#radio_green:checked + label {
+  border-right: 5px solid orange; /* Border color for radio_green */
+}
+
+input[type="radio"]#radio_blue:checked + label {
+  border-right: 5px solid red; /* Border color for radio_blue */
+}
+
+.radio-wrapper {
+  text-align: left;
+}
+
+#right-zone {
+  background: #fff;
+  height: 100%;
+  width: calc(100% - 350px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+/* Responsive styles */
+@media (max-width: 1024px) {
+  #scene {
+    width: 90%;
+    height: auto;
+  }
+
+  #left-zone {
+    width: 300px;
+  }
+
+  #right-zone {
+    width: calc(100% - 300px);
+  }
+}
+
+@media (max-width: 768px) {
+  #scene {
+    flex-direction: column;
+    height: auto;
+    width: 100%;
+  }
+
+  #left-zone, #right-zone {
+    width: 100%;
+  }
+
+  .list {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-around;
+  }
+
+  input[type="radio"] + label {
+    height: 40px;
+    line-height: 40px;
+    font-size: 18px;
+  }
+}
+
+@media (max-width: 480px) {
+  input[type="radio"] + label {
+    height: 30px;
+    line-height: 30px;
+    font-size: 16px;
+  }
+
+  .content p {
+    max-width: 90%;
+  }
+}
+
+#middle-border {
+  width: 2px;
+  background-color: rgb(177, 177, 177);
+  height: 80%;
+  display: inline-block;
+}
+
+.item_r1, .item_r2, .item_r3, .item_r4 {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  margin-left: 14%;
+  margin-right: 14%;
+}
+
+.icon-large {
+  font-size: 6em !important;
+}
+
+.large-text1 {
+  font-size: 2em;
+  font-weight: bold;
+  color: blue;
+}
+
+.large-text2 {
+  font-size: 2em;
+  font-weight: bold;
+  color: green;
+}
+
+.large-text3 {
+  font-size: 2em;
+  font-weight: bold;
+  color: orange;
+}
+
+.large-text4 {
+  font-size: 2em;
+  font-weight: bold;
+  color: red;
+}

@@ -1,5 +1,3 @@
-// EditCharacter.tsx 
-
 import React, { useState, useEffect } from 'react';
 import { Box, Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle, Typography } from '@mui/material';
 import axios from 'axios';
@@ -10,20 +8,19 @@ import { useRecoilValue } from 'recoil';
 
 const svURL = import.meta.env.VITE_SERVER_URL;
 
-interface EditCharacterProps {
+interface EditCharacterteamProps {
   character: Character;
   open: boolean;
   onClose: () => void;
   onUpdate: () => void;
 }
 
-const EditCharacter: React.FC<EditCharacterProps> = ({ character, open, onClose, onUpdate }) => {
+const EditCharacterteam: React.FC<EditCharacterteamProps> = ({ character, open, onClose, onUpdate }) => {
   const [name, setName] = useState(character.name);
   const [description, setdescription] = useState(character.description);
   const [tags, setTags] = useState<string[]>(character.tags || []);
   const [file, setfile] = useState<File | null>(null);
   const [existingImage, setExistingImage] = useState<string | null>(character.imageUrl || null);
-
 
   const token = useRecoilValue(accessTokenState);
   const myStudioId = useRecoilValue(myStudioState);
@@ -41,29 +38,17 @@ const EditCharacter: React.FC<EditCharacterProps> = ({ character, open, onClose,
       return;
     }
   
-    // 상태 변수 tags를 가리키고, CSV 문자열로 변환하여 사용합니다.
     const tagsString = tags.join(', ');
   
     const formData = new FormData();
     formData.append('name', name);
     formData.append('description', description);
-    formData.append('tags', tagsString); // CSV 문자열로 변환된 tags를 전송
-
+    formData.append('tags', tagsString);
 
     if (file) {
-      formData.append('file', file); // Add new file if selected
+      formData.append('file', file);
     } else if (existingImage) {
-      try {
-        // const imageBlob = await fetch(existingImage).then(res => res.blob());
-        // const imageFile = new File([imageBlob], 'existingImage', { type: imageBlob.type });
-        // formData.append('file', imageFile); // Add existing image as a file
-      } catch (error) {
-        console.error('Error fetching existing image:', error);
-        alert('기존 이미지를 가져오는 중 오류가 발생했습니다.');
-        console.log('Existing Image URL:', existingImage);
-        return;
-        
-      }
+      // Handle existing image if needed
     }
   
     try {
@@ -78,7 +63,6 @@ const EditCharacter: React.FC<EditCharacterProps> = ({ character, open, onClose,
         }
       );
       alert('캐릭터가 성공적으로 수정되었습니다.');
-      console.log('Existing Image URL:', existingImage);
       onUpdate();
       onClose();
     } catch (error) {
@@ -87,11 +71,15 @@ const EditCharacter: React.FC<EditCharacterProps> = ({ character, open, onClose,
     }
   };
   
-
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
       setfile(event.target.files[0]);
     }
+  };
+
+  const handleTagsChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const newTags = event.target.value.split(',').map(tag => tag.trim());
+    setTags(newTags);
   };
 
   return (
@@ -113,7 +101,7 @@ const EditCharacter: React.FC<EditCharacterProps> = ({ character, open, onClose,
           <TextField
             label="태그"
             value={tags.join(', ')}
-            onChange={(e) => setTags(e.target.value.split(',').map(tag => tag.trim()))}
+            onChange={handleTagsChange}
             fullWidth
           />
           <Button variant="contained" component="label">
@@ -145,4 +133,4 @@ const EditCharacter: React.FC<EditCharacterProps> = ({ character, open, onClose,
   );
 };
 
-export default EditCharacter;
+export default EditCharacterteam;

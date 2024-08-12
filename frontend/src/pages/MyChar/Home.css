@@ -7,18 +7,18 @@
   width: 100%;
 }
 
-.leftpart {
+.leftpart_home {
   flex: 1;
   /* padding: 0 5px; */
 }
 
-.rightpart {
+.leftpart_home {
   flex: 1;
   padding: 0 10px;
   text-align: center;
 }
 
-.rightpart img {
+.leftpart_home img {
   max-width: 100%;
   height: auto;
 }
@@ -60,7 +60,7 @@
   align-items: center;
 }
 
-.mid {
+.mid_home {
   display: flex;
   align-items: center; /* Align items horizontally */
   gap: 20px; /* Space between items */
