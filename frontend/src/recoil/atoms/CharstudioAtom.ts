@@ -71,8 +71,3 @@ export const charState = atom<CharacterType[]>({
   default: [],
 });
 
-// 팀찾기 Atom
-// export const findTeamState = atom<FindTeamType[]>({
-//   key : 'findTeamState',
-//   default: [],
-// })
