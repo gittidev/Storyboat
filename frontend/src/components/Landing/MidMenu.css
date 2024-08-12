@@ -1,6 +1,7 @@
 /* Base styles */
 .total_mid {
-  background: linear-gradient(to bottom, rgb(10,120,241), rgb(251, 251, 251));
+  background: url('../../images/back3.gif');
+  /* background: linear-gradient(to bottom, rgb(10,120,241), rgb(251, 251, 251)); */
   height: 75vh;  
   display: flex;
   align-items: center;
