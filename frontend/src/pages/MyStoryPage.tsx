@@ -87,9 +87,10 @@ const MyStoryPage: React.FC = () => {
           },    
         }
       );
+      const data = response.data.data
       const updatedData = {
-        ...response.data.data,
-        lastModified: response.data.data.lastModified.slice(0, 10) // lastModified의 앞 10글자만 저장
+        ...data,
+        lastModified: data.lastModified.slice(0, 10) // lastModified의 앞 10글자만 저장
       };
     
       setMystory([...mystory, updatedData]);
