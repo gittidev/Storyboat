@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Avatar from '@mui/material/Avatar';
@@ -7,8 +8,11 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 import Divider from '@mui/material/Divider';
 import Chip from '@mui/material/Chip';
+import Tooltip from '@mui/material/Tooltip';
+// import { Button } from '@mui/material';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { accessTokenState } from '../../recoil/atoms/authAtom';
 import axios from 'axios';
@@ -25,6 +29,7 @@ const Profile: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const setStudioId = useSetRecoilState(myStudioState);  // useSetRecoilState로 변경
+  const navigate = useNavigate();
 
   const fetchProfile = async () => {
     try {
@@ -89,6 +94,28 @@ const Profile: React.FC = () => {
     }
   };
 
+  const handleDeleteAccount = async () => {
+    try {
+      const response = await axios.delete(`${svURL}/api/users`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        }
+      });
+
+      if (response.status === 200) {
+        // Redirect or show a success message
+        alert('회원탈퇴가 완료되었습니다.');
+        navigate('/');
+        // You can redirect the user to a different page or perform other actions here
+      } else {
+        throw new Error('회원탈퇴에 실패했습니다.');
+      }
+    } catch (err) {
+      console.error('회원탈퇴 요청 중 오류가 발생했습니다:', err);
+      setError('회원탈퇴 요청 중 오류가 발생했습니다.');
+    }
+  };
+
   if (isLoading) {
     return <div>로딩 중...</div>;
   }
@@ -107,9 +134,20 @@ const Profile: React.FC = () => {
         <Typography variant="h6" component="div">
           내 프로필 관리
         </Typography>
-        <IconButton onClick={handleEdit} color="primary">
-          <EditIcon />
-        </IconButton>
+        <Box>
+          {/* Tooltip with EditIcon */}
+          <Tooltip title="프로필 수정">
+            <IconButton onClick={handleEdit} color="primary">
+              <EditIcon />
+            </IconButton>
+          </Tooltip>
+          {/* Tooltip with DeleteIcon */}
+          <Tooltip title="회원탈퇴">
+            <IconButton onClick={handleDeleteAccount} color="error">
+              <DeleteIcon />
+            </IconButton>
+          </Tooltip>
+        </Box>
       </Box>
 
       {isEditing ? (

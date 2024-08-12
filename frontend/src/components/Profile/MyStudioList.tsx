@@ -1,9 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { Typography, Box } from '@mui/material';
+import {
+    Typography, Box, Table, TableBody, TableCell,
+    TableContainer, TableHead, TableRow, Paper
+} from '@mui/material';
 import { fetchStudioDataTest } from '../../apis/stuioApites';
 import { StudioType } from '../../types/StudioType';
 import { useRecoilValue } from 'recoil';
 import { accessTokenState } from '../../recoil/atoms/authAtom';
+import DeleteIcon from '@mui/icons-material/Delete';
+import IconButton from '@mui/material/IconButton';
+import axios from 'axios';
+import Tooltip from '@mui/material/Tooltip';
+
+const svURL = import.meta.env.VITE_SERVER_URL;
 
 const MyStudioList: React.FC = () => {
     const [studios, setStudios] = useState<StudioType[]>([]);
@@ -58,6 +67,25 @@ const MyStudioList: React.FC = () => {
         );
     }
 
+    const handleLeaveStudio = async (studioId: number) => {
+        try {
+            const response = await axios.delete(`${svURL}/studios/${studioId}/members`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                }
+            });
+
+            if (response.status === 200) {
+                setStudios((prevStudios) => prevStudios.filter((studio) => studio.studioId !== studioId));
+            } else {
+                throw new Error('Failed to leave the studio');
+            }
+        } catch (err) {
+            console.error('Error leaving the studio:', err); // Debugging log
+            setError('스튜디오에서 탈퇴하는 중 오류가 발생했습니다.');
+        }
+    };
+
     return (
         <Box sx={{ p: 2 }}>
             <Typography variant="h6" component="div" gutterBottom>
@@ -68,19 +96,32 @@ const MyStudioList: React.FC = () => {
                     참여중인 스튜디오가 없습니다.
                 </Typography>
             ) : (
-                studios.map((studio, index) => (
-                    <Box key={index} sx={{ mb: 2 }}>
-                        <Typography variant="subtitle1" component="div">
-                            {studio.name}
-                        </Typography>
-                        <Typography variant="body2" color="textSecondary">
-                            {/* 역할: {studio.role} */}
-                        </Typography>
-                        <Typography variant="body2" color="textSecondary">
-                            {/* 참여일: {studio.participationDate} */}
-                        </Typography>
-                    </Box>
-                ))
+                <TableContainer component={Paper}>
+                    <Table>
+                        <TableHead>
+                            <TableRow>
+                                <TableCell>스튜디오 이름</TableCell>
+                                {/* <TableCell>역할</TableCell> */}
+                                <TableCell>탈퇴</TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {studios.map((studio) => (
+                                <TableRow key={studio.studioId}>
+                                    <TableCell>{studio.name}</TableCell>
+                                    {/* <TableCell>{studio.role}</TableCell> */}
+                                    <TableCell>
+                                        <Tooltip title="스튜디오 나가기">
+                                            <IconButton onClick={() => handleLeaveStudio(studio.studioId)}>
+                                                <DeleteIcon/>
+                                            </IconButton>
+                                        </Tooltip>
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
             )}
         </Box>
     );
