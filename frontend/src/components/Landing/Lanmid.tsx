@@ -28,7 +28,7 @@ const Lanmid: React.FC = () => {
         alignItems: 'center',
         justifyContent: 'center',
         '.blue': {
-          color: 'rgb(15,123,241)',
+          color: 'rgb(43,126,255);',  
         },
       }}
       className="background-wrapper"

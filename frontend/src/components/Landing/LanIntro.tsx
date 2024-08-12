@@ -22,7 +22,7 @@ const LanIntro: React.FC = () => {
   return (
     <Box
       sx={{
-        background: 'linear-gradient(to bottom, rgb(255,255,255) 70%, rgb(101,179,243) 100%)',
+        background: 'linear-gradient(to bottom, rgb(255,255,255) 70%, rgb(43,126,255) 100%)',
         minHeight: boxHeight, // 동적으로 계산된 높이 적용
         padding: 2,
         display: 'flex',

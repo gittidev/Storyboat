@@ -67,7 +67,7 @@ const LandingNav: React.FC = () => {
         <AppBar 
             position="static" 
             elevation={0} 
-            sx={{ height: navHeight }}
+            sx={{ height: navHeight, backgroundColor: 'rgb(43,126,255)' }}
         >
             <Toolbar>
                 <img src={logo} alt="로고" style={{ width: 40, height: 40, marginRight: 16 }} />
@@ -137,3 +137,4 @@ const LandingNav: React.FC = () => {
 };
 
 export default LandingNav;
+
