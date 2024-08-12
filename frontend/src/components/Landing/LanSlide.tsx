@@ -52,7 +52,7 @@ const LanSlide: React.FC = () => {
 
   return (
 
-    <div className='mid'>
+    <div className='mid-lanslide'>
           <div className="carousel">
       <div className="carousel-slides" style={{ transform: `translateX(-${currentSlide * 100}%)` }}>
         {slides.map((slide) => (

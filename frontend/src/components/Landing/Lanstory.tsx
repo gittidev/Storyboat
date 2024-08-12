@@ -5,7 +5,9 @@ import './Lanstory.css';
 
 const Lanstory: React.FC = () => {
   return (
-    <Container className="mid"
+
+    <div className='midLanstory'>
+          <Container className="mid-lanstory2"
       style={{
         height: '100vh',
         display: 'flex',
@@ -20,6 +22,7 @@ const Lanstory: React.FC = () => {
       </Typography>
       <Carousel />
     </Container>
+    </div>
   );
 };
 

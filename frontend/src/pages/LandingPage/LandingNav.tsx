@@ -50,7 +50,7 @@ const LandingNav: React.FC = () => {
     };
 
     const updateHeight = () => {
-        const newHeight = window.innerHeight * 0.07;
+        const newHeight = window.innerHeight * 0.085;
         setNavHeight(`${newHeight}px`);
     };
 
@@ -67,7 +67,8 @@ const LandingNav: React.FC = () => {
         <AppBar 
             position="static" 
             elevation={0} 
-            sx={{ height: navHeight, backgroundColor: 'rgb(43,126,255)' }}
+            // sx={{ height: navHeight, backgroundColor: 'rgb(43,126,255)' }}
+            sx={{ height: navHeight, backgroundColor: 'rgb(0,0,0)' }}
         >
             <Toolbar>
                 <img src={logo} alt="로고" style={{ width: 40, height: 40, marginRight: 16 }} />
