@@ -19,4 +19,6 @@ public class StoryFindAllResponse {
         this.title = title;
         this.lastModified = lastModified;
     }
+
+    public StoryFindAllResponse() {}
 }
