@@ -27,8 +27,8 @@ import AIPaintingPage from './pages/AIPaintingPage';
 import LoginPage from './pages/LoginPage';
 
 // 공동 작업 영역 렌더링
-import StoryDetail from './components/Plot/StoryDetail';
-
+import MyOverviewFlow from './components/Mystory/MyOverviewFlow';
+import StudioOverviewFlow from './components/StudioStoryBox/StudioOverviewFlow';
 // 로그인 상태관리
 import ProtectedRoute from './ProtecedRoute';
 // const svURL = import.meta.env.VITE_SERVER_URL;
@@ -131,12 +131,13 @@ const App: React.FC = () => {
               {/* 네브바에서 라우팅 */}
               <Route path="recent" element={<RecentPage />} />
               <Route path="mystory" element={<MyStoryPage />} />
-              {/* <Route path="mystory/:storyId" element={<MyStoryDetail />} /> */}
+              <Route path="mystory/:storyId" element={<MyOverviewFlow />} />
               <Route path="mystoryedit" element={<MyStoryEditPage />} />
               <Route path="mychar" element={<MyCharPage />} />
               <Route path="AIPaintingPage" element={<AIPaintingPage />} />
               <Route path="myidea" element={<MyIdeaPage />} />
               <Route path="storybox" element={<StoryBoxPage />} />
+              <Route path="storybox/:storyId" element={<StudioOverviewFlow />} />
               <Route path="storyedit" element={<StoryEditPage />} />
               <Route path="charbox" element={<CharBoxPage />} />
               <Route path="ideabox" element={<IdeaBoxPage />} />
@@ -144,8 +145,6 @@ const App: React.FC = () => {
               <Route path="invitations/:studioId" element={<FindTeamDetail />}/>
               <Route path="studios" element={<StudioPage />} />
               <Route path="profile" element={<ProfilePage />} />
-              {/* 공동작업영역 라우팅 */}
-              <Route path="mystory/:storyid" element={<StoryDetail/>} />
             </Route>
           </Route>
         </Routes>
