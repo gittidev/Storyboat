@@ -1,10 +1,10 @@
 import React, { useState, useEffect, ChangeEvent, FormEvent } from "react";
 import ImageBox from "../../components/MyChar/ImageBox";
-// import NavBar from "../../components/MyChar/NavBar";
 import { fetchImages } from "../../services/model-api";
 import { getRandom, loaderMessages } from "../../utils/utils";
 import ChooseResults from "../../components/MyChar/ChooseResults";
 import RecentResults from "../../components/MyChar/RecentResults";
+import { translateText } from '../../services/translateService';
 import "./Home.css";
 
 const Home: React.FC = () => {
@@ -34,7 +34,6 @@ const Home: React.FC = () => {
 
   const handleChange = (event: ChangeEvent<HTMLSelectElement> | ChangeEvent<HTMLInputElement>) => {
     if (event.target instanceof HTMLSelectElement) {
-      // Handle select input changes
       const { name, value } = event.target;
 
       if (name === "style") {
@@ -43,19 +42,19 @@ const Home: React.FC = () => {
         const newInputFields = [...inputFields];
         switch (value) {
           case "Euler":
-            newInputFields[7] = "animation,person";
+            newInputFields[6] = "animation,person";
             break;
           case "DDPM":
-            newInputFields[7] = "real,photo";
+            newInputFields[6] = "real,photo";
             break;
           case "LMS":
-            newInputFields[7] = "";
+            newInputFields[6] = "";
             break;
           case "Heun":
-            newInputFields[7] = "background";
+            newInputFields[6] = "background";
             break;
           default:
-            newInputFields[7] = "";
+            newInputFields[6] = "";
             break;
         }
         setInputFields(newInputFields);
@@ -63,7 +62,6 @@ const Home: React.FC = () => {
         setQualityValue(value);
       }
     } else if (event.target instanceof HTMLInputElement) {
-      // Handle input changes (like number input)
       if (event.target.name === "seed") {
         setSeedValue(Number(event.target.value));
       }
@@ -78,7 +76,24 @@ const Home: React.FC = () => {
   const fetchData = async () => {
     try {
       setShowLoader(true);
-      const promptQuery = inputFields.join(",");
+
+      // 번역 후 각 입력 필드를 업데이트
+      const translatedInputs = await Promise.all(inputFields.map(async (field) => {
+        try {
+          if (field.trim() === '') return field; // 비어 있는 필드는 그대로 반환
+          const translated = await translateText(field, 'ko', 'en');
+          console.log(`Original: ${field}, Translated: ${translated}`);
+          return translated;
+        } catch (translationError) {
+          console.error('Translation Error:', translationError);
+          return field; // 번역 실패 시 원본 필드를 반환
+        }
+      }));
+
+      // 번역된 입력 필드를 사용하여 이미지 생성
+      const promptQuery = translatedInputs.join(",");
+      console.log(`Translated Inputs: ${translatedInputs}`);
+      console.log(`Prompt Query: ${promptQuery}`);
 
       const imageBlob = await fetchImages(
         promptQuery,
@@ -112,10 +127,8 @@ const Home: React.FC = () => {
 
   return (
     <div className="home-container">
-      {/* <NavBar /> */}
       <div className="first">
         <div className="surpriseBox">
-          {/* <label>캐릭터 생성</label> */}
         </div>
       </div>
 
@@ -222,9 +235,10 @@ const Home: React.FC = () => {
           </div>
 
           <div className="leftpart_home">
+            <br/>
             {showLoader ? (
               <div style={{
-                margin: '0 auto',
+                 marginTop: '20px',
                 textAlign: 'center',
                 display: 'flex',
                 alignItems: 'center',
@@ -247,7 +261,6 @@ const Home: React.FC = () => {
         onSelect={handleAvailOptions}
       />
       <div className="slideShowMessage">{loaderMessage}</div>
-      {/* <div className="footer">SSAFY 7조</div> */}
     </div>
   );
 };

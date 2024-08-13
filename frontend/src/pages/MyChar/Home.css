@@ -20,7 +20,7 @@
 
 .leftpart_home img {
   max-width: 100%;
-  height: auto;
+  height: 70%;
 }
 
 .inputboxdesign {
@@ -45,9 +45,9 @@
   border-radius: 10px;
   padding-left: 40px;
   padding-right: 40px;
-  padding-top: 40px;
+  padding-top: 20px;
   /* padding: 40px; */
-  margin-top: 40px;
+  /* margin-top: 40px; */
   margin-left: 40px;
   margin-right: 40px;
   margin-bottom: 40px;
@@ -62,8 +62,8 @@
 
 .mid_home {
   display: flex;
-  align-items: center; /* Align items horizontally */
-  gap: 20px; /* Space between items */
+  align-items: center; 
+  gap: 20px; 
 }
 
 .formValue {
@@ -73,7 +73,7 @@
 }
 
 .select-dropdown {
-  width: 120px; /* Adjust width as needed */
+  width: 120px;
 }
 
 .promptInput {
