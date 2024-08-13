@@ -49,7 +49,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
         // 로그인/회원가입 성공 시 리다이렉트
         response.addHeader("SignupState",customUserDetails.getJoinStatus() + "");
-        response.sendRedirect("http://localhost:5173/login/loading");
+        response.sendRedirect("https://i11c107.p.ssafy.io/login/loading");
     }
 
     private void saveRefreshToken(String userName, String refreshToken) {

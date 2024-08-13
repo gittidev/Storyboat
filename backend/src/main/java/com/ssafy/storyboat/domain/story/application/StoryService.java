@@ -204,7 +204,7 @@ public class StoryService {
     @StudioReadAuthorization
     @Transactional(readOnly = true)
     public LastStory findLastStory(Long studioId, Long userId,  Long studioStoryId) {
-        return lastStoryRepository.findLastStoryByStudioStoryId(studioStoryId)
-                .orElseThrow(() -> new ResourceNotFoundException("스토리 저장 내용 없음"));
+        return lastStoryRepository.findLastStoryByStudioStoryId(studioStoryId).orElse(null);
     }
+
 }

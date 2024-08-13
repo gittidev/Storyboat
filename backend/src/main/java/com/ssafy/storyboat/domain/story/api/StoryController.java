@@ -95,6 +95,9 @@ public class StoryController {
             @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
         Long userId = customOAuth2User.getUserId();
         LastStory story = storyService.findLastStory(studioId, userId, studioStoryId);
+        if (story == null) {
+            return ResponseEntity.ok(ApiResponse.success(null, "Stories Find Success"));
+        }
         return ResponseEntity.ok(ApiResponse.success(story.getStoryData(), "Stories Find Success"));
     }
 
