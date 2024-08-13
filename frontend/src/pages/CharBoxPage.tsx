@@ -1,7 +1,7 @@
 // CharBoxPage.tsx
 
 import React, { useState, useEffect } from 'react';
-import SubTopBarteam from '../components/Commons/SubTopBarteam';
+// import SubTopBarteam from '../components/Commons/SubTopBarteam';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
