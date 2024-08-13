@@ -291,8 +291,6 @@ const AIPaintingPage: React.FC = () => {
                     <div className="container5">
 
 
-                      {/* <h1><span className="pink-text" style={{ fontWeight: 'bold', fontSize: '48px' }}>스토리보트</span>로</h1>
-                      <h1>당신의 상상을 실현해보세요</h1> */}
                     </div>
                   </div>
                 </div>
@@ -300,85 +298,11 @@ const AIPaintingPage: React.FC = () => {
             </div>
           </div>
 
-          {/* Additional Content Section */}
           <br/><br/>
           <div style={{ padding: '0px' }}>
-            {/* <img src={robotPainting} alt="AI Painting" style={{ width: '100%', height: 'auto' }} /> Display image */}
             <h2 style={{ fontSize: '24px', fontWeight: 'bold', margin: '20px 0' }}>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;FAQ</h2>
-            {/* <p style={{ fontSize: '16px', lineHeight: '1.5' }}>
-              최고의 AI 이미지 생성기를 사용하여 캐릭터의 이름과 특징을 멋진 삽화로 변환하세요. 소설에 딱 맞는 일러스트로 독자들의 시선을 사로잡으세요. 스토리보드의 다양한 이미지 생성기를 사용하면 이미지가 아직 존재하지 않더라도 언제든지 완벽한 이미지를 손쉽게 만들 수 있습니다. 아이디어를 시각화하는 이미지를 만들고, 창의적인 콘셉트를 스케치하거나, 이전에는 불가능했던 일을 실현해 보세요.
-            </p> */}
           </div>
 
-
-          {/* <div className='togg'>
-                <div>
-                  <hr />
-                  <h4 style={{ fontSize: '18px', fontWeight: 'bold', margin: '10px 0', lineHeight: '1.8'  }} onClick={() => handleToggle(setHowGeneratedVisible)}>
-                    {isHowGeneratedVisible ? 'Q1. 이미지는 어떻게 생성되나요?' : 'Q1. AI 이미지는 어떻게 생성되나요? ▼'}
-                  </h4>
-                  {isHowGeneratedVisible && (
-                    <p style={{ fontSize: '16px', lineHeight: '1.8' }}>
-                      AI가 생성한 이미지를 만들기 위해 머신러닝 모델은 대규모 데이터셋에서 수백만 개의 이미지와 관련된 텍스트를 학습합니다. 이러한 학습 과정에서 AI는 이미지와 텍스트 간의 상관관계를 파악하고, 주어진 텍스트로부터 해당 이미지가 어떻게 보일지 예측합니다. 이후, 사용자가 입력한 설명에 기반하여 새로운 이미지를 생성합니다. 예를 들어, StoryBoat는 Stable Diffusion XL(SDXL) 모델을 활용하여 고해상도의 이미지를 생성하며, 이를 통해 다양한 스타일의 삽화를 만들 수 있습니다. 상세한 텍스트 입력이 더 정확하고 원하는 이미지를 생성하는 데 도움이 됩니다.
-                    </p>
-                  )}
-                </div>
-
-                <hr />
-
-                <div>
-                  <h4 style={{ fontSize: '18px', fontWeight: 'bold', margin: '10px 0',lineHeight: '1.8'  }} onClick={() => handleToggle(setGoodGeneratorVisible)}>
-                    {isGoodGeneratorVisible ? 'Q2. 좋은 AI 이미지 생성기란? ' : 'Q2. 좋은 AI 이미지 생성기란? ▼'}
-                  </h4>
-                  {isGoodGeneratorVisible && (
-                    <p style={{ fontSize: '16px', lineHeight: '1.8' }}>
-                      좋은 AI 이미지 생성기는 사용자의 입력을 바탕으로 원하는 이미지를 쉽고 빠르게 생성할 수 있는 도구입니다. 복잡한 소프트웨어 없이도 텍스트-이미지 변환 기능을 통해 사용자가 상상하는 이미지를 바로 시각화할 수 있어야 합니다. 예를 들어, StoryBoat는 사용자가 입력한 설명에 따라 다양한 스타일의 삽화를 생성하며, 이는 블로그 포스트나 소셜 미디어 게시물에 활용될 수 있습니다. 사용자 친화적인 인터페이스와 다양한 선택 옵션을 제공하여, 사용자가 쉽게 원하는 이미지를 얻을 수 있도록 돕는 것이 좋은 AI 이미지 생성기의 특징입니다.
-                    </p>
-                  )}
-                </div>
-
-                <hr />
-
-                <div>
-                  <h4 style={{ fontSize: '18px', fontWeight: 'bold', margin: '10px 0',lineHeight: '1.8'  }} onClick={() => handleToggle(setCopyright1Visible)}>
-                    {isCopyright1Visible ? 'Q3. AI가 생성한 이미지의 저작권은 누구에게 있나요? ' : 'Q3. AI가 생성한 이미지의 저작권은 누구에게 있나요? ▼'}
-                  </h4>
-                  {isCopyright1Visible && (
-                    <p style={{ fontSize: '16px', lineHeight: '1.8' }}>
-                      AI가 생성한 이미지의 저작권 문제는 국가와 플랫폼에 따라 다를 수 있습니다. 일반적으로 AI 생성 이미지에 대한 저작권은 명확하게 정의되지 않았으며, 생성 과정에서 사용된 데이터나 알고리즘의 소유권에 따라 달라질 수 있습니다. StoryBoat의 경우, 사용자가 생성한 이미지는 사용자가 소유하며, 플랫폼에서 해당 이미지를 호스팅하고 마케팅에 사용할 수 있는 권리를 부여합니다. 이는 사용자가 생성한 이미지에 대한 권리를 명확히 하여, 사용자에게 창작물에 대한 소유권을 보장하는 데 중점을 둡니다.
-                    </p>
-                  )}
-                </div>
-
-                <hr />
-
-                <div>
-                  <h4 style={{ fontSize: '18px', fontWeight: 'bold', margin: '10px 0',lineHeight: '1.8'  }} onClick={() => handleToggle(setCopyright2Visible)}>
-                    {isCopyright2Visible ? 'Q4. 어떤 인공지능 모델을 사용했나요? ' : 'Q4. 어떤 인공지능 모델을 사용했나요? ▼'}
-                  </h4>
-                  {isCopyright2Visible && (
-                    <p style={{ fontSize: '16px', lineHeight: '1.8' }}>
-                      StoryBoat는 Stable Diffusion XL(SDXL) 모델을 사용하여 고해상도의 이미지를 생성합니다. SDXL은 확장된 Diffusion 모델로, 큰 해상도의 이미지를 생성하는 데 최적화되어 있습니다. Diffusion 모델은 이미지의 픽셀을 점진적으로 변형하면서 노이즈를 제거해 이미지를 생성하는 방식으로 작동합니다. 이를 통해 StoryBoat는 사용자 입력에 기반한 다양한 스타일의 고퀄리티 이미지를 생성할 수 있습니다. 또한, Segmind API를 활용해 모델을 학습시켰으며, Grit과 Midjourney 데이터셋을 사용해 일반적이고 특정한 도메인 지식을 모두 학습했습니다.
-                    </p>
-                  )}
-                </div>
-
-                <hr />
-
-                <div>
-                  <h4 style={{ fontSize: '18px', fontWeight: 'bold', margin: '10px 0',lineHeight: '1.8'  }} onClick={() => handleToggle(setCopyright3Visible)}>
-                    {isCopyright3Visible ? 'Q5. 각각의 화풍의 원리에 대해 말해주세요? ' : 'Q5. 각각의 화풍의 원리에 대해 말해주세요? ▼'}
-                  </h4>
-                  {isCopyright3Visible && (
-                    <p style={{ fontSize: '16px', lineHeight: '1.8' }}>
-                      StoryBoat에서 사용되는 알고리즘들은 각각 다른 스타일의 이미지를 생성하는 데 적합합니다. Euler 방법은 단순하고 초상화 같은 그림에 적합하며, LMS는 복잡한 구조의 건축적 표현에 유용합니다. Heun 방법은 세밀한 조명과 그림자 표현에 탁월하여 풍경화에 사용됩니다. 마지막으로, DDPM은 실사와 같은 현실적인 이미지를 생성하는 데 적합합니다. 이 알고리즘들은 각기 다른 방식으로 이미지를 점진적으로 생성하며, 사용자는 원하는 스타일에 따라 적절한 알고리즘을 선택해 이미지를 생성할 수 있습니다.
-                    </p>
-                  )}
-                </div>
-
-                <hr />
-                <br/><br/><br/><br/><br/><br/> <br/><br/><br/><br/><br/><br/>
-              </div> */}
 
           <div className='togg'>
             <div>

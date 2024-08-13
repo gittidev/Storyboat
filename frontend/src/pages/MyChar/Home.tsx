@@ -1,11 +1,18 @@
 import React, { useState, useEffect, ChangeEvent, FormEvent } from "react";
 import ImageBox from "../../components/MyChar/ImageBox";
-// import NavBar from "../../components/MyChar/NavBar";
 import { fetchImages } from "../../services/model-api";
 import { getRandom, loaderMessages } from "../../utils/utils";
 import ChooseResults from "../../components/MyChar/ChooseResults";
 import RecentResults from "../../components/MyChar/RecentResults";
+import { translateText } from '../../services/translateService';
 import "./Home.css";
+
+// const languageMap = {
+//   'en': 'English',
+//   'ko': 'Korean',
+//   'ja': 'Japanese',
+//   'es': 'Spanish'
+// };
 
 const Home: React.FC = () => {
   const [showLoader, setShowLoader] = useState<boolean>(false);
@@ -15,6 +22,7 @@ const Home: React.FC = () => {
   const [qualityValue, setQualityValue] = useState<string>("20");
   const [seedValue, setSeedValue] = useState<number>(17123564234);
   const [loaderMessage, setLoaderMessage] = useState<string>(loaderMessages[0]);
+  // const [selectedLanguage, setSelectedLanguage] = useState<string>('ko');
 
   useEffect(() => {
     const loaderInterval = setInterval(() => {
@@ -34,7 +42,6 @@ const Home: React.FC = () => {
 
   const handleChange = (event: ChangeEvent<HTMLSelectElement> | ChangeEvent<HTMLInputElement>) => {
     if (event.target instanceof HTMLSelectElement) {
-      // Handle select input changes
       const { name, value } = event.target;
 
       if (name === "style") {
@@ -63,7 +70,6 @@ const Home: React.FC = () => {
         setQualityValue(value);
       }
     } else if (event.target instanceof HTMLInputElement) {
-      // Handle input changes (like number input)
       if (event.target.name === "seed") {
         setSeedValue(Number(event.target.value));
       }
@@ -78,7 +84,22 @@ const Home: React.FC = () => {
   const fetchData = async () => {
     try {
       setShowLoader(true);
-      const promptQuery = inputFields.join(",");
+
+      // Translate all input fields to English
+      const translatedInputs = await Promise.all(inputFields.map(async (field) => {
+        try {
+          const translated = await translateText(field, 'ko', 'en');
+          console.log(`Original: ${field}, Translated: ${translated}`); 
+          return translated;
+        } catch (translationError) {
+          console.error('Translation Error:', translationError);
+          return field; // Fallback to original field if translation fails
+        }
+      }));
+
+      const promptQuery = translatedInputs.join(",");
+      console.log(`Translated Inputs: ${translatedInputs}`); 
+      console.log(`Prompt Query: ${promptQuery}`); 
 
       const imageBlob = await fetchImages(
         promptQuery,
@@ -112,10 +133,8 @@ const Home: React.FC = () => {
 
   return (
     <div className="home-container">
-      {/* <NavBar /> */}
       <div className="first">
         <div className="surpriseBox">
-          {/* <label>캐릭터 생성</label> */}
         </div>
       </div>
 
@@ -222,9 +241,10 @@ const Home: React.FC = () => {
           </div>
 
           <div className="leftpart_home">
+            <br/><br/>
             {showLoader ? (
               <div style={{
-                margin: '0 auto',
+                 marginTop: '20px',
                 textAlign: 'center',
                 display: 'flex',
                 alignItems: 'center',
