@@ -19,9 +19,25 @@ import { setMainNodes, updateMainNodesOnDeletion, updateMainNodesOnEdgeDeletion 
 import { SelectChangeEvent } from '@mui/material';
 import type { History } from '../Plot/HistoryDropdown.tsx';
 import axios from 'axios';
+import PersonIcon from '@mui/icons-material/Person';
+import { IconButton } from '@mui/material';
 
 const svURL = import.meta.env.VITE_SERVER_URL;
 const flowKey = 'Story';
+
+const UserContainer = styled('div')({
+  display: 'flex',
+  flexDirection: 'row', // 세로 정렬
+  alignItems: 'center', // 중앙 정렬
+  // gap: '2px', // 아이콘 사이의 간격
+});
+
+const IconWrapper = styled('div')({
+  display: 'flex',
+  flexDirection: 'column', // 세로 정렬
+  alignItems: 'center', // 중앙 정렬
+  position: 'relative',
+});
 
 const createEdgeTypes = (handleDeleteEdge: any) => ({
   custom: (props: any) => (
@@ -428,11 +444,21 @@ const StudioOverviewFlow: React.FC = () => {
             </StyledButton>
 
             <div className="user-list">
+            <UserContainer>
               {users.map((user) => (
-                <div key={user.clientId} className="user-list-item" style={{ color: user.cursorColor }}>
-                  {user.name}
-                </div>
+                <IconWrapper key={user.clientId}>
+                {/* 사람 아이콘 */}
+                <IconButton
+                  style={{ color: user.cursorColor, marginRight: '8px' }}
+                >
+                  <PersonIcon />
+                </IconButton>
+              </IconWrapper>
+                // <div key={user.clientId} className="user-list-item" style={{ color: user.cursorColor }}>
+                //   {user.name}
+                // </div>
               ))}
+            </UserContainer>
             </div>
           </div>
         </Panel>
