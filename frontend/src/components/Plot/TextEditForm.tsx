@@ -18,7 +18,7 @@ interface TextEditFormProps {
   isOpen: boolean;
   onClose: () => void;
   nodeId: string;
-  initialData: {text : string , label : string, content : string}
+  initialData: {text : string , label : string, content : string, isMain? : boolean}
   // onSave: (text:string)=>void;
 }
 
