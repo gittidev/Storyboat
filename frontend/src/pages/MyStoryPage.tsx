@@ -20,6 +20,7 @@ import { accessTokenState } from '../recoil/atoms/authAtom';
 import { myStudioState } from '../recoil/atoms/studioAtom';
 import axios from 'axios';
 import api from '../apis/api';
+import './Mycss/MyStoryPage.css'
 
 const svURL = import.meta.env.VITE_SERVER_URL;
 
@@ -176,6 +177,8 @@ const MyStoryPage: React.FC = () => {
 
   return (
     <>
+
+    <div className='mystorystoreclass'>
       {/* 상단 영역 */}
       <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", width: "100%", padding: "0px 20px 20px 20px" }}>
         <Box sx={{ flexGrow: 1 }}>
@@ -194,55 +197,112 @@ const MyStoryPage: React.FC = () => {
         />
       </CustomModal>
 
-      {/* 테이블 영역 */}
-      <BorderBox>
-        <TableContainer component={Paper}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell align="center">번호</TableCell> {/* 인덱스 표시 */}
-                <TableCell align="center">스토리 제목</TableCell>
-                <TableCell align="center">최종 수정일</TableCell>
-                <TableCell align="center">작업</TableCell> {/* 삭제 및 내보내기 버튼 추가 */}
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {mystory.map((story, index) => (
-                <TableRow key={story.storyId}>
-                  <TableCell>{page * itemsPerPage + index + 1}</TableCell> {/* 인덱스를 1부터 시작 */}
-                  <TableCell
-                    onClick={() => handleTitleClick(story.storyId)}
-                    sx={{ cursor: 'pointer', color: 'black' }} // 클릭 커서와 글씨 색상 설정
-                  >
-                    {story.title}
-                  </TableCell>
-                  <TableCell>{story.lastModified}</TableCell>
-                  <TableCell>
-                    <IconButton onClick={() => handleDelete(story.storyId)}>
+
+
+
+
+
+
+
+      <Box
+    className='MystoryPage_body'
+    sx={{
+      display: 'flex',
+      flexDirection: 'column',
+      minHeight: '80vh', 
+      padding: '1rem',
+    }}
+  >
+    {/* 테이블 영역 */}
+    <BorderBox
+      sx={{
+        flex: 1, // 테이블 영역이 가능한 공간을 차지하게 설정
+      }}
+    >
+      <TableContainer 
+        component={Paper}
+        sx={{
+          boxShadow: 'none', 
+        }}
+        >
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell align="center">번호</TableCell> {/* 인덱스 표시 */}
+              <TableCell align="center">스토리 제목</TableCell>
+              <TableCell align="center">최종 수정일</TableCell>
+              <TableCell align="center">작업</TableCell> {/* 삭제 및 내보내기 버튼 추가 */}
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {mystory.map((story, index) => (
+              <TableRow key={story.storyId}>
+                <TableCell align="center">{page * itemsPerPage + index + 1}</TableCell> {/* 인덱스를 1부터 시작 */}
+                <TableCell
+                  align="center"
+                  onClick={() => handleTitleClick(story.storyId)}
+                  sx={{ cursor: 'pointer', color: 'black' }} // 클릭 커서와 글씨 색상 설정
+                >
+                  {story.title}
+                </TableCell>
+                <TableCell align="center">{story.lastModified}</TableCell>
+                <TableCell>
+                  <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px' }}>
+                    <IconButton onClick={() => handleDelete(story.storyId)} >
                       <DeleteIcon />
                     </IconButton>
                     <IconButton
                       onClick={() => handleExportClick(story.storyId)}
-                      data-story-id={story.storyId} // 버튼 클릭 시 스토리 ID를 데이터 속성으로 전달
+                      data-story-id={story.storyId}
                     >
                       <ExportIcon />
                     </IconButton>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+      
+    </BorderBox>
 
-        {/* 페이지네이션 */}
-        <Pagination
-          count={totalPages}
-          page={page + 1}
-          onChange={handlePageChange}
-          color="primary"
-          sx={{ marginTop: "20px", display: "flex", justifyContent: "center" }}
-        />
-      </BorderBox>
+    {/* 페이지네이션 */}
+    <Box
+      sx={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'flex-end',
+        marginTop: 'auto', 
+        padding: '1rem',
+        color: 'rgb(173, 216, 230)',
+      }}
+    >
+      <Pagination
+        count={totalPages}
+        page={page + 1}
+        onChange={handlePageChange}
+        sx={{
+          '& .MuiPaginationItem-root': {
+            color: 'rgb(173, 216, 230) !important', // 페이지네이션 아이템의 텍스트 색상 설정
+          },
+          '& .Mui-selected': {
+            backgroundColor: 'rgb(173, 216, 230) !important', // 선택된 페이지네이션 아이템의 배경 색상 설정
+            color: 'white !important' , // 선택된 페이지네이션 아이템의 텍스트 색상 설정
+          },
+          '& .MuiPaginationItem-ellipsis': {
+            color: 'rgb(173, 216, 230) !important', // '...' 아이템의 텍스트 색상 설정
+          },
+        }}
+      />
+    </Box>
+  </Box>
+
+
+
+
+
+
 
       {/* 스튜디오 선택 메뉴 */}
       <Menu
@@ -267,6 +327,8 @@ const MyStoryPage: React.FC = () => {
           {snackbarMessage}
         </Alert>
       </Snackbar>
+
+      </div>
     </>
   );
 };
