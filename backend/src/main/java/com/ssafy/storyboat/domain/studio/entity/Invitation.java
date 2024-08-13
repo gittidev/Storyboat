@@ -30,7 +30,7 @@ public class Invitation {
 
     private String description;
 
-    @OneToMany(mappedBy = "invitation", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "invitation", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<InvitationTag> invitationTags = new ArrayList<>();
 
     public void updateTitle(String title) {

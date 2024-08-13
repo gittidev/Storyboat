@@ -12,13 +12,18 @@ import java.util.Optional;
 
 public interface InvitationRepository extends JpaRepository<Invitation, Long> {
     Optional<Invitation> findByStudio_studioId(Long studio_Id);
-    @Query("SELECT i FROM Invitation i LEFT JOIN FETCH i.invitationTags WHERE i.title LIKE %:title%")
-    Page<Invitation> findByTitleContains(@Param("title") String title, Pageable pageable);
+    Page<Invitation> findByTitleContains(String title, Pageable pageable);
+    Page<Invitation> findByStudio_NameContains(String name, Pageable pageable);
 
-    @Query("SELECT i FROM Invitation i LEFT JOIN FETCH i.invitationTags JOIN i.studio s WHERE s.name LIKE %:name%")
-    Page<Invitation> findByStudio_NameContains(@Param("name") String name, Pageable pageable);
-
-    @Query("SELECT i FROM Invitation i LEFT JOIN FETCH i.invitationTags")
-    Page<Invitation> findAllWithInvitationTags(Pageable pageable);
-
+//    @Query("SELECT i FROM Invitation i LEFT JOIN FETCH i.invitationTags WHERE i.studio.studioId = :studioId")
+//    Optional<Invitation> findByStudio_studioId(@Param("studioId") Long studioId);
+//
+//    @Query("SELECT i FROM Invitation i LEFT JOIN FETCH i.invitationTags WHERE i.title LIKE %:title%")
+//    Page<Invitation> findByTitleContains(@Param("title") String title, Pageable pageable);
+//
+//    @Query("SELECT i FROM Invitation i LEFT JOIN FETCH i.invitationTags JOIN i.studio s WHERE s.name LIKE %:name%")
+//    Page<Invitation> findByStudio_NameContains(@Param("name") String name, Pageable pageable);
+//
+//    @Query("SELECT i FROM Invitation i LEFT JOIN FETCH i.invitationTags")
+//    Page<Invitation> findAllWithInvitationTags(Pageable pageable);
 }
