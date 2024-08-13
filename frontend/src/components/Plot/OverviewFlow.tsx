@@ -11,7 +11,6 @@ import api from '../../apis/api';
 import { useYjsReactFlowSync } from '../../hooks/useYjsReactFlowSync';
 import CustomNode from './CustomNode';
 import CustomEdge from './CustomEdge';
-import HistoryDropdown from './HistoryDropdown';
 import { dummyData } from './dummyStory';
 import { styled } from '@mui/system';
 import { Button } from '@mui/material';
@@ -224,13 +223,6 @@ const OverviewFlow: React.FC = () => {
     }
   }, [storyId, studioId, token, rfInstance]);
 
-  const handleLoadHistory = useCallback((historyData: any) => {
-    if (historyData && rfInstance) {
-      setNodes(historyData.flowData.nodes);
-      setEdges(historyData.flowData.edges);
-      setViewport(historyData.flowData.viewport);
-    }
-  }, [rfInstance, setNodes, setEdges, setViewport]);
 
   // 페이지 벗어날 시 WebRTC 연결 해제
   useEffect(() => {
@@ -286,7 +278,6 @@ const OverviewFlow: React.FC = () => {
 
         <Panel position="top-right" style={{display:'flex', justifyContent: 'space-between', width:'95%'}}>
         <div>
-          <HistoryDropdown studioId={studioId} storyId={storyId || ''} onLoadHistory={handleLoadHistory} />
         </div>
         <div>
           <StyledButton className="primary" onClick={handleSave}>저장하기</StyledButton>
