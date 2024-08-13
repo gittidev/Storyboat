@@ -1,6 +1,6 @@
 // src/components/Audio.tsx
 
-import React, { useImperativeHandle, useRef, forwardRef, useState } from 'react';
+import { useImperativeHandle, useRef, forwardRef, useState } from 'react';
 
 interface AudioProps {
     onStreamReady?: (stream: MediaStream) => void;
