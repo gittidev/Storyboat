@@ -139,7 +139,9 @@ const MyIdeaPage: React.FC = () => {
 
       {/* 내용 들어갈 부분 */}
       <BorderBox>
-        {myIdeas.length === 0 ? (
+
+       <div className='MyIdeaPagebody'   style={{ padding: '5% 8% 5% 6%', }}>
+       {myIdeas.length === 0 ? (
           <Box display="flex" justifyContent="center" alignItems="center" height="100%">
           <Typography variant="body1">새 아이디어를 추가해보세요 💡</Typography>
           </Box>
@@ -153,12 +155,13 @@ const MyIdeaPage: React.FC = () => {
                   content={idea.content} 
                   menuOptions={generateMenuOptions()} 
                   onMenuClick={handleMenuClick} 
-                  width="90%"  // 카드가 가로로 꽉 차도록 설정
+                  width="100%"  // 카드가 가로로 꽉 차도록 설정
                 />
               </Grid>
             ))}
           </Grid>
         )}
+       </div>
       </BorderBox>
     </>
   );

@@ -137,6 +137,7 @@ const IdeaBoxPage: React.FC = () => {
       </CustomModal>
 
       <BorderBox>
+      <div className='MyIdeaPagebody'   style={{ padding: '5% 8% 5% 6%', }}>
         {studioIdeas.length === 0 ? (
 
       <Box display="flex" justifyContent="center" alignItems="center" height="100%">
@@ -158,6 +159,7 @@ const IdeaBoxPage: React.FC = () => {
             ))}
           </Grid>
         )}
+        </div>
       </BorderBox>
     </>
   );
