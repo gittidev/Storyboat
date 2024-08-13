@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { Box, Typography, Button, Card, CardContent, CardActions, IconButton } from '@mui/material';
+import { Box,Chip, Typography, Button, Card, CardContent, CardActions, IconButton } from '@mui/material';
 import { Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material';
 import { accessTokenState } from '../recoil/atoms/authAtom';
 import { useRecoilValue, useRecoilState } from 'recoil';
@@ -121,6 +121,21 @@ const FindTeamDetail: React.FC = () => {
             {detail.description}
           </Typography>
           {/* 태그 등 다른 필요한 정보 추가 */}
+          <Box sx={{ mt: 2 }}>
+          {detail.tags.map((tag, index) => (
+            <Chip
+              key={index}
+              label={tag.name}
+              sx={{
+                mr: 1,
+                mb: 1,
+                backgroundColor: tag.color, // tag.color를 사용해 배경색 설정
+                color: '#fff', // 기본적으로 텍스트 색상을 흰색으로 설정
+              }}
+              // variant="outlined"
+            />
+          ))}
+        </Box>
         </CardContent>
 
         <CardActions sx={{ justifyContent: 'space-between', padding: '0 16px 16px 16px' }}>
