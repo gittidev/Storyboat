@@ -7,13 +7,6 @@ import RecentResults from "../../components/MyChar/RecentResults";
 import { translateText } from '../../services/translateService';
 import "./Home.css";
 
-// const languageMap = {
-//   'en': 'English',
-//   'ko': 'Korean',
-//   'ja': 'Japanese',
-//   'es': 'Spanish'
-// };
-
 const Home: React.FC = () => {
   const [showLoader, setShowLoader] = useState<boolean>(false);
   const [imageResult, setImageResult] = useState<string | undefined>(undefined);
@@ -22,7 +15,6 @@ const Home: React.FC = () => {
   const [qualityValue, setQualityValue] = useState<string>("20");
   const [seedValue, setSeedValue] = useState<number>(17123564234);
   const [loaderMessage, setLoaderMessage] = useState<string>(loaderMessages[0]);
-  // const [selectedLanguage, setSelectedLanguage] = useState<string>('ko');
 
   useEffect(() => {
     const loaderInterval = setInterval(() => {
@@ -50,19 +42,19 @@ const Home: React.FC = () => {
         const newInputFields = [...inputFields];
         switch (value) {
           case "Euler":
-            newInputFields[7] = "animation,person";
+            newInputFields[6] = "animation,person";
             break;
           case "DDPM":
-            newInputFields[7] = "real,photo";
+            newInputFields[6] = "real,photo";
             break;
           case "LMS":
-            newInputFields[7] = "";
+            newInputFields[6] = "";
             break;
           case "Heun":
-            newInputFields[7] = "background";
+            newInputFields[6] = "background";
             break;
           default:
-            newInputFields[7] = "";
+            newInputFields[6] = "";
             break;
         }
         setInputFields(newInputFields);
@@ -85,21 +77,23 @@ const Home: React.FC = () => {
     try {
       setShowLoader(true);
 
-      // Translate all input fields to English
+      // 번역 후 각 입력 필드를 업데이트
       const translatedInputs = await Promise.all(inputFields.map(async (field) => {
         try {
+          if (field.trim() === '') return field; // 비어 있는 필드는 그대로 반환
           const translated = await translateText(field, 'ko', 'en');
-          console.log(`Original: ${field}, Translated: ${translated}`); 
+          console.log(`Original: ${field}, Translated: ${translated}`);
           return translated;
         } catch (translationError) {
           console.error('Translation Error:', translationError);
-          return field; // Fallback to original field if translation fails
+          return field; // 번역 실패 시 원본 필드를 반환
         }
       }));
 
+      // 번역된 입력 필드를 사용하여 이미지 생성
       const promptQuery = translatedInputs.join(",");
-      console.log(`Translated Inputs: ${translatedInputs}`); 
-      console.log(`Prompt Query: ${promptQuery}`); 
+      console.log(`Translated Inputs: ${translatedInputs}`);
+      console.log(`Prompt Query: ${promptQuery}`);
 
       const imageBlob = await fetchImages(
         promptQuery,
@@ -241,7 +235,7 @@ const Home: React.FC = () => {
           </div>
 
           <div className="leftpart_home">
-            <br/><br/>
+            <br/>
             {showLoader ? (
               <div style={{
                  marginTop: '20px',
@@ -267,7 +261,6 @@ const Home: React.FC = () => {
         onSelect={handleAvailOptions}
       />
       <div className="slideShowMessage">{loaderMessage}</div>
-      {/* <div className="footer">SSAFY 7조</div> */}
     </div>
   );
 };
