@@ -13,7 +13,7 @@ import { Character } from '../types/Chartype';
 import { accessTokenState } from '../recoil/atoms/authAtom';
 import { myStudioState } from '../recoil/atoms/studioAtom';
 import MakingCharacter from './MyChar/MakingCharacter';
-import SubTopBar from '../components/Commons/SubTopBar';
+//import SubTopBar from '../components/Commons/SubTopBar';
 import EditCharacter from './MyChar/EditCharacter'; 
 
 const svURL = import.meta.env.VITE_SERVER_URL;
