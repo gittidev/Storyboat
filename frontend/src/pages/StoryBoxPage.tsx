@@ -104,7 +104,7 @@ const StoryBoxPage = () => {
     };
 
     const handleTitleClick = (storyId: number) => {
-        navigate(`/storyboat/mystory/${storyId}`);
+        navigate(`/storyboat/storybox/${storyId}`);
     };
 
 

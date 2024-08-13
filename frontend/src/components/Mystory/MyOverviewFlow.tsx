@@ -1,4 +1,4 @@
-import React, {useCallback, useState, useMemo, useEffect} from 'react';
+import React, {useCallback, useState, useMemo, useEffect, useRef} from 'react';
 import {ReactFlow, MiniMap, Controls, Background, Panel, Node, Edge} from '@xyflow/react';
 import type { XYPosition, ReactFlowInstance } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
@@ -13,11 +13,14 @@ import CustomNode from '../Plot/CustomNode';
 import CustomEdge from '../Plot//CustomEdge';
 import HistoryDropdown from '../Plot//HistoryDropdown';
 import {styled} from '@mui/system';
-import {Button} from '@mui/material';
+import { IconButton, Tooltip, Button } from '@mui/material';
+import MicIcon from '@mui/icons-material/Mic';
+import MicOffIcon from '@mui/icons-material/MicOff';
+
 import {useRecoilState} from 'recoil';
 import {isMainNodeModeState} from '../../recoil/atoms/storyAtom';
 import {setMainNodes, updateMainNodesOnDeletion, updateMainNodesOnEdgeDeletion} from "../../utils/plotUtils.ts";
-
+import Audio from '../Plot/Audio.tsx';
 const flowKey = 'Story';
 
 const createEdgeTypes = (handleDeleteEdge: any) => ({
@@ -79,6 +82,20 @@ const MyOverviewFlow: React.FC = () => {
     // providerRef,
     updateNode,
   } = useYjsReactFlowSync(roomId);
+
+  // 음성회의와 관련된 상태와 참조
+  const [isCallActive, setIsCallActive] = useState(false);
+  const audioRef = useRef<any>(null);
+
+// 음성회의 시작/중단 핸들러
+const handleCallToggle = () => {
+  if (isCallActive) {
+      audioRef.current.stopCall();
+  } else {
+      audioRef.current.startCall();
+  }
+  setIsCallActive(!isCallActive);
+};
 
   const fetchStory = async () => {
     try {
@@ -324,6 +341,25 @@ const MyOverviewFlow: React.FC = () => {
               <StyledButton className="third" onClick={onTemporarySave}>임시저장</StyledButton>
               <StyledButton className="tertiary" onClick={addCustomNode}>플롯추가</StyledButton>
               <StyledButton className="secondary" onClick={deleteAllNodes}>전체삭제</StyledButton>
+              {/* 음성회의와 관련된 UI */}
+              <Tooltip title={isCallActive ? "음성 회의 중단" : "음성 회의 시작"}>
+                    <IconButton
+                        color={isCallActive ? "error" : "primary"}
+                        onClick={handleCallToggle}
+                        sx={{
+                            backgroundColor: isCallActive ? 'rgba(255, 0, 0, 0.1)' : 'rgba(0, 0, 255, 0.1)',
+                            borderRadius: '50%',
+                            p: 1,
+                            '&:hover': {
+                                backgroundColor: isCallActive ? 'rgba(255, 0, 0, 0.2)' : 'rgba(0, 0, 255, 0.2)',
+                            }
+                        }}
+                    >
+                        {isCallActive ? <MicOffIcon /> : <MicIcon />}
+                    </IconButton>
+                </Tooltip>
+                {/* 음성회의와 관련된 UI */}
+
               <StyledButton
                   variant="contained"
                   color={isMainNodeMode ? "success" : "primary"}
@@ -342,6 +378,7 @@ const MyOverviewFlow: React.FC = () => {
             </div>
           </Panel>
         </ReactFlow>
+        <Audio ref={audioRef} />
       </div>
   );
 };
