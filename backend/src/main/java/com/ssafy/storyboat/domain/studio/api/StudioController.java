@@ -102,7 +102,7 @@ public class StudioController {
      */
     @PutMapping("{studioId}/members/{memberId}/roles")
     public ResponseEntity<?> updateMemberRole(@AuthenticationPrincipal CustomOAuth2User customOAuth2User, @PathVariable Long studioId, @PathVariable Long memberId, @RequestBody RoleUpdateRequest roleUpdateRequest) {
-        log.info("");
+        log.info("Role: {}", roleUpdateRequest.getRole());
         Long userId = customOAuth2User.getUserId();
         studioService.updateMemberRole(studioId, userId, memberId, roleUpdateRequest.getRole());
         return ResponseEntity.ok().body(ApiResponse.success("팀원 권한 설정 변경 성공"));
