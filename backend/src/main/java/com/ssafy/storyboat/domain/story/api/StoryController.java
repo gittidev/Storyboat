@@ -1,30 +1,26 @@
 package com.ssafy.storyboat.domain.story.api;
 
-import com.ssafy.storyboat.common.dto.ApiResponse;
 import com.ssafy.storyboat.common.auth.dto.CustomOAuth2User;
+import com.ssafy.storyboat.common.dto.ApiResponse;
 import com.ssafy.storyboat.common.dto.PageResponse;
 import com.ssafy.storyboat.domain.story.application.StoryService;
+import com.ssafy.storyboat.domain.story.dto.StoryCreateResponse;
 import com.ssafy.storyboat.domain.story.dto.StoryFindAllResponse;
-import com.ssafy.storyboat.domain.story.dto.StoryHistoryFindAllResponse;
 import com.ssafy.storyboat.domain.story.entity.LastStory;
 import com.ssafy.storyboat.domain.story.entity.Story;
 import com.ssafy.storyboat.domain.story.entity.StudioStory;
-import com.ssafy.storyboat.domain.studio.dto.Invitation.InvitationFindAllResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.List;
+import java.time.LocalDate;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @RestController
 @Slf4j
@@ -61,10 +57,11 @@ public class StoryController {
             @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
         StudioStory studioStory = storyService.makeStory(studioId, customOAuth2User.getUserId(), (String) payload.get("title"));
 
-        StoryFindAllResponse data = new StoryFindAllResponse();
+        StoryCreateResponse data = new StoryCreateResponse();
         data.setStoryId(studioStory.getStudioStoryId());
         data.setTitle(studioStory.getTitle());
-        data.setLastModified(studioStory.getLastModifiedDate());
+        // 현재 날짜의 년, 월, 일까지만 잘라서 LocalDate에 저장
+        data.setLastModified(LocalDate.now());
 
         return ResponseEntity.ok(ApiResponse.success(data, "스토리 생성 성공"));
     }
