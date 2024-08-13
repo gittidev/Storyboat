@@ -7,9 +7,10 @@ export interface CustomNodeData {
     label: string;
     content : string;
     text : string;
-    isMain: boolean;
+    isMain?: boolean;
     position?: XYPosition;
     onDelete: (id: string) => void;
+    onNodeClick?: (id: string) => void;
     onEdit: (id: string, data: Partial<CustomNodeData>) => void;
 }
 

@@ -50,13 +50,13 @@ const StyledButton = styled(Button)`
   background-color: ${(props) => {
     switch (props.className) {
       case 'primary':
-        return '#4ee956'; 
+        return '#4ee956';
       case 'secondary':
         return '#ff6a7b';
       case 'third':
-        return '#6a9cff'; 
+        return '#6a9cff';
       case 'tertiary':
-        return '#8f8fff'; 
+        return '#8f8fff';
       default:
         return '#c5ffbd';
     }
@@ -139,49 +139,71 @@ const MyOverviewFlow: React.FC = () => {
 
   const fetchStory = async () => {
     try {
-        const response = await api.get(`/api/studios/${studioId}/stories/${storyId}`, {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`,
-            },
+      const response = await api.get(`/api/studios/${studioId}/stories/${storyId}`, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+
+      // 응답 데이터 구조 확인을 위해 콘솔에 출력
+      const temp = JSON.parse(response.data.data);
+      const flowData = JSON.parse(temp.flowData);
+      console.log(flowData);
+
+      if (flowData) {
+        // nodes, edges, viewport를 추출
+        const { nodes, edges, viewport } = flowData;
+
+        // 각 노드의 id 값을 +1하여 업데이트
+        // nodes = nodes.map(node => {
+        //     const idNumberMatch = node.id.match(/(\d+)$/); // id에서 숫자 부분만 추출
+        //     if (idNumberMatch) {
+        //         const newIdNumber = parseInt(idNumberMatch[0], 10) + 100; // 숫자 부분을 +1
+        //         const newId = node.id.replace(idNumberMatch[0], newIdNumber); // 새로운 id로 대체
+        //         return { ...node, id: newId }; // 새 id로 노드 업데이트
+        //     }
+        //     return node; // 숫자가 없는 경우는 그대로 유지
+        // });
+
+        console.log(nodes, edges, viewport);
+
+
+        const updatedNodes = nodes.map(node => ({
+          ...node,
+          draggable: true,  // 노드를 드래그 가능하게 설정
+          dragging: false,  // 초기 상태로 설정
+        }));
+
+        // 노드와 엣지 상태를 설정
+        setNodes(updatedNodes);
+        setEdges(edges);
+        setViewport(viewport || { x: 0, y: 0, zoom: 1 });
+
+        // Yjs 문서에 트랜잭션으로 동기화
+        ydocRef.current?.transact(() => {
+          // 기존 Yjs 맵을 초기화
+          yNodesMapRef.current?.clear();
+          yEdgesMapRef.current?.clear();
+
+          // Yjs 맵에 새 데이터를 추가
+          nodes.forEach(node => {
+            yNodesMapRef.current?.set(node.id, node);
+          });
+          edges.forEach(edge => {
+            yEdgesMapRef.current?.set(edge.id, edge);
+          });
         });
-
-        // 응답 데이터 구조 확인을 위해 콘솔에 출력
-        const temp = JSON.parse(response.data.data);
-        const flowData = JSON.parse(temp.flowData);
-        console.log(flowData);
-
-        if (flowData) {
-            // nodes, edges, viewport를 추출
-            let { nodes, edges, viewport } = flowData;
-
-            // 각 노드의 id 값을 +1하여 업데이트
-            // nodes = nodes.map(node => {
-            //     const idNumberMatch = node.id.match(/(\d+)$/); // id에서 숫자 부분만 추출
-            //     if (idNumberMatch) {
-            //         const newIdNumber = parseInt(idNumberMatch[0], 10) + 100; // 숫자 부분을 +1
-            //         const newId = node.id.replace(idNumberMatch[0], newIdNumber); // 새로운 id로 대체
-            //         return { ...node, id: newId }; // 새 id로 노드 업데이트
-            //     }
-            //     return node; // 숫자가 없는 경우는 그대로 유지
-            // });
-
-            console.log(nodes, edges, viewport);
-
-            // 노드와 엣지 상태를 설정
-            setNodes(nodes);
-            setEdges(edges);
-            setViewport(viewport || { x: 0, y: 0, zoom: 1 });
-        } else {
-            console.error('flowData가 존재하지 않습니다:', response.data);
-            // 예상치 못한 데이터가 올 경우 빈 배열로 설정
-            setNodes([]);
-            setEdges([]);
-        }
+      } else {
+        console.error('flowData가 존재하지 않습니다:', response.data);
+        // 예상치 못한 데이터가 올 경우 빈 배열로 설정
+        setNodes([]);
+        setEdges([]);
+      }
     } catch (error) {
-        console.error('스토리 데이터를 가져오지 못했습니다:', error);
+      console.error('스토리 데이터를 가져오지 못했습니다:', error);
     }
-};
+  };
 
   useEffect(() => {
     fetchStory();
@@ -190,17 +212,18 @@ const MyOverviewFlow: React.FC = () => {
 
   const updateNodeIds = () => {
     const updatedNodes = nodes.map(node => {
-        const idNumberMatch = node.id.match(/(\d+)$/); // id에서 숫자 부분만 추출
-        if (idNumberMatch) {
-            const newIdNumber = parseInt(idNumberMatch[0], 10) - 100; // 숫자 부분을 +100
-            const newId = node.id.replace(idNumberMatch[0], newIdNumber); // 새로운 id로 대체
-            return { ...node, id: newId }; // 새 id로 노드 업데이트
-        }
-        return node; // 숫자가 없는 경우는 그대로 유지
+      const idNumberMatch = node.id.match(/(\d+)$/); // id에서 숫자 부분만 추출
+      if (idNumberMatch) {
+        const newIdNumber = parseInt(idNumberMatch[0], 10) - 100; // 숫자 부분을 +100
+        const newId = node.id.replace(idNumberMatch[0], newIdNumber); // 새로운 id로 대체
+        return { ...node, id: newId }; // 새 id로 노드 업데이트
+      }
+      return node; // 숫자가 없는 경우는 그대로 유지
     });
 
     setNodes(updatedNodes); // 업데이트된 노드로 상태 설정
-};
+    console.log(updatedNodes)
+  };
 
   const deleteAllNodes = useCallback(() => {
     ydocRef.current?.transact(() => {
@@ -229,29 +252,11 @@ const MyOverviewFlow: React.FC = () => {
   const nodeTypes = useMemo(() => createNodeTypes(handleDeleteNode), [handleDeleteNode]);
   const edgeTypes = useMemo(() => createEdgeTypes(handleDeleteEdge), [handleDeleteEdge]);
 
-  // const addCustomNode = useCallback(() => {
-  //   updateNodeIds();
-  //   const position: XYPosition = { x: Math.random() * 500, y: Math.random() * 500 };
-  //   const newNode: Node = {
-  //     id: `node_${Date.now()}`,
-  //     type: 'custom',
-  //     position,
-  //     data: {
-  //       label: `플롯`,
-  //       content: '플롯 작성',
-  //       text: '소설 작성',
-  //     },
-  //   };
-  //   addNode(newNode);
-  //   // fetchStory();
-  // }, [addNode]);
-
   const addCustomNode = useCallback(() => {
-    updateNodeIds(); // 기존 노드들의 ID 업데이트 함수
-    console.log(nodes)
+    updateNodeIds();
     const position: XYPosition = { x: Math.random() * 500, y: Math.random() * 500 };
     const newNode: Node = {
-      id: `node_${Date.now()}`, // 현재 시간을 이용해 고유한 ID 생성
+      id: `node_${Date.now()}`,
       type: 'custom',
       position,
       data: {
@@ -260,10 +265,28 @@ const MyOverviewFlow: React.FC = () => {
         text: '소설 작성',
       },
     };
+    addNode(newNode);
+    // fetchStory();
+  }, [addNode]);
 
-    // 기존 노드에 새로운 노드를 추가하는 방식
-    setNodes(prevNodes => [...prevNodes, newNode]);
-  }, [setNodes]);
+  // const addCustomNode = useCallback(() => {
+  //   updateNodeIds(); // 기존 노드들의 ID 업데이트 함수
+  //   console.log(nodes)
+  //   const position: XYPosition = { x: Math.random() * 500, y: Math.random() * 500 };
+  //   const newNode: Node = {
+  //     id: `node_${Date.now()}`, // 현재 시간을 이용해 고유한 ID 생성
+  //     type: 'custom',
+  //     position,
+  //     data: {
+  //       label: `플롯`,
+  //       content: '플롯 작성',
+  //       text: '소설 작성',
+  //     },
+  //   };
+
+  //   // 기존 노드에 새로운 노드를 추가하는 방식
+  //   setNodes(prevNodes => [...prevNodes, newNode]);
+  // }, [setNodes]);
 
   const onTemporarySave = useCallback(async () => {
     if (rfInstance) {
@@ -283,7 +306,7 @@ const MyOverviewFlow: React.FC = () => {
         dragging: true,
       }));
       const flowData = {
-        nodes : updatedNodes,
+        nodes: updatedNodes,
         edges,
         viewport: rfInstance.getViewport(),
       };
