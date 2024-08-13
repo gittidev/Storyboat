@@ -1,7 +1,6 @@
 import { Node, Edge } from "@xyflow/react";
-import {PlotEdge, PlotNode} from "../types/PlotType.ts";
 
-// Plot path finding functions
+// 노드에서 루트까지의 경로를 찾는 함수
 export const findPlotPathToRoot = (nodeId: string, edges: Edge[]): string[] => {
     const path: string[] = [];
     const visited = new Set<string>();
@@ -18,6 +17,7 @@ export const findPlotPathToRoot = (nodeId: string, edges: Edge[]): string[] => {
     return path.reverse();
 };
 
+// 노드에서 리프 노드까지의 경로를 찾는 함수
 export const findPlotPathToLeaf = (nodeId: string, edges: Edge[]): string[] => {
     const path: string[] = [nodeId];
     const visited = new Set<string>();
@@ -34,7 +34,7 @@ export const findPlotPathToLeaf = (nodeId: string, edges: Edge[]): string[] => {
     return path;
 };
 
-// Main node selection logic
+// 메인 플롯 노드를 설정하는 함수
 export const setMainPlotNodes = (
     nodeId: string,
     nodes: Node[],
@@ -50,18 +50,18 @@ export const setMainPlotNodes = (
     }));
 };
 
-// Helper function to get connected edges for a node
+// 노드와 연결된 엣지를 가져오는 함수
 export const getConnectedEdges = (nodeId: string, edges: Edge[]): Edge[] => {
     return edges.filter((edge) => edge.source === nodeId || edge.target === nodeId);
 };
 
-// Helper function to check if a node is isolated (has no connections)
+// 노드가 고립되었는지 확인하는 함수
 export const isNodeIsolated = (nodeId: string, edges: Edge[]): boolean => {
     return !edges.some((edge) => edge.source === nodeId || edge.target === nodeId);
 };
 
-// Helper function to get all descendant nodes
-export const getDescendantNodes = (nodeId: string, nodes: PlotNode[], edges: PlotEdge[]): PlotNode[] => {
+// 노드의 모든 자손 노드를 가져오는 함수
+export const getDescendantNodes = (nodeId: string, nodes: Node[], edges: Edge[]): Node[] => {
     const descendants: Set<string> = new Set();
     const traverse = (currentId: string) => {
         const childEdges = edges.filter((edge) => edge.source === currentId);
@@ -76,7 +76,7 @@ export const getDescendantNodes = (nodeId: string, nodes: PlotNode[], edges: Plo
     return nodes.filter((node) => descendants.has(node.id));
 };
 
-// Helper function to reorganize node positions after deletion
+// 노드 삭제 후 노드 위치를 재정렬하는 함수
 export const reorganizeNodePositions = (nodes: Node[], deletedNodeId: string): Node[] => {
     const deletedNode = nodes.find((node) => node.id === deletedNodeId);
     if (!deletedNode) return nodes;
@@ -90,8 +90,8 @@ export const reorganizeNodePositions = (nodes: Node[], deletedNodeId: string): N
     });
 };
 
-// 루트 노드까지의 경로 찾기
-export const findPathToRoot = (nodeId: string, edges: PlotEdge[]): string[] => {
+// 루트 노드까지의 경로를 찾는 함수
+export const findPathToRoot = (nodeId: string, edges: Edge[]): string[] => {
     const path: string[] = [nodeId];
     let currentId = nodeId;
 
@@ -105,12 +105,12 @@ export const findPathToRoot = (nodeId: string, edges: PlotEdge[]): string[] => {
     return path.reverse();
 };
 
-// 메인 노드 설정
+// 메인 노드를 설정하는 함수
 export const setMainNodes = (
     nodeId: string,
-    nodes: PlotNode[],
-    edges: PlotEdge[],
-): PlotNode[] => {
+    nodes: Node[],
+    edges: Edge[],
+): Node[] => {
     const pathToRoot = findPathToRoot(nodeId, edges);
     return nodes.map(node => ({
         ...node,
@@ -121,12 +121,12 @@ export const setMainNodes = (
     }));
 };
 
-// 노드 삭제 시 메인 노드 업데이트
+// 노드 삭제 시 메인 노드를 업데이트하는 함수
 export const updateMainNodesOnDeletion = (
     deletedNodeId: string,
-    nodes: PlotNode[],
-    edges: PlotEdge[],
-): PlotNode[] => {
+    nodes: Node[],
+    edges: Edge[],
+): Node[] => {
     const affectedNodes = getDescendantNodes(deletedNodeId, nodes, edges);
     return nodes.map(node => {
         if (affectedNodes.some(affectedNode => affectedNode.id === node.id)) {
@@ -136,12 +136,12 @@ export const updateMainNodesOnDeletion = (
     });
 };
 
-// 엣지 삭제 시 메인 노드 업데이트
+// 엣지 삭제 시 메인 노드를 업데이트하는 함수
 export const updateMainNodesOnEdgeDeletion = (
-    deletedEdge: PlotEdge,
-    nodes: PlotNode[],
-    edges: PlotEdge[],
-): PlotNode[] => {
+    deletedEdge: Edge,
+    nodes: Node[],
+    edges: Edge[],
+): Node[] => {
     const affectedNodes = new Set<string>();
 
     const traverse = (nodeId: string) => {
@@ -160,12 +160,12 @@ export const updateMainNodesOnEdgeDeletion = (
     });
 };
 
-// 노드 위치 변경 시 메인 노드 상태 유지
+// 노드 위치 변경 시 메인 노드 상태를 유지하는 함수
 export const updateNodePosition = (
     nodeId: string,
     newPosition: { x: number; y: number },
     nodes: Node[],
-):Node[] => {
+): Node[] => {
     return nodes.map(node => {
         if (node.id === nodeId) {
             return { ...node, position: newPosition };
