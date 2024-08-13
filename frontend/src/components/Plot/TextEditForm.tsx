@@ -10,19 +10,15 @@ import Quill from 'quill';
 import { useParams } from 'react-router-dom';
 import 'quill/dist/quill.snow.css';
 import axios from 'axios';
-// import { useRecoilState } from 'recoil';
-// import { editorContentState } from '../../recoil/atoms/editorAtom';
-
 
 interface TextEditFormProps {
   isOpen: boolean;
   onClose: () => void;
   nodeId: string;
-  initialData: {text : string , label : string, content : string, isMain? : boolean}
-  // onSave: (text:string)=>void;
+  initialData: { text: string; label: string; content: string };
 }
 
-Quill.register('modules/cursors', QuillCursors)
+Quill.register('modules/cursors', QuillCursors);
 
 const TextEditForm: React.FC<TextEditFormProps> = ({ isOpen, onClose, nodeId, initialData }) => {
   const { storyId } = useParams<{ storyId: string }>();
@@ -30,64 +26,82 @@ const TextEditForm: React.FC<TextEditFormProps> = ({ isOpen, onClose, nodeId, in
   const providerRef = useRef<WebrtcProvider | null>(null);
   const ydocRef = useRef<Y.Doc | null>(null);
   const [saveMessage, setSaveMessage] = useState<string | null>(null);
-  const [drawerWidth, ] = useState(900);
-  const setEditorRef = useCallback((node: HTMLDivElement | null) => {
+  const [drawerWidth] = useState(900);
+  const isComposingRef = useRef(false); // IME 입력 상태를 추적하기 위한 Ref
 
-    if (node) {
-      const ydoc = new Y.Doc();
-      ydocRef.current = ydoc;
+  const setEditorRef = useCallback(
+    (node: HTMLDivElement | null) => {
+      if (node) {
+        const ydoc = new Y.Doc();
+        ydocRef.current = ydoc;
 
-      const provider = new WebrtcProvider(roomId, ydoc, {
-        signaling: ['wss://i11c107.p.ssafy.io/signal'],
-      });
-      providerRef.current = provider;
+        const provider = new WebrtcProvider(roomId, ydoc, {
+          signaling: ['wss://i11c107.p.ssafy.io/signal'],
+        });
+        providerRef.current = provider;
 
-      const type = ydoc.getText('quill');
+        const type = ydoc.getText('quill');
 
-      const editor = new Quill(node, {
-        modules: {
-          cursors: true,
-          toolbar: [
-            [{ header: [1, 2, false] }],
-            ['bold', 'italic', 'underline'],
-            ['image', 'code-block'],
-          ],
-          history: {
-            userOnly: true,
+        const editor = new Quill(node, {
+          modules: {
+            cursors: true,
+            toolbar: [
+              [{ header: [1, 2, false] }],
+              ['bold', 'italic', 'underline'],
+              ['image', 'code-block'],
+            ],
+            history: {
+              userOnly: true,
+            },
           },
-        },
-        placeholder: '집필 영역',
-        theme: 'snow',
-      });
+          placeholder: '집필 영역',
+          theme: 'snow',
+        });
 
-      new QuillBinding(type, editor, provider.awareness);
+        new QuillBinding(type, editor, provider.awareness);
 
-      node.addEventListener('keydown', async (event) => {
-        if ((event.ctrlKey || event.metaKey) && event.key === 's') {
-          event.preventDefault();
-          setSaveMessage('Saving...');
+        editor.root.addEventListener('compositionstart', () => {
+          isComposingRef.current = true;
+        });
 
-          try {
-            const content = editor.getContents();
-            const response = await axios.post('/api/save', {
-              storyId,
-              nodeId,
-              content,
-            });
-            if (response.status === 200) {
-              setSaveMessage('Document saved successfully!');
-            } else {
-              setSaveMessage('Failed to save document.');
+        editor.root.addEventListener('compositionend', () => {
+          isComposingRef.current = false;
+        });
+
+        node.addEventListener('keydown', async (event) => {
+          if ((event.ctrlKey || event.metaKey) && event.key === 's') {
+            event.preventDefault();
+            setSaveMessage('Saving...');
+
+            try {
+              const content = editor.getContents();
+              const response = await axios.post('/api/save', {
+                storyId,
+                nodeId,
+                content,
+              });
+              if (response.status === 200) {
+                setSaveMessage('Document saved successfully!');
+              } else {
+                setSaveMessage('Failed to save document.');
+              }
+            } catch (error) {
+              setSaveMessage('Error saving document.');
             }
-          } catch (error) {
-            setSaveMessage('Error saving document.');
-          }
 
-          setTimeout(() => setSaveMessage(null), 3000); // 메시지 3초 후 사라짐
-        }
-      });
-    }
-  }, [roomId, storyId, nodeId]);
+            setTimeout(() => setSaveMessage(null), 3000); // 메시지 3초 후 사라짐
+          }
+        });
+
+        node.addEventListener('input', (event) => {
+          if (isComposingRef.current) {
+            event.stopImmediatePropagation(); // IME 조합 중인 상태에서는 전송 방지
+          }
+        });
+      }
+    },
+    [roomId, storyId, nodeId]
+  );
 
   useEffect(() => {
     return () => {
@@ -101,28 +115,6 @@ const TextEditForm: React.FC<TextEditFormProps> = ({ isOpen, onClose, nodeId, in
       }
     };
   }, []);
-
-
-  //  // 크기 조절 핸들러
-  //  const handleMouseDown = (e: React.MouseEvent) => {
-  //   const startX = e.clientX;
-  //   const startWidth = drawerWidth;
-
-  //   const onMouseMove = (e: MouseEvent) => {
-  //     const newWidth = startWidth - (e.clientX - startX);
-  //     setDrawerWidth(Math.max(newWidth, 300)); // 최소 너비 300px 설정
-  //   };
-
-  //   const onMouseUp = () => {
-  //     document.removeEventListener('mousemove', onMouseMove);
-  //     document.removeEventListener('mouseup', onMouseUp);
-  //   };
-
-  //   document.addEventListener('mousemove', onMouseMove);
-  //   document.addEventListener('mouseup', onMouseUp);
-  // };
-
-
 
   return (
     <Drawer
@@ -143,9 +135,7 @@ const TextEditForm: React.FC<TextEditFormProps> = ({ isOpen, onClose, nodeId, in
       </AppBar>
       <Box sx={{ padding: 2, display: 'flex', flexDirection: 'column', height: '100%' }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 2 }}>
-          <Typography variant="body1">
-            {saveMessage ? saveMessage : 'Ctrl+S to save your changes'}
-          </Typography>
+          <Typography variant="body1">{saveMessage ? saveMessage : 'Ctrl+S to save your changes'}</Typography>
           <Tooltip title="Save Document">
             <Button
               variant="contained"
