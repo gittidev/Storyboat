@@ -63,15 +63,18 @@ const CustomNode: React.FC<CustomNodeProps> = ({id, data, deleteNode}) => {
     const [label, setLabel] = useState(data.label);
     const [content, setContent] = useState(data.content);
     const [text, setText] = useState(data.text);
+    const [isMain, setIsMain] = useState(data.isMain);
+
     console.log(setText)
     useEffect(() => {
         // data.label이나 data.content가 변경되면 label과 content의 상태를 업데이트
         setLabel(data.label);
         setContent(data.content);
+        setIsMain(data.isMain);
     }, [data.label, data.content]);
 
     const saveChanges = () => {
-        const updatedData = {label, content, text};
+        const updatedData = {label, content, text, isMain};
         updateNode(id, {data: updatedData}); // Yjs와 React Flow 상태를 업데이트
         setNodes((nds) =>
             nds.map((n) => {
@@ -123,7 +126,7 @@ const CustomNode: React.FC<CustomNodeProps> = ({id, data, deleteNode}) => {
     const handleClick = () => {
         if (data.onNodeClick) {
             data.onNodeClick(id);
-            console.log(`${id}가 클릭됨, isMain: ${data.isMain}`);
+            // console.log(`${id}가 클릭됨, isMain: ${data.isMain}`);
         }
     };
 
@@ -219,7 +222,7 @@ const CustomNode: React.FC<CustomNodeProps> = ({id, data, deleteNode}) => {
                 isOpen={isTextEditDialogOpen}
                 onClose={handleTextDialogClose}
                 // onSave={handleTextSave(text)}
-                initialData={{text: text, label: label, content: content}}
+                initialData={{text: text, label: label, content: content, isMain: isMain}}
                 nodeId={id}
             />
         </>
