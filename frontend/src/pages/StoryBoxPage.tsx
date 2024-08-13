@@ -127,29 +127,40 @@ const StoryBoxPage = () => {
             </CustomModal>
 
             {/* 내용 들어갈 부분 */}
-            <BorderBox>
-                <TableContainer component={Paper}>
+            <BorderBox
+                sx={{
+                    flex: 1,
+                    minHeight: '70vh', 
+                }}
+                >
+                      <TableContainer 
+                    component={Paper}
+                    sx={{
+                    boxShadow: 'none', 
+                    }}
+                    >
                     <Table>
                         <TableHead>
-                            <TableRow>
-                                <TableCell align="center">번호</TableCell> {/* 인덱스 표시 */}
-                                <TableCell align="center">스토리 제목</TableCell>
-                                <TableCell align="center">최종 수정일</TableCell>
-                                <TableCell align="center">작업</TableCell> {/* 삭제 및 내보내기 버튼 추가 */}
+                            <TableRow sx={{ padding: '4px' }}>
+                                <TableCell align="center" sx={{ padding: '12px' }}>번호</TableCell> {/* 인덱스 표시 */}
+                                <TableCell align="center" sx={{ padding: '12px' }}>스토리 제목</TableCell>
+                                <TableCell align="center" sx={{ padding: '12px' }}>최종 수정일</TableCell>
+                                <TableCell align="center" sx={{ padding: '12px' }}>작업</TableCell> {/* 삭제 및 내보내기 버튼 추가 */}
                             </TableRow>
                         </TableHead>
                         <TableBody>
                             {story.map((story, index) => (
-                                <TableRow key={story.storyId}>
-                                    <TableCell>{page * itemsPerPage + index + 1}</TableCell> {/* 인덱스를 1부터 시작 */}
+                                <TableRow key={story.storyId} sx={{ height: '40px' }}>
+                                    <TableCell align="center" sx={{ padding: '4px' }}>{page * itemsPerPage + index + 1}</TableCell> {/* 인덱스를 1부터 시작 */}
                                     <TableCell
+                                        align="center"
                                         onClick={() => handleTitleClick(story.storyId)}
-                                        sx={{ cursor: 'pointer', color: 'black' }} // 클릭 커서와 글씨 색상 설정
+                                        sx={{ cursor: 'pointer', color: 'black', padding: '4px' }} // 클릭 커서와 글씨 색상 설정
                                     >
                                         {story.title}
-                                    </TableCell>
-                                    <TableCell>{story.lastModified}</TableCell>
-                                    <TableCell>
+                                    </TableCell >
+                                    <TableCell align="center"  sx={{ padding: '4px' }} > {story.lastModified}</TableCell>
+                                    <TableCell align="center"  sx={{ padding: '4px' }} >
                                         <IconButton onClick={() => handleDelete(story.storyId)}>
                                             <DeleteIcon />
                                         </IconButton>
@@ -161,14 +172,42 @@ const StoryBoxPage = () => {
                 </TableContainer>
 
                 {/* 페이지네이션 */}
+
+                <Box
+                sx={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'flex-end',
+                    marginTop: 'auto', 
+                    padding: '1rem',
+                    color: 'rgb(173, 216, 230)',
+                }}
+                >
                 <Pagination
                     count={totalPages}
                     page={page + 1}
                     onChange={handlePageChange}
-                    color="primary"
-                    sx={{ marginTop: "20px", display: "flex", justifyContent: "center" }}
+                    // color="primary"
+                    sx={{ 
+                        
+                    marginTop: "20px", 
+                    display: "flex", 
+                    justifyContent: "center", 
+                    color: 'rgb(173, 216, 230)' ,
+                    '& .MuiPaginationItem-root': {
+                        color: 'rgb(173, 216, 230) !important', // 페이지네이션 아이템의 텍스트 색상 설정
+                    },
+                    '& .Mui-selected': {
+                        backgroundColor: 'rgb(173, 216, 230) !important', // 선택된 페이지네이션 아이템의 배경 색상 설정
+                        color: 'white !important' , // 선택된 페이지네이션 아이템의 텍스트 색상 설정
+                    },
+                    '& .MuiPaginationItem-ellipsis': {
+                        color: 'rgb(173, 216, 230) !important', // '...' 아이템의 텍스트 색상 설정
+                    },
+                
+                }}
                 />
-
+                </Box>
             </BorderBox>
 
         </>

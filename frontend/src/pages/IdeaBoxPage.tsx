@@ -125,7 +125,7 @@ const IdeaBoxPage: React.FC = () => {
     <>
       <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", width: "100%", padding: "0px 20px 20px 20px" }}>
         <Box sx={{ flexGrow: 1 }}>
-          <SubTopBar title={"스튜디오 아이디어 보관소"} content="스튜디오의 아이디어를 작성하세요" />
+          <SubTopBar title={"스튜디오 아이디어 보관함"} content="팀과 함께 멋진 아이디어를 떠올리세요" />
         </Box>
         <Box sx={{ flexShrink: 0 }}>
           <CustomButton content='+ 생성하기' bgcolor="lightgreen" hoverBgColor="green" onClick={handleOpen} />
@@ -137,8 +137,12 @@ const IdeaBoxPage: React.FC = () => {
       </CustomModal>
 
       <BorderBox>
+      <div className='MyIdeaPagebody'   style={{ padding: '5% 8% 5% 6%', }}>
         {studioIdeas.length === 0 ? (
-          <Typography variant="body1">아이디어가 없습니다. 새 아이디어를 추가해보세요!</Typography>
+
+      <Box display="flex" justifyContent="center" alignItems="center" height="100%">
+          <Typography variant="body1">새 아이디어를 추가해보세요 💡</Typography>
+          </Box>
         ) : (
           <Grid container spacing={2}>
             {studioIdeas.map((idea) => (
@@ -155,6 +159,7 @@ const IdeaBoxPage: React.FC = () => {
             ))}
           </Grid>
         )}
+        </div>
       </BorderBox>
     </>
   );

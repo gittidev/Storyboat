@@ -33,11 +33,14 @@ import StudioOverviewFlow from './components/StudioStoryBox/StudioOverviewFlow';
 import ProtectedRoute from './ProtecedRoute';
 // const svURL = import.meta.env.VITE_SERVER_URL;
 
+import { nameState } from './recoil/atoms/userAtom';
+
 const App: React.FC = () => {
   const [accessToken, setAccessToken] = useRecoilState(accessTokenState);
   const [refreshToken, setRefreshToken] = useRecoilState(refreshTokenState);
   console.log(accessToken)
   const setStudioId = useSetRecoilState(myStudioState);
+  const setPenName = useSetRecoilState(nameState);
 
   const fetchProfile = async () => {
     try {
@@ -52,6 +55,7 @@ const App: React.FC = () => {
         if (data && data.privateStudio && data.privateStudio.studioId) {
           setStudioId(data.privateStudio.studioId);
         }
+        setPenName(data.penName)
       } else {
         throw new Error('프로필 정보를 가져오는데 실패했습니다.');
       }

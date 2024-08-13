@@ -209,14 +209,15 @@ const MyStoryPage: React.FC = () => {
     sx={{
       display: 'flex',
       flexDirection: 'column',
-      minHeight: '80vh', 
+      minHeight: '70vh', 
       padding: '1rem',
     }}
   >
     {/* 테이블 영역 */}
     <BorderBox
       sx={{
-        flex: 1, // 테이블 영역이 가능한 공간을 차지하게 설정
+        flex: 1,
+        minHeight: '70vh', 
       }}
     >
       <TableContainer 
@@ -227,41 +228,61 @@ const MyStoryPage: React.FC = () => {
         >
         <Table>
           <TableHead>
-            <TableRow>
-              <TableCell align="center">번호</TableCell> {/* 인덱스 표시 */}
-              <TableCell align="center">스토리 제목</TableCell>
-              <TableCell align="center">최종 수정일</TableCell>
-              <TableCell align="center">작업</TableCell> {/* 삭제 및 내보내기 버튼 추가 */}
+            <TableRow sx={{ padding: '4px' }}>
+              <TableCell align="center" sx={{ padding: '12px' }}>번호</TableCell> {/* 인덱스 표시 */}
+              <TableCell align="center" sx={{ padding: '12px' }}>스토리 제목</TableCell>
+              <TableCell align="center" sx={{ padding: '12px' }}>최종 수정일</TableCell>
+              <TableCell align="center" sx={{ padding: '12px' }}>작업</TableCell> {/* 삭제 및 내보내기 버튼 추가 */}
             </TableRow>
           </TableHead>
+
+
           <TableBody>
-            {mystory.map((story, index) => (
-              <TableRow key={story.storyId}>
-                <TableCell align="center">{page * itemsPerPage + index + 1}</TableCell> {/* 인덱스를 1부터 시작 */}
-                <TableCell
-                  align="center"
-                  onClick={() => handleTitleClick(story.storyId)}
-                  sx={{ cursor: 'pointer', color: 'black' }} // 클릭 커서와 글씨 색상 설정
-                >
-                  {story.title}
-                </TableCell>
-                <TableCell align="center">{story.lastModified}</TableCell>
-                <TableCell>
-                  <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px' }}>
-                    <IconButton onClick={() => handleDelete(story.storyId)} >
-                      <DeleteIcon />
-                    </IconButton>
-                    <IconButton
-                      onClick={() => handleExportClick(story.storyId)}
-                      data-story-id={story.storyId}
-                    >
-                      <ExportIcon />
-                    </IconButton>
-                  </div>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
+              {mystory.map((story, index) => (
+                <TableRow key={story.storyId} sx={{ height: '40px' }}> {/* 행의 높이 조정 */}
+                  <TableCell 
+                    align="center" 
+                    sx={{ padding: '4px' }} // 패딩을 줄여서 셀 간의 높이 간격 줄이기
+                  >
+                    {page * itemsPerPage + index + 1}
+                  </TableCell>
+                  <TableCell
+                    align="center"
+                    onClick={() => handleTitleClick(story.storyId)}
+                    sx={{ 
+                      cursor: 'pointer', 
+                      color: 'black',  
+                      padding: '4px' // 패딩을 줄여서 셀 간의 높이 간격 줄이기
+                    }}
+                  >
+                    {story.title}
+                  </TableCell>
+                  <TableCell 
+                    align="center" 
+                    sx={{ padding: '4px' }} // 패딩을 줄여서 셀 간의 높이 간격 줄이기
+                  >
+                    {story.lastModified}
+                  </TableCell>
+                  <TableCell sx={{ padding: '4px' }}> {/* 패딩을 줄여서 셀 간의 높이 간격 줄이기 */}
+                    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px' }}>
+                      <IconButton onClick={() => handleDelete(story.storyId)}>
+                        <DeleteIcon />
+                      </IconButton>
+                      <IconButton
+                        onClick={() => handleExportClick(story.storyId)}
+                        data-story-id={story.storyId}
+                      >
+                        <ExportIcon />
+                      </IconButton>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+
+
+
+
         </Table>
       </TableContainer>
       

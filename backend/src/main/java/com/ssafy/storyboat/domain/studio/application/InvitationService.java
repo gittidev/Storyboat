@@ -54,6 +54,7 @@ public class InvitationService {
      */
     @Transactional(readOnly = true)
     public Page<Invitation> findAll(Pageable pageable) {
+//        return invitationRepository.findAllWithInvitationTags(pageable);
         return invitationRepository.findAll(pageable);
     }
 
