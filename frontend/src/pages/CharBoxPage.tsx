@@ -273,7 +273,7 @@ const CharBoxPage: React.FC = () => {
             </Box>
 
             {/* <CharacTag /> */}
-            <div className='MyCharPage-body' style={{ padding: '0 15px' }}>
+
             <Grid container spacing={3}>
                 
                 {filteredCharacters.map((character) => (
@@ -303,8 +303,7 @@ const CharBoxPage: React.FC = () => {
                     </Grid>
                 ))}
             </Grid>
-            </div>
-            
+
             <Modal
                 open={open}
                 onClose={handleClose}

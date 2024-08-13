@@ -15,8 +15,6 @@ import { myStudioState } from '../recoil/atoms/studioAtom';
 import MakingCharacter from './MyChar/MakingCharacter';
 //import SubTopBar from '../components/Commons/SubTopBar';
 import EditCharacter from './MyChar/EditCharacter'; 
-// import { BorderBox } from '../components/Commons/BorderBox';
-
 
 const svURL = import.meta.env.VITE_SERVER_URL;
 
@@ -115,7 +113,6 @@ const MyCharPage: React.FC = () => {
             <MakingCharacter />
             {/* <SubTopBar /> */}
             {/* Search Input */}
-
             <Box sx={{ padding: 2 }}>
                 <input
                     type="text"
@@ -126,7 +123,6 @@ const MyCharPage: React.FC = () => {
                 />
             </Box>
 
-            <div className='MyCharPage-body' style={{ padding: '0 15px' }}>
             <Grid container spacing={3}>
                 {filteredCharacters.map(character => (
                     <Grid item xs={12} sm={6} md={4} lg={3} key={character.id}>
@@ -152,7 +148,6 @@ const MyCharPage: React.FC = () => {
                     </Grid>
                 ))}
             </Grid>
-            </div>
 
             <Modal
                 open={open}

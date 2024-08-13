@@ -18,7 +18,7 @@ const TopBar = ()=> {
     return (
         <>
         <StyledTopBar>
-            스토리 보트에 오신 것을 환영합니다 
+            스토리 보트에 오신 것을 환영합니다
         </StyledTopBar>
         </>
     )

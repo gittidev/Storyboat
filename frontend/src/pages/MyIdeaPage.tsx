@@ -140,9 +140,7 @@ const MyIdeaPage: React.FC = () => {
       {/* 내용 들어갈 부분 */}
       <BorderBox>
         {myIdeas.length === 0 ? (
-          <Box display="flex" justifyContent="center" alignItems="center" height="100%">
-          <Typography variant="body1">새 아이디어를 추가해보세요 💡</Typography>
-          </Box>
+          <Typography variant="body1">아이디어가 없습니다. 새 아이디어를 추가해보세요!</Typography>
         ) : (
           <Grid container spacing={2}>
             {myIdeas.map((idea) => (
