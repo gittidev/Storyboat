@@ -4,6 +4,9 @@ FROM openjdk:17
 # /app 디렉토리로 작업 디렉토리 설정
 WORKDIR /app
 
+Run ln -sf /usr/share/zoneinfo/Asia/Seoul /etc/localtime && \
+    echo "Asia/Seoul" > /etc/timezone
+
 # JAR 파일을 app.jar로 복사
 ARG JAR_FILE=build/libs/*.jar
 COPY ${JAR_FILE} app.jar
