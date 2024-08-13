@@ -376,7 +376,7 @@ const edgeTypes = useMemo(() => createEdgeTypes(handleDeleteEdge), [handleDelete
           <div className="user-list">
           {users.map((user) => (
             <div key={user.clientId} className="user-list-item" style={{ color: user.cursorColor }}>
-              {user.name} - {user.clientId}
+              {user.name} 
             </div>
           ))}
         </div>
