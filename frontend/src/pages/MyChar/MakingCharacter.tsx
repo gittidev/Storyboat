@@ -8,6 +8,7 @@ import { myStudioState } from '../../recoil/atoms/studioAtom';
 import SubTopBar from '../../components/Commons/SubTopBar';
 import CustomButton from '../../components/Commons/CustomButton';
 import { styled } from '@mui/system';
+// import { BorderBox } from '../../components/Commons/BorderBox';
 
 const svURL = import.meta.env.VITE_SERVER_URL;
 

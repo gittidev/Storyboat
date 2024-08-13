@@ -15,6 +15,10 @@ export const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
 
     return (
         <Box sx={{ display: "flex", alignItems: "center", marginBottom: "20px" }}>
+            
+            <div className="SearchBarbody " style={{ marginTop: '15px', marginBottom: '15px' }}>
+
+           
             <FormControl 
                 sx={{ 
                     minWidth: 120, 
@@ -32,12 +36,14 @@ export const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
                     <MenuItem value="category">카테고리</MenuItem>
                 </Select>
             </FormControl>
+            </div>
             <TextField
                 variant="outlined"
                 label="검색어 입력"
                 value={keyword}
                 onChange={(e) => setKeyword(e.target.value)}
                 sx={{ 
+              
                     marginRight: "10px", 
                     height: "40px",
                     "& .MuiInputBase-root": { height: "100%" }, // TextField 높이 맞추기

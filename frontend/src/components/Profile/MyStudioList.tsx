@@ -11,6 +11,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import IconButton from '@mui/material/IconButton';
 import axios from 'axios';
 import Tooltip from '@mui/material/Tooltip';
+// import { BorderBox } from '../Commons/BorderBox';
 
 const svURL = import.meta.env.VITE_SERVER_URL;
 
@@ -89,28 +90,42 @@ const MyStudioList: React.FC = () => {
     return (
         <Box sx={{ p: 2 }}>
             <Typography variant="h6" component="div" gutterBottom>
-                참여중인 스튜디오 목록
+                참여 중인 스튜디오 목록
             </Typography>
+            <br/>
             {studios.length === 0 ? (
                 <Typography variant="body1" component="div">
-                    참여중인 스튜디오가 없습니다.
+                    스튜디오를 생성해주세요 😊
                 </Typography>
             ) : (
-                <TableContainer component={Paper}>
+                <TableContainer
+                component={Paper}
+                style={{
+                  borderRadius: '10px',
+                  padding: '1px',
+                  height: 'auto',
+                  border: '1px solid transparent',
+                  backgroundImage: 'linear-gradient(#fff, #fff), linear-gradient(0deg, #ebffde 0%, #cde4ff 100%)',
+                  backgroundOrigin: 'border-box',
+                  backgroundClip: 'content-box, border-box',
+                  overflow: 'auto',
+                  boxShadow: 'none'
+                }}
+              >
                     <Table>
                         <TableHead>
                             <TableRow>
-                                <TableCell>스튜디오 이름</TableCell>
+                                <TableCell align="center">스튜디오 이름</TableCell>
                                 {/* <TableCell>역할</TableCell> */}
-                                <TableCell>탈퇴</TableCell>
+                                <TableCell align="center">탈퇴</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
                             {studios.map((studio) => (
                                 <TableRow key={studio.studioId}>
-                                    <TableCell>{studio.name}</TableCell>
+                                    <TableCell align="center">{studio.name}</TableCell>
                                     {/* <TableCell>{studio.role}</TableCell> */}
-                                    <TableCell>
+                                    <TableCell align="center">
                                         <Tooltip title="스튜디오 나가기">
                                             <IconButton onClick={() => handleLeaveStudio(studio.studioId)}>
                                                 <DeleteIcon/>

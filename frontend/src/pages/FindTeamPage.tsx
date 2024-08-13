@@ -15,6 +15,7 @@ import { FindTeamType } from "../types/StudioType";
 import { accessTokenState } from "../recoil/atoms/authAtom";
 import axios from "axios";
 
+
 const svURL = import.meta.env.VITE_SERVER_URL;
 
 const FindTeamPage: React.FC = () => {
@@ -104,8 +105,9 @@ const FindTeamPage: React.FC = () => {
                     <CustomButton content='+ 팀원 모집하기' bgcolor="lightgreen" hoverBgColor="green" onClick={handleOpen} />
                 </Box>
             </Box>
-
+    
             <CustomModal open={open} onClose={handleClose}>
+               
                 <FindTeamForm onSave={handleSave} onClose={handleClose} />
             </CustomModal>
 
@@ -116,30 +118,141 @@ const FindTeamPage: React.FC = () => {
                     <SearchBar onSearch={handleSearch} />
                 </Box>
                 
-                {/* FindTeamBox를 왼쪽 정렬 */}
-                <Box sx={{ display: "flex", flexDirection: "column", alignItems: "flex-start", width: "100%", padding: "10px 20px" }}>
-                    {Array.isArray(findTeams) && findTeams.length > 0 ? (
-                        findTeams.map((findTeam, index) => (
-                            <FindteamBox
-                                key={index}
-                                title={findTeam.title}
-                                description={findTeam.description}
-                                studioId={findTeam.studioId}
-                                tags={findTeam.tags}
+
+
+{/* 
+
+                    <Box
+                        sx={{
+                            display: "flex",
+                            height: "90vh",
+                            flexDirection: "row",
+                            flexWrap: "wrap",
+                            alignItems: "flex-start",
+                            width: "100%", // 전체 너비를 100%로 설정
+                            paddingLeft: '5%',
+                            paddingRight: '5%', // paddingRight를 5%로 조정
+                            gap: '3%', // gap을 3%로 유지
+                        }}
+                    >
+                        {Array.isArray(findTeams) && findTeams.length > 0 ? (
+                            findTeams.map((findTeam, index) => (
+                                <Box
+                                    key={index}
+                                    sx={{
+                                        height: '10vh', // 자동 높이 설정
+                                        width: 'calc(50% - 1.5%)', // 두 열을 맞추기 위한 너비 설정 (gap을 고려하여 차감)
+                                        borderRadius: '4px',
+                                    }}
+                                >
+                                    <FindteamBox
+                                        title={findTeam.title}
+                                        description={findTeam.description}
+                                        studioId={findTeam.studioId}
+                                        tags={findTeam.tags}
+                                    />
+                                </Box>
+                            ))
+                        ) : (
+                            <p>팀을 만들어주세요 👨‍👨‍👧‍👦</p>
+                        )}
+                        <Box 
+                            sx={{ 
+                                display: 'flex', 
+                                justifyContent: 'center', 
+                                alignItems: 'center', 
+                                marginTop: '20px', 
+                                width: '100%' 
+                            }}
+                        >
+                            <Pagination 
+                                count={totalPages} 
+                                page={page + 1} 
+                                onChange={handlePageChange} 
+                                sx={{
+                                    '& .MuiPaginationItem-root': {
+                                        color: 'rgb(173, 216, 230) !important',
+                                    },
+                                    '& .Mui-selected': {
+                                        backgroundColor: 'rgb(173, 216, 230) !important',
+                                        color: 'white !important' ,
+                                    },
+                                    '& .MuiPaginationItem-ellipsis': {
+                                        color: 'rgb(173, 216, 230) !important',
+                                    },
+                                }}
                             />
-                        ))
-                    ) : (
-                        <p>No teams found.</p>
-                    )}
-                    <Box sx={{ alignSelf: "center", marginTop: "20px" }}>
-                        <Pagination 
-                            count={totalPages} 
-                            page={page + 1} // 0 기반 인덱스를 1 기반 인덱스로 변환하여 MUI Pagination에 전달
-                            onChange={handlePageChange} 
-                            color="primary"
-                        />
+                        </Box>
                     </Box>
-                </Box>
+ */}
+
+<Box
+    sx={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(2, 1fr)', // 2열로 설정
+        gap: '16px', // 카드 간의 간격 설정 (픽셀 단위로 조정 가능)
+        padding: '0 5%', // padding 설정
+        height: 'auto', // 높이를 자동으로 설정
+        overflowY: 'auto', // 콘텐츠가 넘칠 경우 스크롤 가능
+    }}
+>
+    {Array.isArray(findTeams) && findTeams.length > 0 ? (
+        findTeams.map((findTeam, index) => (
+            <Box
+                key={index}
+                sx={{
+                    borderRadius: '4px',
+                    
+                    backgroundColor: 'white', // 카드 배경 색상
+                }}
+            >
+                <FindteamBox
+                    title={findTeam.title}
+                    description={findTeam.description}
+                    studioId={findTeam.studioId}
+                    tags={findTeam.tags}
+                />
+            </Box>
+        ))
+    ) : (
+        <p>팀을 만들어주세요 👨‍👨‍👧‍👦</p>
+    )}
+<Box
+    sx={{
+        display: 'flex',
+        justifyContent: 'center', // 가로 중앙 정렬
+        alignItems: 'center', // 세로 중앙 정렬
+        position: 'fixed', // 고정 위치
+        bottom: '20px', // 바닥에서의 거리
+        left: '60%', // 왼쪽에서 중앙으로 위치 조정
+        transform: 'translateX(-50%)', // X축 중앙 정렬
+        width: '100%', // 전체 너비
+    }}
+>
+    <Pagination 
+        count={totalPages} 
+        page={page + 1} 
+        onChange={handlePageChange} 
+        sx={{
+            '& .MuiPaginationItem-root': {
+                color: 'rgb(173, 216, 230) !important',
+            },
+            '& .Mui-selected': {
+                backgroundColor: 'rgb(173, 216, 230) !important',
+                color: 'white !important',
+            },
+            '& .MuiPaginationItem-ellipsis': {
+                color: 'rgb(173, 216, 230) !important',
+            },
+        }}
+    />
+</Box>
+</Box>
+
+
+
+
+                
             </BorderBox>
         </>
     );

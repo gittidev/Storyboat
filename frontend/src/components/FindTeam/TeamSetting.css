@@ -1,0 +1,17 @@
+.teamsetting-head {
+  display: flex;
+  justify-content: space-between; /* 좌우 공간을 분배 */
+  align-items: center; /* 세로 중앙 정렬 */
+}
+
+.teamsetting-head h2 {
+  margin: 0; /* 기본 여백 제거 */
+}
+
+.teamsetting-head .box {
+  text-align: right; /* 오른쪽 정렬 */
+}
+
+.centered {
+  text-align: center !important; 
+}
