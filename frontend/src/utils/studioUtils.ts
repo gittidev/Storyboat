@@ -69,16 +69,16 @@ export const fetchteams = async (accessToken: string|null, studoId :string|numbe
 
 export const updateInvitationStatus = async (accessToken: string|null, studioId: string|number, userId: number, decision: 'accept' | 'rejection') => {
   try {
-    await axios.put(`${svURL}/api/studios/${studioId}/members/${userId}/roles`, {decision}, {
+    await axios.put(`${svURL}/api/studios/${studioId}/join-requests/${userId}`, {decision}, {
       headers: {
         'Authorization': `Bearer ${accessToken}`,
         'Content-Type': 'application/json'
       }
     });
     
-    console.log('팀원 역할 업데이트 성공');
+    console.log('참여 요청 수락');
   } catch (error) {
-    console.error('팀원 역할 업데이트 실패:', error);
+    console.error('참여 요청 거절', error);
   }
 };
 

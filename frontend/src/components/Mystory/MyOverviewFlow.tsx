@@ -20,17 +20,6 @@ import {setMainNodes, updateMainNodesOnDeletion, updateMainNodesOnEdgeDeletion} 
 
 const flowKey = 'Story';
 
-// const createNodeTypes = (handleDeleteNode: any) => ({
-//   custom: (props: any) => (
-//       <CustomNode
-//           {...props}
-//           id={props.id}
-//           data={props.data}
-//           deleteNode={handleDeleteNode}
-//       />
-//   ),
-// });
-
 const createEdgeTypes = (handleDeleteEdge: any) => ({
   custom: (props: any) => (
       <CustomEdge
@@ -69,10 +58,6 @@ const MyOverviewFlow: React.FC = () => {
   const studioId = useRecoilValue(myStudioState)
   const token = useRecoilValue(accessTokenState)
 
-  // const [nodes, setNodes] = useState([]);
-  // const [edges, setEdges] = useState([]);
-  // const [viewport, setViewport] = useState({ x: 0, y: 0, zoom: 1 });
-
   const {
     nodes,
     edges,
@@ -110,19 +95,7 @@ const MyOverviewFlow: React.FC = () => {
       console.log(flowData);
 
       if (flowData) {
-        // nodes, edges, viewport를 추출
         const {nodes, edges, viewport} = flowData;
-
-        // 각 노드의 id 값을 +1하여 업데이트
-        // nodes = nodes.map(node => {
-        //     const idNumberMatch = node.id.match(/(\d+)$/); // id에서 숫자 부분만 추출
-        //     if (idNumberMatch) {
-        //         const newIdNumber = parseInt(idNumberMatch[0], 10) + 100; // 숫자 부분을 +1
-        //         const newId = node.id.replace(idNumberMatch[0], newIdNumber); // 새로운 id로 대체
-        //         return { ...node, id: newId }; // 새 id로 노드 업데이트
-        //     }
-        //     return node; // 숫자가 없는 경우는 그대로 유지
-        // });
 
         console.log(nodes, edges, viewport);
 
@@ -258,27 +231,7 @@ const MyOverviewFlow: React.FC = () => {
       },
     };
     addNode(newNode);
-    // fetchStory();
   }, [addNode]);
-
-  // const addCustomNode = useCallback(() => {
-  //   updateNodeIds(); // 기존 노드들의 ID 업데이트 함수
-  //   console.log(nodes)
-  //   const position: XYPosition = { x: Math.random() * 500, y: Math.random() * 500 };
-  //   const newNode: Node = {
-  //     id: `node_${Date.now()}`, // 현재 시간을 이용해 고유한 ID 생성
-  //     type: 'custom',
-  //     position,
-  //     data: {
-  //       label: `플롯`,
-  //       content: '플롯 작성',
-  //       text: '소설 작성',
-  //     },
-  //   };
-
-  //   // 기존 노드에 새로운 노드를 추가하는 방식
-  //   setNodes(prevNodes => [...prevNodes, newNode]);
-  // }, [setNodes]);
 
   const onTemporarySave = useCallback(async () => {
     if (rfInstance) {
