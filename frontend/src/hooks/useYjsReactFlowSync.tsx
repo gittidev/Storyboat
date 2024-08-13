@@ -17,6 +17,7 @@ import { Awareness } from 'y-protocols/awareness';
 import { getRandomColor } from '../utils/getRandomColor';
 import { useRecoilValue } from 'recoil';
 import { userState } from '../recoil/atoms/userAtom';
+import { nameState } from '../recoil/atoms/userAtom';
 
 const initialNodes: Node[] = [];
 const initialEdges: Edge[] = [];
@@ -25,6 +26,7 @@ export const useYjsReactFlowSync = (roomId: string) => {
     const [nodes, setNodes] = useNodesState(initialNodes);
     const [edges, setEdges] = useEdgesState(initialEdges);
     const [isInitialized, setIsInitialized] = useState(false);
+    const penName = useRecoilValue(nameState)
     const { setViewport } = useReactFlow();
     // const [awareness, setAwareness] = useState<Awareness>();
     const [users, setUsers] = useState<{ clientId: number; name: string; cursorColor: string }[]>([]);
@@ -60,12 +62,13 @@ export const useYjsReactFlowSync = (roomId: string) => {
         
             awarenessRef.current.setLocalStateField('user', {
                 userId: safeUserId,
+                name : penName,
                 cursor: { x: 0, y: 0, color: cursorColor },
             });
         
             setUsers((prevUsers) => [
                 ...prevUsers,
-                { clientId: awarenessRef.current!.clientID, name: safeUserId, cursorColor },  // 타입 단언 사용
+                { clientId: awarenessRef.current!.clientID, name: penName, cursorColor },  // 타입 단언 사용
             ]);
         }
 
@@ -111,10 +114,11 @@ export const useYjsReactFlowSync = (roomId: string) => {
         setCursors(updatedCursors);
 
         const updatedUsers = states.map(([clientId, state]) => {
-            const userId = state.user.userId || 'Unknown'; // null을 처리하기 위해 기본값 설정
+            // const userId = state.user.userId || 'Unknown'; // null을 처리하기 위해 기본값 설정
+            // const name = 
             return {
                 clientId,
-                name: userId,
+                name: penName,
                 cursorColor: state.user.cursor.color, // 사용자 커서 색상도 함께 저장
             };
         });

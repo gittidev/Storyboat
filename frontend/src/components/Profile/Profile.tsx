@@ -20,11 +20,13 @@ import { myStudioState } from '../../recoil/atoms/studioAtom';
 import ProfileForm from './ProfileForm';
 import { ProfileType } from '../../types/UserType';
 
+
 const svURL = import.meta.env.VITE_SERVER_URL;
 
 const Profile: React.FC = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [profile, setProfile] = useState<ProfileType | null>(null);
+ 
   const token = useRecoilValue(accessTokenState);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -44,6 +46,7 @@ const Profile: React.FC = () => {
         if (data && data.privateStudio && data.privateStudio.studioId) {
           setStudioId(data.privateStudio.studioId);
         }
+        
         setProfile(data);
       } else {
         throw new Error('프로필 정보를 가져오는데 실패했습니다.');

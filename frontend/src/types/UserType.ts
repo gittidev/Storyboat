@@ -14,6 +14,7 @@ export interface ProfileType {
     description: string;
   };
 }
+
 export interface UserType {
   id : string;
 }
