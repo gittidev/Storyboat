@@ -17,6 +17,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -36,25 +37,13 @@ public class JWTFilter extends OncePerRequestFilter {
 
         //request 에서 Authorization 헤더를 찾음
         String authorization = request.getHeader("Authorization");
-        log.info("헤더 토큰={}", authorization);
 
         //Authorization 헤더 검증
         if (authorization == null || !authorization.startsWith("Bearer ")) {
 
             log.info("헤더에 Authorization 없거나 이상함!");
             filterChain.doFilter(request, response);
-            // API 응답 객체 생성
-//            ApiResponse<Object> apiResponse = ApiResponse.error("No Permission");
-//            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-//            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-//            response.setCharacterEncoding(StandardCharsets.UTF_8.name());
-//
-//            try (OutputStream os = response.getOutputStream()) {
-//                objectMapper.writeValue(os, apiResponse);
-//                os.flush();
-//            }
             return;
-            // 조건이 해당되면 메소드 종료 (필수)
         }
 
         String token = authorization.split(" ")[1];
@@ -82,13 +71,11 @@ public class JWTFilter extends OncePerRequestFilter {
         String username = jwtUtil.getUsername(token);
         String role = jwtUtil.getRole(token);
 
-        User user = userRepository.findByProviderIdAndProvider(username.split(" ")[0], username.split(" ")[1]);
+        User user = getUser(username);
 
         if (user == null || user.getUserId() == null) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         }
-
-        log.info("username={} role={}", username, role);
 
         //userDTO 를 생성하여 값 set
         OAuth2UserDTO userDTO = new OAuth2UserDTO();
@@ -105,6 +92,12 @@ public class JWTFilter extends OncePerRequestFilter {
         SecurityContextHolder.getContext().setAuthentication(authToken);
 
         filterChain.doFilter(request, response);
+    }
+
+    @Transactional(readOnly = true)
+    protected User getUser(String username) {
+        User user = userRepository.findByProviderIdAndProvider(username.split(" ")[0], username.split(" ")[1]);
+        return user;
     }
 
     private void setErrorResponse(HttpServletResponse response, int status, String message) throws IOException {
