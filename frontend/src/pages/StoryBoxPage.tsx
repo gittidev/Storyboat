@@ -176,11 +176,13 @@ const StoryBoxPage = () => {
                 <Box
                 sx={{
                     display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'flex-end',
-                    marginTop: 'auto', 
-                    padding: '1rem',
-                    color: 'rgb(173, 216, 230)',
+                    justifyContent: 'center', // 가로 중앙 정렬
+                    alignItems: 'center', // 세로 중앙 정렬
+                    position: 'fixed', // 고정 위치
+                    bottom: '20px', // 바닥에서의 거리
+                    left: '60%', // 왼쪽에서 중앙으로 위치 조정
+                    transform: 'translateX(-50%)', // X축 중앙 정렬
+                    width: '100%', // 전체 너비
                 }}
                 >
                 <Pagination

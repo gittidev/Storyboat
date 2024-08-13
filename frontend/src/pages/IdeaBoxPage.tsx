@@ -153,7 +153,7 @@ const IdeaBoxPage: React.FC = () => {
                   content={idea.content}
                   menuOptions={generateMenuOptions()}
                   onMenuClick={handleMenuClick} // 수정된 핸들러 사용
-                  width="90%"
+                  width="100%"
                 />
               </Grid>
             ))}

@@ -12,6 +12,7 @@ import { selectedStudioState } from "../../recoil/atoms/studioAtom";
 import { accessTokenState } from "../../recoil/atoms/authAtom";
 import { updateInvitationStatus } from "../../utils/studioUtils";
 import { updateRole } from "../../utils/studioUtils";
+import '../FindTeam/TeamSetting.css'
 
 const svURL = import.meta.env.VITE_SERVER_URL;
 
@@ -111,14 +112,22 @@ const TeamSetting = () => {
         <>
             <div style={{ width: '100%' }}>
 
-                <Box>
-                    {/* <h1>팀원 초대하기</h1> */}
+               <div className="teamsetting-head">
+                <h2>멤버 관리하기</h2>
+                <Box className="box">
                     <Button content='초대 링크 생성' bgcolor="#00C4BB" onClick={handleSendInvitation} />
                 </Box>
-                <div >
-                    <h2>멤버 관리하기</h2>
+                </div>
+
+                {/* <Box sx={{ textAlign: 'right' }}>
+                    <h1>팀원 초대하기</h1>
+                    <Button content='초대 링크 생성' bgcolor="#00C4BB" onClick={handleSendInvitation} />
+                </Box> */}
+                <div className="centered"><br/>
                     <TeamTable rows={teams} setRows={setTeams} studioId={selectedStudioId} handleMenuClick={handleMenuClick} />
                 </div>
+
+       
                 <Modal
                     open={isModalOpen}
                     onClose={handleCloseModal}
