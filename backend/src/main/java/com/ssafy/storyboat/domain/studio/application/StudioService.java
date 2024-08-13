@@ -178,9 +178,9 @@ public class StudioService {
      * @param role
      */
     @StudioOwnerAuthorization
-    public void updateMemberRole(Long studioId, Long userId, Long memberId, Role role) {
+    public void updateMemberRole(Long studioId, Long userId, Long memberId, String role) {
         // 1. ROLE 조회 (ROLE_OWNER or ROLE_VIEWER or ROLE_MEMBER)
-        if (!(Role.ROLE_OWNER.equals(role) || Role.ROLE_MEMBER.equals(role) || Role.ROLE_VIEWER.equals(role))) {
+        if (!("ROLE_OWNER".equals(role) || "ROLE_MEMBER".equals(role) || "ROLE_VIEWER".equals(role))) {
             throw new ForbiddenException("설정할 수 없는 권한: " + role);
         }
 
@@ -188,7 +188,16 @@ public class StudioService {
         StudioUser studioUser = studioUserRepository.findByStudio_StudioIdAndUser_UserId(studioId, memberId)
                 .orElseThrow(() -> new ResourceNotFoundException("해당 유저 Studio 에 존재하지 않음"));
 
-        studioUser.updateRole(role);
+        Role role1;
+        if (role.equals("ROLE_OWNER")) {
+            role1 = Role.ROLE_OWNER;
+        } else if (role.equals("ROLE_MEMBER")) {
+            role1 = Role.ROLE_MEMBER;
+        } else {
+            role1 = Role.ROLE_VIEWER;
+        }
+
+        studioUser.updateRole(role1);
         studioUserRepository.save(studioUser);
     }
 
