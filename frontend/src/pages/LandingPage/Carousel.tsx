@@ -115,7 +115,8 @@ const Carousel: React.FC = () => {
           >
             <CardHeader
               avatar={
-                <Avatar sx={{ bgcolor: '#1976d2' }} aria-label="slide">
+                <Avatar sx={{ bgcolor: '#2b7eff' }} aria-label="slide">
+                {/* <Avatar sx={{ bgcolor: 'rgb(255,0,0)' }} aria-label="slide"> */}
                   {slide.title.charAt(0)}
                 </Avatar>
               }

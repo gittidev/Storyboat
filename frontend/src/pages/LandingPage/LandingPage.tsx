@@ -135,7 +135,9 @@ const LandingPage: React.FC = () => {
       <div ref={el => (sectionRefs.current[9] = el)}>
         <Faq />
       </div>
-      <Footer />
+      <div ref={el => (sectionRefs.current[10] = el)}>
+        <Footer />
+      </div>
       <ButtonContainer>
         <CustomButton onClick={scrollToNextSection}>
           <KeyboardDoubleArrowDownIcon />

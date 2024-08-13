@@ -28,15 +28,15 @@ const Lanmid: React.FC = () => {
         alignItems: 'center',
         justifyContent: 'center',
         '.blue': {
-          color: 'rgb(15,123,241)',
+          color: 'rgb(43,126,255);',  
         },
       }}
       className="background-wrapper"
     >
-      <div className="container">
-        <h2 className="heading"><span className='blue'>AI를 활용한 그림그리기, 글쓰기 기능</span>까지 <br />함께 소설을 작성하고 싶은 당신을 위한 최고의 서비스</h2>
-        {/* <br />
-        <p className="subheading">동료 작가들과 협력하여 <br />보다 편리하게 멋진 원고를 작성해보세요 😊</p> */}
+      <div className="container-lan">
+        <h2 className="heading-lan"><span className='blue'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AI를 활용한 그림그리기, 글쓰기 기능</span>까지</h2>
+        <h2>함께 소설을 작성하고 싶은 당신을 위한 최고의 서비스</h2>
+        {/*         <p className="subheading">동료 작가들과 협력하여 <br />보다 편리하게 멋진 원고를 작성해보세요 😊</p> */}
       </div>
     </Box>
   );

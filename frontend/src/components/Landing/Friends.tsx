@@ -69,7 +69,7 @@ const Friends: React.FC = () => {
             <br/>
             <br/>
             <h2>당신이 원하던 소설 제작 사이트</h2>
-            <h2>동료들과 함께 <b style={{ color: 'rgb(10,120,241)' }}>멋진 스토리</b>를 작성해보세요</h2>
+            <h2>동료들과 함께 <b style={{ color: 'rgb(43,126,255)' }}>멋진 스토리</b>를 작성해보세요</h2>
 
             <div className="my-image1">
               <img src={team} alt="team" style={{ width: 'auto', height: 'auto' }} />

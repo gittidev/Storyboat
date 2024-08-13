@@ -21,10 +21,10 @@ const MidMenu: React.FC = () => {
 
     // Define inline styles for each color
     const labelStyles = {
-        red: { color: 'blue' },
-        orange: { color: 'green' },
-        green: { color:'orange' },
-        blue: { color:'red' }
+        red: { color: 'red' },
+        orange: { color: 'orange' },
+        green: { color:'green' },
+        blue: { color:'blue' }
     };
 
     return (

@@ -1,9 +1,13 @@
 /* Lanstory.css */
-.mid {
+.mid-lanstory2 {
   height: 100vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   overflow: hidden;
+}
+
+.midLanstory {
+  margin-top: 10%;
 }
