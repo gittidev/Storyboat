@@ -306,7 +306,7 @@ const AIPaintingPage: React.FC = () => {
 
           <div className='togg'>
             <div>
-              <hr /><br/>
+              <hr />
               <h4
                 style={{
                   fontSize: '18px',
@@ -333,7 +333,7 @@ const AIPaintingPage: React.FC = () => {
               )}
             </div><br/>
 
-            <hr /><br/>
+            <hr />
 
             <div>
               <h4
@@ -362,7 +362,7 @@ const AIPaintingPage: React.FC = () => {
               )}
             </div><br/>
 
-            <hr /><br/>
+            <hr />
 
             <div>
               <h4
@@ -391,7 +391,7 @@ const AIPaintingPage: React.FC = () => {
               )}
             </div><br/>
 
-            <hr /><br/>
+            <hr />
 
             <div>
               <h4
@@ -420,7 +420,7 @@ const AIPaintingPage: React.FC = () => {
               )}
             </div><br/>
 
-            <hr /><br/>
+            <hr />
 
             <div>
               <h4
@@ -433,8 +433,8 @@ const AIPaintingPage: React.FC = () => {
                 onClick={() => handleToggle(setCopyright3Visible)}
               >
                 {isCopyright3Visible
-                  ? 'Q5. 각각의 화풍의 원리에 대해 말해주세요? '
-                  : 'Q5. 각각의 화풍의 원리에 대해 말해주세요? ▼'}
+                  ? 'Q5. 각각의 화풍의 원리는 어떻게 되나요? '
+                  : 'Q5. 각각의 화풍의 원리는 어떻게 되나요? ▼'}
               </h4>
               {isCopyright3Visible && (
                 <p style={{ fontSize: '16px', lineHeight: '1.8' }}>
