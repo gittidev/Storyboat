@@ -1,6 +1,6 @@
 import React, { useCallback, useState, useMemo, useEffect } from 'react';
-import { ReactFlow, MiniMap, Controls, Background, Panel } from '@xyflow/react';
-import type { Node, XYPosition } from '@xyflow/react';
+import { ReactFlow, MiniMap, Controls, Background, Panel, Node, Edge } from '@xyflow/react';
+import type { XYPosition, ReactFlowInstance  } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import { useParams } from 'react-router-dom';
 import { saveFlowToIndexedDB } from '../../utils/indexedDBUtils';
@@ -16,10 +16,10 @@ import { styled } from '@mui/system';
 import { Button } from '@mui/material';
 import { useRecoilState } from 'recoil';
 import { isMainNodeModeState } from '../../recoil/atoms/storyAtom';
-import axios from 'axios';
-import { dummyData } from '../Plot/dummyStory';
+// import axios from 'axios';
+// import { dummyData } from '../Plot/dummyStory';
 
-const svURL = import.meta.env.VITE_SERVER_URL;
+// const svURL = import.meta.env.VITE_SERVER_URL;
 const flowKey = 'Story';
 
 const createNodeTypes = (handleDeleteNode: any) => ({
@@ -66,7 +66,7 @@ const StyledButton = styled(Button)`
 
 const MyOverviewFlow: React.FC = () => {
   const { storyId } = useParams<{ storyId: string }>();
-  const [rfInstance, setRfInstance] = useState<any>(null);
+  const [rfInstance, setRfInstance] = useState<ReactFlowInstance | null>(null);
   const roomId = storyId || `default_room_${Date.now()}`;
   const [isMainNodeMode, setIsMainNodeMode] = useRecoilState(isMainNodeModeState);
   const studioId = useRecoilValue(myStudioState)
@@ -94,12 +94,9 @@ const MyOverviewFlow: React.FC = () => {
     yEdgesMapRef,
     ydocRef,
     users,
-    providerRef,
+    // providerRef,
   } = useYjsReactFlowSync(roomId);
 
-  const onInit = useCallback((instance) => {
-    setRfInstance(instance);
-  }, []);
 
   // const loadDummyData = useCallback(() => {
   //   const { nodes: dummyNodes, edges: dummyEdges, viewport } = dummyData.flowData;
@@ -169,28 +166,26 @@ const MyOverviewFlow: React.FC = () => {
         console.log(nodes, edges, viewport);
 
 
-        const updatedNodes = nodes.map(node => ({
-          ...node,
-          draggable: true,  // 노드를 드래그 가능하게 설정
-          dragging: false,  // 초기 상태로 설정
-        }));
+        // const updatedNodes = nodes.map(node => ({
+        //   ...node,
+        //   draggable: true,  // 노드를 드래그 가능하게 설정
+        //   dragging: false,  // 초기 상태로 설정
+        // }));
 
         // 노드와 엣지 상태를 설정
-        setNodes(updatedNodes);
+        // setNodes(updatedNodes);
         setEdges(edges);
         setViewport(viewport || { x: 0, y: 0, zoom: 1 });
 
         // Yjs 문서에 트랜잭션으로 동기화
         ydocRef.current?.transact(() => {
-          // 기존 Yjs 맵을 초기화
           yNodesMapRef.current?.clear();
           yEdgesMapRef.current?.clear();
-
-          // Yjs 맵에 새 데이터를 추가
-          nodes.forEach(node => {
+  
+          nodes.forEach((node: Node) => {
             yNodesMapRef.current?.set(node.id, node);
           });
-          edges.forEach(edge => {
+          edges.forEach((edge: Edge) => {
             yEdgesMapRef.current?.set(edge.id, edge);
           });
         });
@@ -210,20 +205,20 @@ const MyOverviewFlow: React.FC = () => {
     // loadDummyData();
   }, []);
 
-  const updateNodeIds = () => {
-    const updatedNodes = nodes.map(node => {
-      const idNumberMatch = node.id.match(/(\d+)$/); // id에서 숫자 부분만 추출
-      if (idNumberMatch) {
-        const newIdNumber = parseInt(idNumberMatch[0], 10) - 100; // 숫자 부분을 +100
-        const newId = node.id.replace(idNumberMatch[0], newIdNumber); // 새로운 id로 대체
-        return { ...node, id: newId }; // 새 id로 노드 업데이트
-      }
-      return node; // 숫자가 없는 경우는 그대로 유지
-    });
+  // const updateNodeIds = () => {
+  //   const updatedNodes = nodes.map(node => {
+  //     const idNumberMatch = node.id.match(/(\d+)$/); // id에서 숫자 부분만 추출
+  //     if (idNumberMatch) {
+  //       const newIdNumber = parseInt(idNumberMatch[0], 10) - 100; // 숫자 부분을 +100
+  //       const newId = node.id.replace(idNumberMatch[0], newIdNumber); // 새로운 id로 대체
+  //       return { ...node, id: newId }; // 새 id로 노드 업데이트
+  //     }
+  //     return node; // 숫자가 없는 경우는 그대로 유지
+  //   });
 
-    setNodes(updatedNodes); // 업데이트된 노드로 상태 설정
-    console.log(updatedNodes)
-  };
+  //   setNodes(updatedNodes); // 업데이트된 노드로 상태 설정
+  //   console.log(updatedNodes)
+  // };
 
   const deleteAllNodes = useCallback(() => {
     ydocRef.current?.transact(() => {
@@ -253,7 +248,7 @@ const MyOverviewFlow: React.FC = () => {
   const edgeTypes = useMemo(() => createEdgeTypes(handleDeleteEdge), [handleDeleteEdge]);
 
   const addCustomNode = useCallback(() => {
-    updateNodeIds();
+    // updateNodeIds();
     const position: XYPosition = { x: Math.random() * 500, y: Math.random() * 500 };
     const newNode: Node = {
       id: `node_${Date.now()}`,
@@ -378,7 +373,7 @@ const MyOverviewFlow: React.FC = () => {
             <StyledButton className="third" onClick={onTemporarySave}>임시저장</StyledButton>
             <StyledButton className="tertiary" onClick={addCustomNode}>플롯추가</StyledButton>
             <StyledButton className="secondary" onClick={deleteAllNodes}>전체삭제</StyledButton>
-            <button onClick={updateNodeIds}>편집시작</button>
+            {/* <button onClick={updateNodeIds}>편집시작</button> */}
             <StyledButton
               variant="contained"
               color={isMainNodeMode ? "success" : "primary"}

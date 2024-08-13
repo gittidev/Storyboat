@@ -63,7 +63,7 @@ const CustomNode: React.FC<CustomNodeProps> = ({id, data, deleteNode}) => {
     const [label, setLabel] = useState(data.label);
     const [content, setContent] = useState(data.content);
     const [text, setText] = useState(data.text);
-
+    console.log(setText)
     useEffect(() => {
         // data.label이나 data.content가 변경되면 label과 content의 상태를 업데이트
         setLabel(data.label);
