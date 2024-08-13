@@ -180,7 +180,7 @@ const MakingCharacter: React.FC = () => {
           />
         </Box>
       </Box>
-    
+
       <Dialog 
         open={open} 
         onClose={handleClose} 
