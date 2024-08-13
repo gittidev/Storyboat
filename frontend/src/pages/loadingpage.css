@@ -1,3 +1,10 @@
+.loadingpagebody {
+  display: flex;
+  justify-content: center; 
+  align-items: center;    
+  height: 100vh;          
+}
+
 body{
   margin: 0;
   background-color: #ffffff;
@@ -14,6 +21,7 @@ body{
               5px 5px 15px rgba(0, 0, 0, 0.3);
   overflow: hidden;
 }
+
 
 .wave-container {
   position: absolute;
