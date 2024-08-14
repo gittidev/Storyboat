@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useCallback, useState } from 'react';
-import { Box, AppBar, Toolbar, Typography, Button, Tooltip } from '@mui/material';
+import { Box, AppBar, Toolbar, Typography, Button, Tooltip, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
 import SaveIcon from '@mui/icons-material/Save';
 import * as Y from 'yjs';
 import { WebrtcProvider } from 'y-webrtc';
@@ -12,9 +12,8 @@ import axios from 'axios';
 import { useRecoilValue } from 'recoil';
 import { selectedStudioState } from '../../recoil/atoms/studioAtom';
 import { accessTokenState } from '../../recoil/atoms/authAtom';
-import { Select, MenuItem, FormControl, InputLabel } from '@mui/material';
 import { SelectChangeEvent } from '@mui/material';
-import type { TextHistory } from './HistoryDropdown';
+import { TextHistory } from './HistoryDropdown';
 
 Quill.register('modules/cursors', QuillCursors);
 const svURL = import.meta.env.VITE_SERVER_URL;
@@ -33,7 +32,7 @@ const TextEditPage: React.FC = () => {
 
   const [Texthistories, setTextHistories] = useState<TextHistory[]>([])
   const [selectedTextHistory, setSelectedTextHistory] = useState<string | null>(null)
-          
+
   const fetchTextHistories = async () => {
     try {
       const response = await axios.get(`${svURL}/api/studios/${studioId}/stories/${storyId}/text/histories`, {
@@ -57,9 +56,7 @@ const TextEditPage: React.FC = () => {
           'Authorization': `Bearer ${token}`,
         },
       })
-      // console.log(response.data.data)
       const script = JSON.parse(response.data.data);
-      // console.log(script.text)
       if (editorRef.current) {
         editorRef.current.clipboard.dangerouslyPasteHTML(script.text);
       }
@@ -68,6 +65,35 @@ const TextEditPage: React.FC = () => {
     }
   }
 
+  const saveDocument = async () => {
+    if (editorRef.current) {
+      setSaveMessage('Saving...');
+      const content = editorRef.current.getContents().ops[0].insert;
+      const data = {
+        studioId: studioId,
+        storyId: storyId,
+        text: content
+      };
+      try {
+        const response = await axios.put(`${svURL}/api/studios/${studioId}/stories/${storyId}/text`, data, {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+        if (response.status === 200) {
+          fetchTextHistories()
+          setSaveMessage('Document saved successfully!');
+        } else {
+          setSaveMessage('Failed to save document.');
+        }
+      } catch (error) {
+        setSaveMessage('Error saving document.');
+      }
+
+      setTimeout(() => setSaveMessage(null), 3000); // 메시지 3초 후 사라짐
+    }
+  };
 
   const fetchText = useCallback(async () => {
     try {
@@ -82,7 +108,6 @@ const TextEditPage: React.FC = () => {
       if (editorRef.current) {
         editorRef.current.clipboard.dangerouslyPasteHTML(script.text);
       }
-      console.log(script);
     } catch (error) {
       console.error('원고를 가져오지 못하였습니다:', error);
     }
@@ -130,32 +155,7 @@ const TextEditPage: React.FC = () => {
         node.addEventListener('keydown', async (event) => {
           if ((event.ctrlKey || event.metaKey) && event.key === 's') {
             event.preventDefault();
-            setSaveMessage('Saving...');
-            const content = editor.getContents().ops[0].insert;
-            console.log(content);
-            const data = {
-              studioId: studioId,
-              storyId: storyId,
-              text: content
-            };
-            console.log(data)
-            try {
-              const response = await axios.put(`${svURL}/api/studios/${studioId}/stories/${storyId}/text`, data, {
-                headers: {
-                  'Content-Type': 'application/json',
-                  'Authorization': `Bearer ${token}`,
-                },
-              });
-              if (response.status === 200) {
-                setSaveMessage('Document saved successfully!');
-              } else {
-                setSaveMessage('Failed to save document.');
-              }
-            } catch (error) {
-              setSaveMessage('Error saving document.');
-            }
-
-            setTimeout(() => setSaveMessage(null), 3000); // 메시지 3초 후 사라짐
+            await saveDocument(); // Call saveDocument function on Ctrl+S
           }
         });
 
@@ -188,8 +188,6 @@ const TextEditPage: React.FC = () => {
   const handleHistoryChange = (event: SelectChangeEvent<string>) => {
     const selectedTextId = event.target.value as string;
     setSelectedTextHistory(selectedTextId);
-    console.log(selectedTextId)
-    // 선택된 storyId에 따라 다른 동작 수행 가능
     fetTextHistoryData(selectedTextId)
   };
 
@@ -200,8 +198,7 @@ const TextEditPage: React.FC = () => {
           <Typography variant="h6" noWrap>
             공동 소설 작성:
           </Typography>
-        </Toolbar>
-        <FormControl variant="outlined" size="small" style={{ minWidth: 120 }}>
+          <FormControl variant="outlined" size="small" style={{ minWidth: 120 }}>
             <InputLabel id="history-select-label">History</InputLabel>
             <Select
               labelId="history-select-label"
@@ -211,13 +208,12 @@ const TextEditPage: React.FC = () => {
             >
               {Texthistories.map((textHistory) => (
                 <MenuItem key={textHistory.textId} value={textHistory.textId}>
-                  {/* {history.storyId} */}
-                  {textHistory.textId}
-                  {/* {`${history.dateTime} - ${history.penName}`} */}
+                  {`${textHistory.dateTime} - ${textHistory.penName}`}
                 </MenuItem>
               ))}
             </Select>
           </FormControl>
+        </Toolbar>
       </AppBar>
       <Box sx={{ padding: 2, display: 'flex', flexDirection: 'column', height: '100%' }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 2 }}>
@@ -227,7 +223,7 @@ const TextEditPage: React.FC = () => {
               variant="contained"
               color="primary"
               startIcon={<SaveIcon />}
-              onClick={() => document.dispatchEvent(new KeyboardEvent('keydown', { key: 's', ctrlKey: true }))}
+              onClick={saveDocument} // 버튼 클릭 시 saveDocument 함수 호출
             >
               Save
             </Button>
