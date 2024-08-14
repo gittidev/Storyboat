@@ -29,6 +29,7 @@ import LoginPage from './pages/LoginPage';
 // 공동 작업 영역 렌더링
 import MyOverviewFlow from './components/Mystory/MyOverviewFlow';
 import StudioOverviewFlow from './components/StudioStoryBox/StudioOverviewFlow';
+import TextEditPage from './components/Plot/TextEditPage';
 // 로그인 상태관리
 import ProtectedRoute from './ProtecedRoute';
 // const svURL = import.meta.env.VITE_SERVER_URL;
@@ -142,6 +143,7 @@ const App: React.FC = () => {
               <Route path="myidea" element={<MyIdeaPage />} />
               <Route path="storybox" element={<StoryBoxPage />} />
               <Route path="storybox/:storyId" element={<StudioOverviewFlow />} />
+              <Route path="storybox/:storyId/edit" element={<TextEditPage />} />
               <Route path="storyedit" element={<StoryEditPage />} />
               <Route path="charbox" element={<CharBoxPage />} />
               <Route path="ideabox" element={<IdeaBoxPage />} />

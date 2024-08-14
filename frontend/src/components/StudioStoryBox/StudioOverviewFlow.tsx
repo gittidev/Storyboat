@@ -2,7 +2,7 @@ import React, { useCallback, useState, useMemo, useEffect } from 'react';
 import { ReactFlow, MiniMap, Controls, Background, Panel, Node, Edge } from '@xyflow/react';
 import type { XYPosition, ReactFlowInstance } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate} from 'react-router-dom';
 import { saveFlowToIndexedDB } from '../../utils/indexedDBUtils';
 import { accessTokenState } from '../../recoil/atoms/authAtom';
 import { useRecoilValue } from 'recoil';
@@ -69,6 +69,7 @@ const StyledButton = styled(Button)`
 `;
 
 const StudioOverviewFlow: React.FC = () => {
+
   const { storyId } = useParams<{ storyId: string }>();
   const [rfInstance, setRfInstance] = useState<ReactFlowInstance | null>(null);
   const roomId = storyId || `default_room_${Date.now()}`;
@@ -77,6 +78,7 @@ const StudioOverviewFlow: React.FC = () => {
 
   const studioId = useRecoilValue(selectedStudioState)
   const token = useRecoilValue(accessTokenState)
+  const navigate = useNavigate();
 
   const {
     nodes,
@@ -395,6 +397,11 @@ const StudioOverviewFlow: React.FC = () => {
   }, [setIsMainNodeMode]);
 
 
+  const handleEditButtonClick = () => {
+    // storyId와 함께 edit 페이지로 이동합니다
+    navigate(`/storyboat/storybox/${storyId}/edit`);
+  };
+
   return (
     <div style={{ height: '100vh', width: '100%' }}>
       <ReactFlow
@@ -442,7 +449,7 @@ const StudioOverviewFlow: React.FC = () => {
             >
               {isMainNodeMode ? "메인 노드 선택 모드 켜짐" : "메인 노드 선택 모드 꺼짐"}
             </StyledButton>
-
+            <StyledButton className="primary" onClick={handleEditButtonClick}>공동 집필하기</StyledButton>
             <div className="user-list">
             <UserContainer>
               {users.map((user) => (
@@ -454,9 +461,7 @@ const StudioOverviewFlow: React.FC = () => {
                   <PersonIcon />
                 </IconButton>
               </IconWrapper>
-                // <div key={user.clientId} className="user-list-item" style={{ color: user.cursorColor }}>
-                //   {user.name}
-                // </div>
+
               ))}
             </UserContainer>
             </div>

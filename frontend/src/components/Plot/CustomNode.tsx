@@ -2,7 +2,7 @@ import React, {memo, useState, useEffect} from 'react';
 import {Handle, Position, NodeResizeControl, useReactFlow} from '@xyflow/react';
 import {Button, Card, CardContent, CardHeader, CardActions, TextField} from '@mui/material';
 import {styled} from '@mui/system';
-import TextEditForm from './TextEditForm';
+
 import {ResizeIcon} from '../../assets/asset';
 import {useYjsReactFlowSync} from '../../hooks/useYjsReactFlowSync';
 import {useParams} from 'react-router-dom';
@@ -59,7 +59,7 @@ const CustomNode: React.FC<CustomNodeProps> = ({id, data, deleteNode}) => {
     const {setNodes} = useReactFlow();
 
     const [isEditingPlot, setEditingPlot] = useState(false);
-    const [isTextEditDialogOpen, setTextEditDialogOpen] = useState(false);
+    const [_, setTextEditDialogOpen] = useState(false);
     const [label, setLabel] = useState(data.label);
     const [content, setContent] = useState(data.content);
     const [text, setText] = useState(data.text);
@@ -103,9 +103,9 @@ const CustomNode: React.FC<CustomNodeProps> = ({id, data, deleteNode}) => {
         setTextEditDialogOpen(true);
     };
 
-    const handleTextDialogClose = () => {
-        setTextEditDialogOpen(false);
-    };
+    // const handleTextDialogClose = () => {
+    //     setTextEditDialogOpen(false);
+    // };
 
     // const handleTextSave = (newText: string) => {
     //   setText(newText);
@@ -218,13 +218,6 @@ const CustomNode: React.FC<CustomNodeProps> = ({id, data, deleteNode}) => {
             <Handle type="target" position={Position.Left} style={{...handleStyle, left: '-8px'}}/>
             <Handle type="source" position={Position.Right} style={{...handleStyle, right: '-8px'}}/>
 
-            <TextEditForm
-                isOpen={isTextEditDialogOpen}
-                onClose={handleTextDialogClose}
-                // onSave={handleTextSave(text)}
-                initialData={{text: text, label: label, content: content, isMain: isMain}}
-                nodeId={id}
-            />
         </>
     );
 };
