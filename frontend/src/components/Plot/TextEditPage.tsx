@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useCallback, useState } from 'react';
-import { Drawer, Box, AppBar, Toolbar, Typography, IconButton, Button, Tooltip } from '@mui/material';
+import { Box, AppBar, Toolbar, Typography, Button, Tooltip } from '@mui/material';
 import SaveIcon from '@mui/icons-material/Save';
-import CloseIcon from '@mui/icons-material/Close';
 import * as Y from 'yjs';
 import { WebrtcProvider } from 'y-webrtc';
 import { QuillBinding } from 'y-quill';
@@ -11,22 +10,14 @@ import { useParams } from 'react-router-dom';
 import 'quill/dist/quill.snow.css';
 import axios from 'axios';
 
-interface TextEditFormProps {
-  isOpen: boolean;
-  onClose: () => void;
-  nodeId: string;
-  initialData: { text: string; label: string; content: string, isMain?: boolean };
-}
-
 Quill.register('modules/cursors', QuillCursors);
 
-const TextEditForm: React.FC<TextEditFormProps> = ({ isOpen, onClose, nodeId, initialData }) => {
-  const { storyId } = useParams<{ storyId: string }>();
-  const roomId = nodeId + storyId;
+const TextEditPage: React.FC = () => {
+  const { storyId } = useParams();  // useParams를 사용하여 storyId를 추출
+  const roomId = storyId?.toString() + "edit"
   const providerRef = useRef<WebrtcProvider | null>(null);
   const ydocRef = useRef<Y.Doc | null>(null);
   const [saveMessage, setSaveMessage] = useState<string | null>(null);
-  const [drawerWidth] = useState(900);
   const isComposingRef = useRef(false); // IME 입력 상태를 추적하기 위한 Ref
 
   const setEditorRef = useCallback(
@@ -35,6 +26,7 @@ const TextEditForm: React.FC<TextEditFormProps> = ({ isOpen, onClose, nodeId, in
         const ydoc = new Y.Doc();
         ydocRef.current = ydoc;
 
+        // 추출한 storyId를 WebrtcProvider에 roomId로 사용
         const provider = new WebrtcProvider(roomId, ydoc, {
           signaling: ['wss://i11c107.p.ssafy.io/signal'],
         });
@@ -76,8 +68,7 @@ const TextEditForm: React.FC<TextEditFormProps> = ({ isOpen, onClose, nodeId, in
             try {
               const content = editor.getContents();
               const response = await axios.post('/api/save', {
-                storyId,
-                nodeId,
+                storyId,  // 저장 시에도 storyId 사용
                 content,
               });
               if (response.status === 200) {
@@ -100,7 +91,7 @@ const TextEditForm: React.FC<TextEditFormProps> = ({ isOpen, onClose, nodeId, in
         });
       }
     },
-    [roomId, storyId, nodeId]
+    [storyId] // storyId가 변경될 때만 useCallback이 다시 실행되도록 의존성 배열에 추가
   );
 
   useEffect(() => {
@@ -117,20 +108,12 @@ const TextEditForm: React.FC<TextEditFormProps> = ({ isOpen, onClose, nodeId, in
   }, []);
 
   return (
-    <Drawer
-      anchor="right"
-      open={isOpen}
-      onClose={onClose}
-      sx={{ '& .MuiDrawer-paper': { width: drawerWidth, padding: 2 } }}
-    >
+    <>
       <AppBar position="relative" color="transparent" elevation={0}>
         <Toolbar sx={{ justifyContent: 'space-between' }}>
           <Typography variant="h6" noWrap>
-            공동 소설 작성: {initialData.label}
+            공동 소설 작성: 
           </Typography>
-          <IconButton onClick={onClose} color="inherit">
-            <CloseIcon />
-          </IconButton>
         </Toolbar>
       </AppBar>
       <Box sx={{ padding: 2, display: 'flex', flexDirection: 'column', height: '100%' }}>
@@ -142,7 +125,7 @@ const TextEditForm: React.FC<TextEditFormProps> = ({ isOpen, onClose, nodeId, in
               color="primary"
               startIcon={<SaveIcon />}
               onClick={() => document.dispatchEvent(new KeyboardEvent('keydown', { key: 's', ctrlKey: true }))}
-            >
+              >
               Save
             </Button>
           </Tooltip>
@@ -157,10 +140,11 @@ const TextEditForm: React.FC<TextEditFormProps> = ({ isOpen, onClose, nodeId, in
             backgroundColor: '#f9f9f9',
             overflowY: 'auto',
           }}
-        />
+          />
       </Box>
-    </Drawer>
+
+    </>
   );
 };
 
-export default TextEditForm;
+export default TextEditPage;
