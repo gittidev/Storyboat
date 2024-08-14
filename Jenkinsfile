@@ -9,6 +9,10 @@ pipeline {
         FRONTEND_IMAGE = 'siokim002/jenkins_frontend'
     }
 
+    options {
+        buildDiscarder(logRotator(numToKeepStr: '3'))
+    }
+
     stages {
         stage('Start Notification') {
             steps {
@@ -81,6 +85,11 @@ pipeline {
         failure {
             script {
                 sendNotification('danger', '빌드 실패')
+            }
+        }
+        always {
+            script {
+                cleanWs()
             }
         }
     }
