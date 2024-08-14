@@ -59,4 +59,8 @@ public class User {
         this.profile = profile;
         profile.setUser(this);
     }
+
+    public void setIsDeleted(boolean isDeleted) {
+        this.isDeleted = isDeleted;
+    }
 }
