@@ -62,20 +62,25 @@ const CharBoxPage: React.FC = () => {
     };
 
     const handleUpdate = async () => {
-        try {
-            const response = await axios.get<{ message: string, data: Character[] }>(
-                `${svURL}/api/studios/${SelectedStudioId}/characters/${selectedCharacter.id}/${myStudioId}`,
-                {
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                    },
-                }
-            );
-            setCharacters(response.data.data);
-        } catch (error) {
-            console.error('Error fetching characters:', error);
+        if (selectedCharacter) {
+            try {
+                const response = await axios.get<{ message: string, data: Character[] }>(
+                    `${svURL}/api/studios/${SelectedStudioId}/characters/${selectedCharacter.id}/${SelectedStudioId}`,
+                    {
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                        },
+                    }
+                );
+                setCharacters(response.data.data);
+            } catch (error) {
+                console.error('Error fetching characters:', error);
+            }
+        } else {
+            console.error('No character selected');
         }
     };
+    
 
     const handleDelete = async () => {
         if (selectedCharacter) {
