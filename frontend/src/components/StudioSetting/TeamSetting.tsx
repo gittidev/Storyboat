@@ -22,9 +22,27 @@ const TeamSetting = () => {
     const [teams, setTeams] = useRecoilState(teamState)
     const [invitationCode, setInvitationCode] = useState<string | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [role, setRole] = useState<string>(''); // 사용자 역할 상태
+    const [isOwner, setIsOwner] = useState<boolean>(false); // 오너 여부 상태
 
     useEffect(() => {
         fetchteams(accessToken, selectedStudioId, setTeams)
+        const fetchStudioDetails = async () => {
+            try {
+                const roleResponse = await axios.get(`${svURL}/api/studios/${selectedStudioId}/my`, {
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`,
+                        'Content-Type': 'application/json',
+                    },
+                });
+                const userRole = roleResponse.data.data;
+                setRole(userRole);
+                setIsOwner(userRole === 'ROLE_OWNER');
+            } catch (error) {
+                console.error('스튜디오 정보를 불러오는 데 실패했습니다:', error);
+            }
+        };
+        fetchStudioDetails();
     }, [selectedStudioId, setTeams, accessToken])
 
     // const studioId = useRecoilState(selectedStudioState)
@@ -79,7 +97,7 @@ const TeamSetting = () => {
             } else {
                 const postResponse = await axios.post(
                     `${svURL}/api/invitations/code/${selectedStudioId}`,
-                    
+
                     {
                         headers: {
                             'Authorization': `Bearer ${accessToken}`,
@@ -112,22 +130,23 @@ const TeamSetting = () => {
         <>
             <div style={{ width: '100%' }}>
 
-               <div className="teamsetting-head">
-                <h2>멤버 관리하기</h2>
-                <Box className="box">
-                    <Button content='초대 링크 생성' bgcolor="#00C4BB" onClick={handleSendInvitation} />
-                </Box>
+                <div className="teamsetting-head">
+                    <h2>멤버 관리하기</h2>
+                    {isOwner &&
+                    <Box className="box">
+                         <Button content='초대 링크 생성' bgcolor="#00C4BB" onClick={handleSendInvitation} />
+                    </Box>}
                 </div>
 
                 {/* <Box sx={{ textAlign: 'right' }}>
                     <h1>팀원 초대하기</h1>
                     <Button content='초대 링크 생성' bgcolor="#00C4BB" onClick={handleSendInvitation} />
                 </Box> */}
-                <div className="centered"><br/>
+                <div className="centered"><br />
                     <TeamTable rows={teams} setRows={setTeams} studioId={selectedStudioId} handleMenuClick={handleMenuClick} />
                 </div>
 
-       
+
                 <Modal
                     open={isModalOpen}
                     onClose={handleCloseModal}
@@ -135,8 +154,8 @@ const TeamSetting = () => {
                     aria-describedby="modal-modal-description"
                 >
                     <Box sx={{ ...modalStyle }}>
-                        <IconButton 
-                            onClick={handleCloseModal} 
+                        <IconButton
+                            onClick={handleCloseModal}
                             sx={{ position: 'absolute', right: 8, top: 8 }}>
                             <CloseIcon />
                         </IconButton>
@@ -144,8 +163,8 @@ const TeamSetting = () => {
                             초대 코드
                         </Typography>
                         <Box sx={{ display: 'flex', alignItems: 'center', mt: 2 }}>
-                            <Typography 
-                                id="modal-modal-description" 
+                            <Typography
+                                id="modal-modal-description"
                                 sx={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', mr: 1 }}
                             >
                                 {invitationCode}
