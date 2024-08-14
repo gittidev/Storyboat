@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
@@ -38,9 +39,10 @@ const StudioSelected: React.FC<StudioSelectedProps> = ({ listopen }) => {
   const [selectedStudioId, setSelectedStudio] = useRecoilState(selectedStudioState);
   const studios = useRecoilValue(studioListState);
   const [open, setOpen] = React.useState(false);
-
+  const navigate = useNavigate();
   const handleChange = (event: SelectChangeEvent<string | number>) => {
     setSelectedStudio(event.target.value);
+    navigate('/storyboat/storybox')
   };
 
   useEffect(() => {
