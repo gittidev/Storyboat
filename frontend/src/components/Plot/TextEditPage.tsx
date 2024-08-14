@@ -14,7 +14,7 @@ import { selectedStudioState } from '../../recoil/atoms/studioAtom';
 import { accessTokenState } from '../../recoil/atoms/authAtom';
 import { Select, MenuItem, FormControl, InputLabel } from '@mui/material';
 import { SelectChangeEvent } from '@mui/material';
-import { TextHistory } from './HistoryDropdown';
+import type { TextHistory } from './HistoryDropdown';
 
 Quill.register('modules/cursors', QuillCursors);
 const svURL = import.meta.env.VITE_SERVER_URL;
