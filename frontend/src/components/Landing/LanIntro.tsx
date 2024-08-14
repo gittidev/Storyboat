@@ -4,7 +4,7 @@ import './LanIntro.css';
 import backgroundImage from '../../images/back2.gif'; // 이미지 파일을 import
 
 const LanIntro: React.FC = () => {
-  const [boxHeight, setBoxHeight] = useState('43vh'); // 초기 높이를 43vh로 설정
+  const [boxHeight, setBoxHeight] = useState('40vh'); // 초기 높이를 43vh로 설정
 
   const updateHeight = () => {
     const newHeight = window.innerHeight * 0.95; // 사용자가 보는 화면의 43% 계산
@@ -32,6 +32,7 @@ const LanIntro: React.FC = () => {
         alignItems: 'center',
         justifyContent: 'center',
         zIndex: -1,
+        clipPath: 'inset(0 0 10% 0)', // 이미지의 하단 20%를 잘라냄
       }}
       className="background-wrapper"
     >
