@@ -1,3 +1,5 @@
+// LanIntro.tsx
+
 import React, { useEffect, useState } from 'react';
 import { Box } from '@mui/material';
 import './LanIntro.css';
@@ -36,7 +38,7 @@ const LanIntro: React.FC = () => {
       }}
       className="background-wrapper"
     >
-      <div className="container">
+      <div className="container-lanintro">
         <h1 className="heading">웹소설 작가를 위한 <br />종합 창작 플랫폼 <span >"StoryBoat"</span></h1>
         <br />
         <p className="subheading">동료 작가들과 협력하여 <br />보다 편리하게 멋진 원고를 작성해보세요 😊</p>

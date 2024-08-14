@@ -86,6 +86,7 @@ const StudioSetting: React.FC = () => {
           <Box sx={{ marginBottom: '1rem' }}>
             <Typography variant="h6">스튜디오 설정</Typography>
             <Box sx={{ marginBottom: '1rem' }}>
+              <br/>
               <label>
                 Studio 이름
                 <input
@@ -111,9 +112,14 @@ const StudioSetting: React.FC = () => {
                 />
               </label>
             </Box>
+            <div style={{ textAlign: 'right' }}>
             <CustomButton type="submit" content="저장하기" bgcolor='lightgreen' hoverBgColor='green'/>
+            </div>
+          
           </Box>
+
           {isOwner && <StudioDelete />} {/* 오너일 때만 삭제 버튼 보이기 */}
+          
         </form>
       ) : (
         <Box>
