@@ -17,12 +17,12 @@ import axios from 'axios';
 import { Character } from '../types/Chartype'; 
 import { accessTokenState } from '../recoil/atoms/authAtom';
 
-import { myStudioState } from '../recoil/atoms/studioAtom';
+// import { myStudioState } from '../recoil/atoms/studioAtom';
 // 나중에 이걸로 바꿔야 함
-// import { selectedStudioState} from '../recoil/atoms/studioAtom';
+import { selectedStudioState} from '../recoil/atoms/studioAtom';
 
 import EditCharacterteam from './MyChar/EditCharacterteam'; 
-
+import api from '../apis/api';
 
 
 // import img11 from '../images/img11.jpg';
@@ -56,7 +56,8 @@ const CharBoxPage: React.FC = () => {
     const [editMode, setEditMode] = useState(false);
 
     const token = useRecoilValue(accessTokenState);
-    const myStudioId = useRecoilValue(myStudioState);
+    const myStudioId = useRecoilValue(selectedStudioState);
+    console.log(myStudioId)
 
     // selectedStudioState
     
@@ -180,8 +181,8 @@ const CharBoxPage: React.FC = () => {
         // 캐릭터 불러오기
         const loadCharacters = async () => {
             try {
-                const response = await axios.get<{ message: string, data: Character[] }>(
-                    `${svURL}/api/studios/${myStudioId}/characters`,
+                const response = await api.get<{ message: string, data: Character[] }>(
+                    `/api/studios/${myStudioId}/characters`,
                     {
                         headers: {
                             'Authorization': `Bearer ${token}`,

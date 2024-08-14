@@ -1,12 +1,19 @@
-.container {
+/* LanIntro.css */
+
+.container-lanintro {
   text-align: center;
   color: white;
-  /* color: black; */
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px); 
+  border-radius: 10px; 
+  padding: 20px; 
+  width: 45%; 
+  max-width: 1200px; 
+  margin: 0 auto; 
 }
 
 
 .subheading {
-  /* color: #555; */
   color: white;
 }
 

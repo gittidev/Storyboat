@@ -23,7 +23,7 @@ const plans: Plan[] = [
     ]
   },
   {
-    name: "프리미엄 요금제",
+    name: "프리미엄",
     price: "15,000원/월",
     storage: "50GB",
     duration: "1년",
@@ -37,7 +37,7 @@ const plans: Plan[] = [
     ]
   },
   {
-    name: "프로페셔널 요금제",
+    name: "프로페셔널",
     price: "30,000원/월",
     storage: "무제한",
     duration: "5년",

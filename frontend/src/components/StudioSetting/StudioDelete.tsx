@@ -34,9 +34,11 @@ const StudioDelete = () => {
     return (
         <>
             <div>
-                <h3>
+                {/* <h4 style={{ fontWeight: 'normal'  }}>
                     Studio 삭제하기
-                </h3>
+                </h4> */}
+                <Typography variant="h6">스튜디오 삭제하기</Typography>
+                <br/>
 
                 <Typography variant="body2" component="div">
                     Studio 삭제시 기존에 작성한 모든 플롯, 원고, 작품, 캐릭터 베이스가 삭제됩니다.
@@ -48,9 +50,12 @@ const StudioDelete = () => {
 
 
             </div>
+            <div style={{ textAlign: 'right' }}>
+
             <CustomButton content="삭제하기" bgcolor="orange" hoverBgColor="red" onClick={handleDelete}>
 
             </CustomButton>
+            </div>
         </>
 
     )
