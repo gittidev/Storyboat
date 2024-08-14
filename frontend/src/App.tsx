@@ -33,7 +33,7 @@ import TextEditPage from './components/Plot/TextEditPage';
 // 로그인 상태관리
 import ProtectedRoute from './ProtecedRoute';
 // const svURL = import.meta.env.VITE_SERVER_URL;
-
+import MyTextEditPage from './components/Mystory/MyTextEditPage'
 import { nameState } from './recoil/atoms/userAtom';
 
 const App: React.FC = () => {
@@ -144,6 +144,7 @@ const App: React.FC = () => {
               <Route path="storybox" element={<StoryBoxPage />} />
               <Route path="storybox/:storyId" element={<StudioOverviewFlow />} />
               <Route path="storybox/:storyId/edit" element={<TextEditPage />} />
+              <Route path="mystory/:storyId/edit" element={<MyTextEditPage />} />
               <Route path="storyedit" element={<StoryEditPage />} />
               <Route path="charbox" element={<CharBoxPage />} />
               <Route path="ideabox" element={<IdeaBoxPage />} />
