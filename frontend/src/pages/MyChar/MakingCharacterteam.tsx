@@ -1,159 +1,105 @@
-import React, { useState } from 'react';
-import { Box, Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle, Typography } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import {
+  Box, Button, Dialog, DialogActions, DialogContent, DialogTitle,
+  FormControl, InputLabel, Select, MenuItem
+} from '@mui/material';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import { accessTokenState } from '../../recoil/atoms/authAtom';
-import { myStudioState } from '../../recoil/atoms/studioAtom';
+import { myStudioState, selectedStudioState } from '../../recoil/atoms/studioAtom';
 import SubTopBar from '../../components/Commons/SubTopBar';
 import CustomButton from '../../components/Commons/CustomButton';
-import { styled } from '@mui/system';
+import { Character } from '../../types/Chartype';
+import { SelectChangeEvent } from '@mui/material';
 
 const svURL = import.meta.env.VITE_SERVER_URL;
 
-const MakingCharacter: React.FC = () => {
+interface MakingCharacterteamProps {
+  onCharacterCreated: () => void;  // Callback function called after character creation or update
+}
+
+const MakingCharacterteam: React.FC<MakingCharacterteamProps> = ({ onCharacterCreated }) => {
   const navigate = useNavigate();
   const token = useRecoilValue(accessTokenState);
   const myStudioId = useRecoilValue(myStudioState);
-
-  const [characterName, setCharacterName] = useState<string>('');
-  const [characterTraits, setCharacterTraits] = useState<string>('');
-  const [selectedImage, setSelectedImage] = useState<File | null>(null);
-  const [tags, setTags] = useState<string[]>(['귀여운', '상냥한']);
+  const selectedStudioId = useRecoilValue(selectedStudioState);
+  const [bringmyCharacterId, setBringmyCharacterId] = useState<string>('');
+  const [myStudioCharacters, setMyStudioCharacters] = useState<Character[]>([]);
+  // const [selectedStudioCharacters, setSelectedStudioCharacters] = useState<Character[]>([]);
   const [open, setOpen] = useState<boolean>(false);
 
-  const TagsInput = styled('div')`
-  display: flex;
-  align-items: flex-start;
-  flex-wrap: wrap;
-  min-height: 48px;
-  width: 100%; /* Set width to 80% of the viewport width */
-  max-width: 2000px; /* Optional: Set a maximum width to avoid it becoming too large */
-  padding: 0 8px;
-  border: 1px solid rgb(1, 186, 138);
-  border-radius: 6px;
+  // Fetch characters from selected studio
+  // Fetch characters from selected studio
+useEffect(() => {
+  const fetchSelectedStudioCharacters = async () => {
+    try {
+      await axios.get<{ message: string, data: Character[] }>(
+        `${svURL}/api/studios/${selectedStudioId}/characters`,
+        { headers: { 'Authorization': `Bearer ${token}` } }
+      );
+      // setSelectedStudioCharacters(response.data.data); // 필요시 주석 해제
+    } catch (error) {
+      console.error('Error fetching characters from selected studio:', error);
+    }
+  };
 
-  > ul {
-    display: flex;
-    flex-wrap: wrap;
-    padding: 0;
-    margin: 8px 0 0 0;
+  if (selectedStudioId) {
+    fetchSelectedStudioCharacters();
+  }
+}, [token, selectedStudioId]);
 
-    > .tag {
-      width: auto;
-      height: 32px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: rgb(1, 186, 138);
-      padding: 0 8px;
-      font-size: 14px;
-      list-style: none;
-      border-radius: 6px;
-      margin: 0 8px 8px 0;
-      background: rgb(242,243,244);
-      border-radius: 15px;
-
-      > .tag-close-icon {
-        display: block;
-        width: 16px;
-        height: 16px;
-        line-height: 16px;
-        text-align: center;
-        font-size: 14px;
-        margin-left: 8px;
-        color: rgb(1, 186, 138);
-        border-radius: 50%;
-        background: #fff;
-        cursor: pointer;
+  // Fetch characters from my studio
+  useEffect(() => {
+    const fetchMyStudioCharacters = async () => {
+      try {
+        const response = await axios.get<{ message: string, data: Character[] }>(
+          `${svURL}/api/studios/${myStudioId}/characters`,
+          { headers: { 'Authorization': `Bearer ${token}` } }
+        );
+        setMyStudioCharacters(response.data.data);
+      } catch (error) {
+        console.error('Error fetching characters from my studio:', error);
       }
+    };
+
+    if (myStudioId) {
+      fetchMyStudioCharacters();
     }
-  }
+  }, [token, myStudioId]);
 
-  > input {
-    flex: 1;
-    border: none;
-    height: 46px;
-    font-size: 14px;
-    padding: 4px 0 0 12px; /* Adjust padding-left here */
-    :focus {
-      outline: transparent;
-    }
-  }
-
-  &:focus-within {
-    border: 1px solid rgb(1, 186, 138);
-  }
-`;
-
-  const handleChangeName = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setCharacterName(event.target.value);
-  };
-
-  const handleChangeTraits = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setCharacterTraits(event.target.value);
-  };
-
-  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files && event.target.files[0]) {
-      setSelectedImage(event.target.files[0]);
-    }
-  };
-
-  const handleOpen = () => {
-    setOpen(true);
-  };
-
+  // Open and close dialog functions
+  const handleOpen = () => setOpen(true);
   const handleClose = () => {
     setOpen(false);
+    setBringmyCharacterId('');
   };
 
-  const handleCreateCharacter = async () => {
-    if (!characterName || !characterTraits || !selectedImage) {
-      alert('모든 필드를 채워주세요.');
+  // Handle character export
+  const handleExportCharacter = async () => {
+    if (!bringmyCharacterId) {
+      alert('캐릭터를 선택하세요.');
       return;
     }
 
-    // Convert tags array to a comma-separated string
-    const tagsString = tags.join(', ');
-
-    const formData = new FormData();
-    formData.append('name', characterName);
-    formData.append('description', characterTraits);
-    formData.append('file', selectedImage);
-    formData.append('tags', tagsString); 
-
     try {
-      const response = await axios.post(
-        `${svURL}/api/studios/${myStudioId}/characters`,
-        formData,
-        {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'multipart/form-data',
-          },
-        }
+      await axios.post(
+        `${svURL}/api/studios/${myStudioId}/characters/${bringmyCharacterId}/${selectedStudioId}`,
+        {},
+        { headers: { 'Authorization': `Bearer ${token}` } }
       );
-      console.log('Character created successfully:', response.data);
-      alert('캐릭터가 성공적으로 생성되었습니다.');
+      alert('캐릭터가 성공적으로 내보내졌습니다.');
       handleClose();
+      onCharacterCreated();  // Notify parent component
     } catch (error) {
-      console.error('Error creating character:', error);
-      alert('캐릭터 생성 중 오류가 발생했습니다.');
+      console.error('Error exporting character:', error);
+      alert('캐릭터 내보내기 중 오류가 발생했습니다.');
     }
   };
 
-  const removeTags = (indexToRemove: number) => {
-    setTags(tags.filter((_, index) => index !== indexToRemove));
-  };
-
-  const addTags = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    const inputElement = event.target as HTMLInputElement;
-    const inputVal = inputElement.value;
-    if (event.key === "Enter" && inputVal !== '' && !tags.includes(inputVal)) {
-      setTags([...tags, inputVal]);
-      inputElement.value = '';
-    }
+  // Handle character selection
+  const handleCharacterSelect = (event: SelectChangeEvent<string>) => {
+    setBringmyCharacterId(event.target.value as string);
   };
 
   return (
@@ -161,19 +107,19 @@ const MakingCharacter: React.FC = () => {
       <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", width: "100%" }}>
         <Box sx={{ flexGrow: 1 }}>
           <SubTopBar 
-            title={'스튜디오 캐릭터 보관함'} 
-            content='스튜디오의 캐릭터 한 눈에 볼 수 있어요' 
+            title="스튜디오 캐릭터 보관함" 
+            content="우리 팀의 캐릭터를 한 눈에 볼 수 있어요" 
           />
         </Box>
         <Box sx={{ flexShrink: 0, display: 'flex', gap: 1 }}>
           <CustomButton 
-            content={'캐릭터 생성'} 
+            content="내 캐릭터 업로드" 
             bgcolor="lightgreen" 
             hoverBgColor="green" 
             onClick={handleOpen} 
           />
           <CustomButton 
-            content={'AI 활용하기'} 
+            content="AI 활용하기" 
             bgcolor="lightblue" 
             hoverBgColor="blue" 
             onClick={() => navigate('/storyboat/AIPaintingPage')}
@@ -184,76 +130,30 @@ const MakingCharacter: React.FC = () => {
       <Dialog 
         open={open} 
         onClose={handleClose} 
-        PaperProps={{ 
-          sx: { 
-            width: '400px',
-            maxWidth: '90vw', 
-          } 
-        }} 
+        PaperProps={{ sx: { width: '400px', maxWidth: '90vw' } }} 
       >
-        <DialogTitle>캐릭터 생성</DialogTitle>
+        <DialogTitle>캐릭터 내보내기</DialogTitle>
         <DialogContent>
-          <Box component="form" sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-            <TextField 
-              label="캐릭터 이름" 
-              value={characterName} 
-              onChange={handleChangeName} 
-              fullWidth 
-            />
-            <TextField 
-              label="캐릭터 특징" 
-              value={characterTraits} 
-              onChange={handleChangeTraits} 
-              fullWidth 
-              multiline 
-              minRows={4} 
-              maxRows={8} 
-            />
-            
-            <TagsInput>
-              <ul id="tags">
-                {tags.map((tag, index) => (
-                  <li key={index} className="tag">
-                    <span className="tag-title">{tag}</span>
-                    <span className="tag-close-icon" onClick={() => removeTags(index)}>x</span>
-                  </li>
-                ))}
-              </ul>
-              <input
-                className="tag-input"
-                type="text"
-                onKeyUp={addTags}
-                placeholder="태그를 입력 후 엔터"
-              />
-            </TagsInput>
-
-            <Button 
-              variant="contained" 
-              component="label" 
-              sx={{ mt: 2 }}
+          <FormControl fullWidth>
+            <InputLabel id="select-character-label">캐릭터 선택</InputLabel>
+            <Select
+              labelId="select-character-label"
+              value={bringmyCharacterId}
+              onChange={handleCharacterSelect}
+              fullWidth
             >
-              이미지 업로드
-              <input 
-                type="file" 
-                accept="image/*" 
-                hidden 
-                onChange={handleImageChange} 
-              />
-            </Button>
-            {selectedImage && (
-              <Typography variant="body2" sx={{ mt: 2 }}>
-                선택된 이미지: {selectedImage.name}
-              </Typography>
-            )}
-          </Box>
+              {myStudioCharacters.map(character => (
+                <MenuItem key={character.id} value={character.id}>
+                  {character.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>취소</Button>
-          <Button 
-            onClick={handleCreateCharacter}
-            color="primary"
-          >
-            생성하기
+          <Button onClick={handleExportCharacter} color="primary">
+            내보내기
           </Button>
         </DialogActions>
       </Dialog>
@@ -261,4 +161,4 @@ const MakingCharacter: React.FC = () => {
   );
 };
 
-export default MakingCharacter;
+export default MakingCharacterteam;
