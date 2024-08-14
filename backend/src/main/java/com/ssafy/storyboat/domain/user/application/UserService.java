@@ -143,9 +143,7 @@ public class UserService {
     public void deleteUser(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
-        
-        user.setIsDeleted(true);
-        userRepository.save(user);
+        userRepository.delete(user);
     }
 
     @Transactional(readOnly = true)

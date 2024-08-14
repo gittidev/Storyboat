@@ -169,8 +169,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
 
     // 로그인, 유저 복구시 유저 세팅 메서드
-    @Transactional
-    protected OAuth2UserDTO getoAuth2UserDTO(User queriedUser, String name, String providerId, String provider) {
+    private static OAuth2UserDTO getoAuth2UserDTO(User queriedUser, String name, String providerId, String provider) {
         log.info(queriedUser.toString());
         OAuth2UserDTO userDTO = new OAuth2UserDTO();
         ;
@@ -179,10 +178,8 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         userDTO.setRole("ROLE_USER");
         if (queriedUser.getIsDeleted()) {
             queriedUser.revokeUser();
-            userRepository.save(queriedUser);
             userDTO.setJoinStatus(CustomJoinStatus.REVOKED);
             log.info("유저 복구={}", userDTO);
-
         } else {
             // 로그인 로직 (사용자 정보 처리 등)
             userDTO.setJoinStatus(CustomJoinStatus.JOINED);
