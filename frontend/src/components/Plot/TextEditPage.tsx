@@ -9,31 +9,90 @@ import Quill from 'quill';
 import { useParams } from 'react-router-dom';
 import 'quill/dist/quill.snow.css';
 import axios from 'axios';
+import { useRecoilValue } from 'recoil';
+import { selectedStudioState } from '../../recoil/atoms/studioAtom';
+import { accessTokenState } from '../../recoil/atoms/authAtom';
+import { Select, MenuItem, FormControl, InputLabel } from '@mui/material';
+import { SelectChangeEvent } from '@mui/material';
+import { TextHistory } from './HistoryDropdown';
 
 Quill.register('modules/cursors', QuillCursors);
+const svURL = import.meta.env.VITE_SERVER_URL;
 
 const TextEditPage: React.FC = () => {
-  const { storyId } = useParams();  // useParams를 사용하여 storyId를 추출
-  const roomId = storyId?.toString() + "edit"
+  const { storyId } = useParams(); // useParams를 사용하여 storyId를 추출
+  const roomId = storyId?.toString() + "edit";
   const providerRef = useRef<WebrtcProvider | null>(null);
   const ydocRef = useRef<Y.Doc | null>(null);
+  const editorRef = useRef<Quill | null>(null); // Quill 인스턴스를 저장하는 ref
+  const nodeRef = useRef<HTMLDivElement | null>(null); // Editor node를 저장하는 ref
   const [saveMessage, setSaveMessage] = useState<string | null>(null);
   const isComposingRef = useRef(false); // IME 입력 상태를 추적하기 위한 Ref
+  const studioId = useRecoilValue(selectedStudioState);
+  const token = useRecoilValue(accessTokenState);
+
+  const [Texthistories, setTextHistories] = useState<TextHistory[]>([])
+  const [selectedTextHistory, setSelectedTextHistory] = useState<string | null>(null)
+
+  const fetchTextHistories = async () => {
+    try {
+      const response = await axios.get(`${svURL}/api/studios/${studioId}/stories/${storyId}/text/histories`, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+      })
+      console.log(response.data.data.content)
+      setTextHistories(response.data.data.content);
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  const fetTextHistoryData = async (textId: string) => {
+    try {
+      const response = await axios.get(`${svURL}/api/studios/${studioId}/stories/${storyId}/text/${textId}`,{
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+      })
+      // console.log(response.data.data)
+      const script = JSON.parse(response.data.data);
+      // console.log(script.text)
+      if (editorRef.current) {
+        editorRef.current.clipboard.dangerouslyPasteHTML(script.text);
+      }
+    } catch (error) {
+      console.error('히스토리 불러오기 실패', error)
+    }
+  }
+
+
+  const fetchText = useCallback(async () => {
+    try {
+      const response = await axios.get(`${svURL}/api/studios/${studioId}/stories/${storyId}/text`, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+      const script = JSON.parse(response.data.data);
+      console.log(script)
+      if (editorRef.current) {
+        editorRef.current.clipboard.dangerouslyPasteHTML(script.text);
+      }
+      console.log(script);
+    } catch (error) {
+      console.error('원고를 가져오지 못하였습니다:', error);
+    }
+  }, [studioId, storyId, token]);
 
   const setEditorRef = useCallback(
     (node: HTMLDivElement | null) => {
       if (node) {
+        nodeRef.current = node;
         const ydoc = new Y.Doc();
-        ydocRef.current = ydoc;
-
-        // 추출한 storyId를 WebrtcProvider에 roomId로 사용
-        const provider = new WebrtcProvider(roomId, ydoc, {
-          signaling: ['wss://i11c107.p.ssafy.io/signal'],
-        });
-        providerRef.current = provider;
-
-        const type = ydoc.getText('quill');
-
         const editor = new Quill(node, {
           modules: {
             cursors: true,
@@ -49,7 +108,15 @@ const TextEditPage: React.FC = () => {
           placeholder: '집필 영역',
           theme: 'snow',
         });
+        ydocRef.current = ydoc;
+        editorRef.current = editor; // Save editor instance in ref
 
+        const provider = new WebrtcProvider(roomId, ydoc, {
+          signaling: ['wss://i11c107.p.ssafy.io/signal'],
+        });
+        providerRef.current = provider;
+
+        const type = ydoc.getText('quill');
         new QuillBinding(type, editor, provider.awareness);
 
         editor.root.addEventListener('compositionstart', () => {
@@ -64,12 +131,20 @@ const TextEditPage: React.FC = () => {
           if ((event.ctrlKey || event.metaKey) && event.key === 's') {
             event.preventDefault();
             setSaveMessage('Saving...');
-
+            const content = editor.getContents().ops[0].insert;
+            console.log(content);
+            const data = {
+              studioId: studioId,
+              storyId: storyId,
+              text: content
+            };
+            console.log(data)
             try {
-              const content = editor.getContents();
-              const response = await axios.post('/api/save', {
-                storyId,  // 저장 시에도 storyId 사용
-                content,
+              const response = await axios.put(`${svURL}/api/studios/${studioId}/stories/${storyId}/text`, data, {
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': `Bearer ${token}`,
+                },
               });
               if (response.status === 200) {
                 setSaveMessage('Document saved successfully!');
@@ -89,9 +164,12 @@ const TextEditPage: React.FC = () => {
             event.stopImmediatePropagation(); // IME 조합 중인 상태에서는 전송 방지
           }
         });
+
+        fetchText(); // Initial fetch text on editor setup
+        fetchTextHistories();
       }
     },
-    [storyId] // storyId가 변경될 때만 useCallback이 다시 실행되도록 의존성 배열에 추가
+    [storyId, roomId, studioId, fetchText] // Add dependencies for the callback
   );
 
   useEffect(() => {
@@ -107,14 +185,39 @@ const TextEditPage: React.FC = () => {
     };
   }, []);
 
+  const handleHistoryChange = (event: SelectChangeEvent<string>) => {
+    const selectedTextId = event.target.value as string;
+    setSelectedTextHistory(selectedTextId);
+    console.log(selectedTextId)
+    // 선택된 storyId에 따라 다른 동작 수행 가능
+    fetTextHistoryData(selectedTextId)
+  };
+
   return (
     <>
       <AppBar position="relative" color="transparent" elevation={0}>
         <Toolbar sx={{ justifyContent: 'space-between' }}>
           <Typography variant="h6" noWrap>
-            공동 소설 작성: 
+            공동 소설 작성:
           </Typography>
         </Toolbar>
+        <FormControl variant="outlined" size="small" style={{ minWidth: 120 }}>
+            <InputLabel id="history-select-label">History</InputLabel>
+            <Select
+              labelId="history-select-label"
+              value={selectedTextHistory || ''}
+              onChange={handleHistoryChange}
+              label="History"
+            >
+              {Texthistories.map((textHistory) => (
+                <MenuItem key={textHistory.textId} value={textHistory.textId}>
+                  {/* {history.storyId} */}
+                  {textHistory.textId}
+                  {/* {`${history.dateTime} - ${history.penName}`} */}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
       </AppBar>
       <Box sx={{ padding: 2, display: 'flex', flexDirection: 'column', height: '100%' }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 2 }}>
@@ -125,7 +228,7 @@ const TextEditPage: React.FC = () => {
               color="primary"
               startIcon={<SaveIcon />}
               onClick={() => document.dispatchEvent(new KeyboardEvent('keydown', { key: 's', ctrlKey: true }))}
-              >
+            >
               Save
             </Button>
           </Tooltip>
@@ -140,9 +243,8 @@ const TextEditPage: React.FC = () => {
             backgroundColor: '#f9f9f9',
             overflowY: 'auto',
           }}
-          />
+        />
       </Box>
-
     </>
   );
 };
