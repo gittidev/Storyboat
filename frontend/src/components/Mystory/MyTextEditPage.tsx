@@ -10,10 +10,10 @@ import { useParams } from 'react-router-dom';
 import 'quill/dist/quill.snow.css';
 import axios from 'axios';
 import { useRecoilValue } from 'recoil';
-import { selectedStudioState } from '../../recoil/atoms/studioAtom';
 import { accessTokenState } from '../../recoil/atoms/authAtom';
 import { SelectChangeEvent } from '@mui/material';
-import { TextHistory } from './HistoryDropdown';
+import { TextHistory } from '../Plot/HistoryDropdown';
+import { myStudioState } from '../../recoil/atoms/CharstudioAtom';
 
 Quill.register('modules/cursors', QuillCursors);
 const svURL = import.meta.env.VITE_SERVER_URL;
@@ -27,7 +27,7 @@ const TextEditPage: React.FC = () => {
   const nodeRef = useRef<HTMLDivElement | null>(null); // Editor node를 저장하는 ref
   const [saveMessage, setSaveMessage] = useState<string | null>(null);
   const isComposingRef = useRef(false); // IME 입력 상태를 추적하기 위한 Ref
-  const studioId = useRecoilValue(selectedStudioState);
+  const studioId = useRecoilValue(myStudioState);
   const token = useRecoilValue(accessTokenState);
 
   const [Texthistories, setTextHistories] = useState<TextHistory[]>([])

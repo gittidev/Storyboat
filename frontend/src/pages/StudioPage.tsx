@@ -1,7 +1,6 @@
 import SubTopBar from "../components/Commons/SubTopBar"
 import TabBar from "../components/Commons/TabBar"
 import StudioSetting from "../components/StudioSetting/StudioSetting"
-import SubscriptionPlan from "../components/StudioSetting/SubscriptionPlan"
 import TeamSetting from "../components/StudioSetting/TeamSetting"
 import { Container } from "@mui/material"
 import { styled } from "@mui/system"
@@ -14,8 +13,8 @@ const StyledContainer = styled(Container)`
 
 
 const StudioPage = () => {
-    const labels = ['일반 설정', '요금제 & 플랜', '팀 관리']
-    const childrenComponents = [<StudioSetting/>, <SubscriptionPlan/>, <TeamSetting/>]
+    const labels = ['일반 설정',  '팀 관리']
+    const childrenComponents = [<StudioSetting/>, <TeamSetting/>]
 
     return (
         <> 
