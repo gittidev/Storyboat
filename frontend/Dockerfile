@@ -9,7 +9,7 @@ WORKDIR /app
 
 # 의존성 파일을 복사하고 설치
 COPY package*.json ./
-RUN npm install --production
+RUN npm install
 
 # 소스 코드 복사 및 빌드..
 COPY . .
