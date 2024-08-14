@@ -22,6 +22,8 @@ const IdeaBoxPage: React.FC = () => {
   const selectedStudioId = useRecoilValue(selectedStudioState);
   const accessToken = useRecoilValue(accessTokenState);
 
+
+  
   useEffect(() => {
     const fetchIdeas = async () => {
       try {

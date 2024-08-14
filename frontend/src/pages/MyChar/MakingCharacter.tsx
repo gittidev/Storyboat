@@ -8,11 +8,14 @@ import { myStudioState } from '../../recoil/atoms/studioAtom';
 import SubTopBar from '../../components/Commons/SubTopBar';
 import CustomButton from '../../components/Commons/CustomButton';
 import { styled } from '@mui/system';
-// import { BorderBox } from '../../components/Commons/BorderBox';
 
 const svURL = import.meta.env.VITE_SERVER_URL;
 
-const MakingCharacter: React.FC = () => {
+interface MakingCharacterProps {
+  onCharacterCreated: () => void;
+}
+
+const MakingCharacter: React.FC<MakingCharacterProps> = ({ onCharacterCreated }) => {
   const navigate = useNavigate();
   const token = useRecoilValue(accessTokenState);
   const myStudioId = useRecoilValue(myStudioState);
@@ -24,68 +27,68 @@ const MakingCharacter: React.FC = () => {
   const [open, setOpen] = useState<boolean>(false);
 
   const TagsInput = styled('div')`
-  display: flex;
-  align-items: flex-start;
-  flex-wrap: wrap;
-  min-height: 48px;
-  width: 100%; /* Set width to 80% of the viewport width */
-  max-width: 2000px; /* Optional: Set a maximum width to avoid it becoming too large */
-  padding: 0 8px;
-  border: 1px solid rgb(1, 186, 138);
-  border-radius: 6px;
-
-  > ul {
     display: flex;
+    align-items: flex-start;
     flex-wrap: wrap;
-    padding: 0;
-    margin: 8px 0 0 0;
+    min-height: 48px;
+    width: 100%;
+    max-width: 2000px;
+    padding: 0 8px;
+    border: 1px solid rgb(1, 186, 138);
+    border-radius: 6px;
 
-    > .tag {
-      width: auto;
-      height: 32px;
+    > ul {
       display: flex;
-      align-items: center;
-      justify-content: center;
-      color: rgb(1, 186, 138);
-      padding: 0 8px;
-      font-size: 14px;
-      list-style: none;
-      border-radius: 6px;
-      margin: 0 8px 8px 0;
-      background: rgb(242,243,244);
-      border-radius: 15px;
+      flex-wrap: wrap;
+      padding: 0;
+      margin: 8px 0 0 0;
 
-      > .tag-close-icon {
-        display: block;
-        width: 16px;
-        height: 16px;
-        line-height: 16px;
-        text-align: center;
-        font-size: 14px;
-        margin-left: 8px;
+      > .tag {
+        width: auto;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         color: rgb(1, 186, 138);
-        border-radius: 50%;
-        background: #fff;
-        cursor: pointer;
+        padding: 0 8px;
+        font-size: 14px;
+        list-style: none;
+        border-radius: 6px;
+        margin: 0 8px 8px 0;
+        background: rgb(242,243,244);
+        border-radius: 15px;
+
+        > .tag-close-icon {
+          display: block;
+          width: 16px;
+          height: 16px;
+          line-height: 16px;
+          text-align: center;
+          font-size: 14px;
+          margin-left: 8px;
+          color: rgb(1, 186, 138);
+          border-radius: 50%;
+          background: #fff;
+          cursor: pointer;
+        }
       }
     }
-  }
 
-  > input {
-    flex: 1;
-    border: none;
-    height: 46px;
-    font-size: 14px;
-    padding: 4px 0 0 12px; /* Adjust padding-left here */
-    :focus {
-      outline: transparent;
+    > input {
+      flex: 1;
+      border: none;
+      height: 46px;
+      font-size: 14px;
+      padding: 4px 0 0 12px;
+      :focus {
+        outline: transparent;
+      }
     }
-  }
 
-  &:focus-within {
-    border: 1px solid rgb(1, 186, 138);
-  }
-`;
+    &:focus-within {
+      border: 1px solid rgb(1, 186, 138);
+    }
+  `;
 
   const handleChangeName = (event: React.ChangeEvent<HTMLInputElement>) => {
     setCharacterName(event.target.value);
@@ -115,14 +118,13 @@ const MakingCharacter: React.FC = () => {
       return;
     }
 
-    // Convert tags array to a comma-separated string
     const tagsString = tags.join(', ');
 
     const formData = new FormData();
     formData.append('name', characterName);
     formData.append('description', characterTraits);
     formData.append('file', selectedImage);
-    formData.append('tags', tagsString); 
+    formData.append('tags', tagsString);
 
     try {
       const response = await axios.post(
@@ -138,6 +140,7 @@ const MakingCharacter: React.FC = () => {
       console.log('Character created successfully:', response.data);
       alert('캐릭터가 성공적으로 생성되었습니다.');
       handleClose();
+      onCharacterCreated(); // 캐릭터 생성 후 콜백 호출
     } catch (error) {
       console.error('Error creating character:', error);
       alert('캐릭터 생성 중 오류가 발생했습니다.');
@@ -251,12 +254,7 @@ const MakingCharacter: React.FC = () => {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>취소</Button>
-          <Button 
-            onClick={handleCreateCharacter}
-            color="primary"
-          >
-            생성하기
-          </Button>
+          <Button onClick={handleCreateCharacter}>생성하기&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</Button>
         </DialogActions>
       </Dialog>
     </Box>

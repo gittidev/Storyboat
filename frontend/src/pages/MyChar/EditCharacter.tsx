@@ -1,5 +1,4 @@
-// EditCharacter.tsx 
-
+// EditCharacter.tsx
 import React, { useState, useEffect } from 'react';
 import { Box, Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle, Typography } from '@mui/material';
 import axios from 'axios';
@@ -19,18 +18,17 @@ interface EditCharacterProps {
 
 const EditCharacter: React.FC<EditCharacterProps> = ({ character, open, onClose, onUpdate }) => {
   const [name, setName] = useState(character.name);
-  const [description, setdescription] = useState(character.description);
+  const [description, setDescription] = useState(character.description);
   const [tags, setTags] = useState<string[]>(character.tags || []);
-  const [file, setfile] = useState<File | null>(null);
+  const [file, setFile] = useState<File | null>(null);
   const [existingImage, setExistingImage] = useState<string | null>(character.imageUrl || null);
-
 
   const token = useRecoilValue(accessTokenState);
   const myStudioId = useRecoilValue(myStudioState);
 
   useEffect(() => {
     setName(character.name);
-    setdescription(character.description);
+    setDescription(character.description);
     setTags(character.tags || []);
     setExistingImage(character.imageUrl);
   }, [character]);
@@ -40,32 +38,29 @@ const EditCharacter: React.FC<EditCharacterProps> = ({ character, open, onClose,
       alert('모든 필드를 채워주세요.');
       return;
     }
-  
-    // 상태 변수 tags를 가리키고, CSV 문자열로 변환하여 사용합니다.
+
     const tagsString = tags.join(', ');
-  
+
     const formData = new FormData();
     formData.append('name', name);
     formData.append('description', description);
-    formData.append('tags', tagsString); // CSV 문자열로 변환된 tags를 전송
-
+    formData.append('tags', tagsString);
 
     if (file) {
-      formData.append('file', file); // Add new file if selected
+      formData.append('file', file);
     } else if (existingImage) {
       try {
         // const imageBlob = await fetch(existingImage).then(res => res.blob());
         // const imageFile = new File([imageBlob], 'existingImage', { type: imageBlob.type });
-        // formData.append('file', imageFile); // Add existing image as a file
+        // formData.append('file', imageFile);
       } catch (error) {
         console.error('Error fetching existing image:', error);
         alert('기존 이미지를 가져오는 중 오류가 발생했습니다.');
         console.log('Existing Image URL:', existingImage);
         return;
-        
       }
     }
-  
+
     try {
       await axios.put(
         `${svURL}/api/studios/${myStudioId}/characters/${character.id}`,
@@ -78,19 +73,17 @@ const EditCharacter: React.FC<EditCharacterProps> = ({ character, open, onClose,
         }
       );
       alert('캐릭터가 성공적으로 수정되었습니다.');
-      console.log('Existing Image URL:', existingImage);
-      onUpdate();
+      onUpdate(); // 상위 컴포넌트에서 상태 업데이트 호출
       onClose();
     } catch (error) {
       console.error('Error updating character:', error);
       alert('캐릭터 수정 중 오류가 발생했습니다. 빈 값이 없는지 확인해주세요');
     }
   };
-  
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
-      setfile(event.target.files[0]);
+      setFile(event.target.files[0]);
     }
   };
 
@@ -98,13 +91,13 @@ const EditCharacter: React.FC<EditCharacterProps> = ({ character, open, onClose,
     <Dialog open={open} onClose={onClose} PaperProps={{ sx: { width: '400px', maxWidth: '90vw' } }}>
       <DialogTitle>캐릭터 수정</DialogTitle>
       <DialogContent>
-        <br/>
+        <br />
         <Box component="form" sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
           <TextField label="캐릭터 이름" value={name} onChange={(e) => setName(e.target.value)} fullWidth />
           <TextField
             label="캐릭터 특징"
             value={description}
-            onChange={(e) => setdescription(e.target.value)}
+            onChange={(e) => setDescription(e.target.value)}
             fullWidth
             multiline
             minRows={4}
