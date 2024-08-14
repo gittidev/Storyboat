@@ -7,7 +7,7 @@ import tsconfigPaths from 'vite-tsconfig-paths';
 export default defineConfig(({ mode }) => {
   // 환경 변수 로드
   const env = loadEnv(mode, process.cwd());
-  // Build용 주석 g
+  // Build용 주석 gg
   return {
     plugins: [react(), tsconfigPaths()],
     server: {
