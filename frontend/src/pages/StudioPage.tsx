@@ -14,8 +14,8 @@ const StyledContainer = styled(Container)`
 
 
 const StudioPage = () => {
-    const labels = ['일반 설정', '요금제 & 플랜', '팀 관리']
-    const childrenComponents = [<StudioSetting/>, <SubscriptionPlan/>, <TeamSetting/>]
+    const labels = ['일반 설정',  '팀 관리']
+    const childrenComponents = [<StudioSetting/>, <TeamSetting/>]
 
     return (
         <> 
