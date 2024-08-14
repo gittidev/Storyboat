@@ -1,79 +1,180 @@
-import React, { useEffect, useRef, useCallback, useState } from 'react';
-import { Box, AppBar, Toolbar, Typography, Button, Tooltip, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
-import SaveIcon from '@mui/icons-material/Save';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
+import { Box, AppBar, Toolbar, Typography, TextField, IconButton, Chip, Button } from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
+import AddIcon from '@mui/icons-material/Add';
+import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import * as Y from 'yjs';
 import { WebrtcProvider } from 'y-webrtc';
-import { QuillBinding } from 'y-quill';
-import QuillCursors from 'quill-cursors';
-import Quill from 'quill';
 import { useParams } from 'react-router-dom';
-import 'quill/dist/quill.snow.css';
-import axios from 'axios';
 import { useRecoilValue } from 'recoil';
 import { selectedStudioState } from '../../recoil/atoms/studioAtom';
 import { accessTokenState } from '../../recoil/atoms/authAtom';
-import { SelectChangeEvent } from '@mui/material';
-import { TextHistory } from './HistoryDropdown';
+import { nameState } from '../../recoil/atoms/userAtom';
+import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
+import axios from 'axios';
 
-Quill.register('modules/cursors', QuillCursors);
 const svURL = import.meta.env.VITE_SERVER_URL;
 
+interface Sentence {
+  id: string;
+  text: string;
+  author: string;
+  lastEditor: string;
+  lastEditTime: number;
+  isEditing?: boolean; // 다른 사용자가 작성 중인지 표시
+}
+
 const TextEditPage: React.FC = () => {
-  const { storyId } = useParams(); // useParams를 사용하여 storyId를 추출
-  const roomId = storyId?.toString() + "edit";
-  const providerRef = useRef<WebrtcProvider | null>(null);
+  const { storyId } = useParams();
+  const roomId = storyId?.toString() + 'edit';
   const ydocRef = useRef<Y.Doc | null>(null);
-  const editorRef = useRef<Quill | null>(null); // Quill 인스턴스를 저장하는 ref
-  const nodeRef = useRef<HTMLDivElement | null>(null); // Editor node를 저장하는 ref
-  const [saveMessage, setSaveMessage] = useState<string | null>(null);
-  const isComposingRef = useRef(false); // IME 입력 상태를 추적하기 위한 Ref
+  const providerRef = useRef<WebrtcProvider | null>(null);
+  const [content, setContent] = useState<Sentence[]>([]);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [activeUsers, setActiveUsers] = useState<string[]>([]);
+  const [isViewerMode, setIsViewerMode] = useState<boolean>(false);
   const studioId = useRecoilValue(selectedStudioState);
   const token = useRecoilValue(accessTokenState);
+  // const userId = useRecoilValue(userState);
+  const userName = useRecoilValue(nameState);
 
-  const [Texthistories, setTextHistories] = useState<TextHistory[]>([])
-  const [selectedTextHistory, setSelectedTextHistory] = useState<string | null>(null)
+  useEffect(() => {
+    const ydoc = new Y.Doc();
+    ydocRef.current = ydoc;
 
-  const fetchTextHistories = async () => {
-    try {
-      const response = await axios.get(`${svURL}/api/studios/${studioId}/stories/${storyId}/text/histories`, {
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-      })
-      console.log(response.data.data.content)
-      setTextHistories(response.data.data.content);
-    } catch (error) {
-      console.error(error)
-    }
-  }
+    const provider = new WebrtcProvider(roomId, ydoc, {
+      signaling: ['wss://i11c107.p.ssafy.io/signal'],
+    });
+    providerRef.current = provider;
 
-  const fetTextHistoryData = async (textId: string) => {
-    try {
-      const response = await axios.get(`${svURL}/api/studios/${studioId}/stories/${storyId}/text/${textId}`,{
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-      })
-      const script = JSON.parse(response.data.data);
-      if (editorRef.current) {
-        editorRef.current.clipboard.dangerouslyPasteHTML(script.text);
+    const sharedArray = ydoc.getArray<Sentence>('sentences');
+
+    sharedArray.observe(() => {
+      setContent(sharedArray.toArray());
+    });
+
+    provider.awareness.setLocalStateField('user', { name: userName });
+    provider.awareness.on('change', () => {
+      const users = Array.from(provider.awareness.getStates().values())
+        .map((state: any) => state.user?.name)
+        .filter((name): name is string => !!name);
+      setActiveUsers(users);
+    });
+
+    return () => {
+      if (providerRef.current) {
+        providerRef.current.disconnect();
+        providerRef.current = null;
       }
-    } catch (error) {
-      console.error('히스토리 불러오기 실패', error)
-    }
-  }
+      if (ydocRef.current) {
+        ydocRef.current.destroy();
+        ydocRef.current = null;
+      }
+    };
+  }, [roomId, userName]);
 
-  const saveDocument = async () => {
-    if (editorRef.current) {
-      setSaveMessage('Saving...');
-      const content = editorRef.current.getContents().ops[0].insert;
-      const data = {
-        studioId: studioId,
-        storyId: storyId,
-        text: content
+  const handleAddNewSentenceAtBottom = () => {
+    if (ydocRef.current) {
+      const sharedArray = ydocRef.current.getArray<Sentence>('sentences');
+      const newSentence: Sentence = {
+        id: Date.now().toString(),
+        text: '',
+        author: userName,
+        lastEditor: userName,
+        lastEditTime: Date.now(),
+        isEditing: true,
       };
+      sharedArray.push([newSentence]); // 맨 밑에 추가
+      setEditingId(newSentence.id);
+    }
+  };
+
+  const handleAddNewSentenceBelow = (index: number) => {
+    if (ydocRef.current) {
+      const sharedArray = ydocRef.current.getArray<Sentence>('sentences');
+      const newSentence: Sentence = {
+        id: Date.now().toString(),
+        text: '',
+        author: userName,
+        lastEditor: userName,
+        lastEditTime: Date.now(),
+        isEditing: true,
+      };
+      sharedArray.insert(index + 1, [newSentence]); // 현재 줄 아래에 추가
+      setEditingId(newSentence.id);
+    }
+  };
+
+  const handleDelete = (id: string) => {
+    if (ydocRef.current) {
+      const sharedArray = ydocRef.current.getArray<Sentence>('sentences');
+      const index = sharedArray.toArray().findIndex(s => s.id === id);
+      if (index !== -1) {
+        sharedArray.delete(index, 1);
+      }
+    }
+  };
+
+  const handleLineClick = (id: string) => {
+    setEditingId(id);
+  };
+
+  const handleSave = (id: string, newText: string) => {
+    if (ydocRef.current) {
+      const sharedArray = ydocRef.current.getArray<Sentence>('sentences');
+      const index = sharedArray.toArray().findIndex(s => s.id === id);
+      if (index !== -1) {
+        const updatedSentence: Sentence = {
+          ...sharedArray.get(index),
+          text: newText,
+          lastEditor: userName,
+          lastEditTime: Date.now(),
+          isEditing: false,
+        };
+        sharedArray.delete(index, 1);
+        sharedArray.insert(index, [updatedSentence]);
+      }
+      setEditingId(null);
+    }
+  };
+
+  const onDragEnd = (result: DropResult) => {
+    if (!result.destination) {
+      return;
+    }
+
+    const items = Array.from(content);
+    const [reorderedItem] = items.splice(result.source.index, 1);
+    items.splice(result.destination.index, 0, reorderedItem);
+
+    if (ydocRef.current) {
+      const sharedArray = ydocRef.current.getArray<Sentence>('sentences');
+      ydocRef.current.transact(() => {
+        sharedArray.delete(0, sharedArray.length);
+        sharedArray.insert(0, items);
+      });
+    }
+  };
+
+  // Add new sentence by Enter key
+  const handleKeyPress = (event: React.KeyboardEvent, id: string, index: number, newText: string) => {
+    if (event.key === 'Enter') {
+      handleSave(id, newText);
+      handleAddNewSentenceBelow(index); // 현재 줄 아래에 새 문장 추가
+    }
+  };
+
+  const toggleViewerMode = () => {
+    setIsViewerMode(!isViewerMode);
+  };
+
+  const handleSaveToList = async () => {
+    if (ydocRef.current) {
+      const sharedArray = ydocRef.current.getArray<Sentence>('sentences');
+      const data = sharedArray.toArray();
+
       try {
         const response = await axios.put(`${svURL}/api/studios/${studioId}/stories/${storyId}/text`, data, {
           headers: {
@@ -82,16 +183,13 @@ const TextEditPage: React.FC = () => {
           },
         });
         if (response.status === 200) {
-          fetchTextHistories()
-          setSaveMessage('Document saved successfully!');
-        } else {
-          setSaveMessage('Failed to save document.');
+          console.log(response.data)
+          console.log('저장성공')
+          // fetchTextHistories()
         }
       } catch (error) {
-        setSaveMessage('Error saving document.');
+        console.error(error)
       }
-
-      setTimeout(() => setSaveMessage(null), 3000); // 메시지 3초 후 사라짐
     }
   };
 
@@ -103,146 +201,156 @@ const TextEditPage: React.FC = () => {
           'Authorization': `Bearer ${token}`,
         },
       });
-      const script = JSON.parse(response.data.data);
-      console.log(script)
-      if (editorRef.current) {
-        editorRef.current.clipboard.dangerouslyPasteHTML(script.text);
+      const script: Sentence[] = JSON.parse(response.data.data);
+      if (ydocRef.current) {
+        const sharedArray = ydocRef.current.getArray<Sentence>('sentences');
+        ydocRef.current.transact(() => {
+          sharedArray.delete(0, sharedArray.length);
+          sharedArray.insert(0, script);
+        });
       }
+      console.log(script)
+      // if (ydocRef.current) {
+      //   ydocRef.current.clipboard.dangerouslyPasteHTML(script.text);
+      // }
     } catch (error) {
       console.error('원고를 가져오지 못하였습니다:', error);
     }
   }, [studioId, storyId, token]);
 
-  const setEditorRef = useCallback(
-    (node: HTMLDivElement | null) => {
-      if (node) {
-        nodeRef.current = node;
-        const ydoc = new Y.Doc();
-        const editor = new Quill(node, {
-          modules: {
-            cursors: true,
-            toolbar: [
-              [{ header: [1, 2, false] }],
-              ['bold', 'italic', 'underline'],
-              ['image', 'code-block'],
-            ],
-            history: {
-              userOnly: true,
-            },
-          },
-          placeholder: '집필 영역',
-          theme: 'snow',
-        });
-        ydocRef.current = ydoc;
-        editorRef.current = editor; // Save editor instance in ref
-
-        const provider = new WebrtcProvider(roomId, ydoc, {
-          signaling: ['wss://i11c107.p.ssafy.io/signal'],
-        });
-        providerRef.current = provider;
-
-        const type = ydoc.getText('quill');
-        new QuillBinding(type, editor, provider.awareness);
-
-        editor.root.addEventListener('compositionstart', () => {
-          isComposingRef.current = true;
-        });
-
-        editor.root.addEventListener('compositionend', () => {
-          isComposingRef.current = false;
-          provider.awareness.setLocalStateField('selection', editor.getSelection());
-        });
-
-        node.addEventListener('keydown', async (event) => {
-          if ((event.ctrlKey || event.metaKey) && event.key === 's') {
-            event.preventDefault();
-            await saveDocument(); // Call saveDocument function on Ctrl+S
-          }
-        });
-
-        node.addEventListener('input', (event) => {
-          if (isComposingRef.current) {
-            event.stopImmediatePropagation(); // IME 조합 중인 상태에서는 전송 방지
-          } else{
-            provider.awareness.setLocalStateField('selection', editor.getSelection());
-          }
-        });
-
-        fetchText(); // Initial fetch text on editor setup
-        fetchTextHistories();
-      }
-    },
-    [storyId, roomId, studioId, fetchText] // Add dependencies for the callback
-  );
-
   useEffect(() => {
-    return () => {
-      if (providerRef.current) {
-        providerRef.current.disconnect();
-        providerRef.current = null;
-      }
-      if (ydocRef.current) {
-        ydocRef.current.destroy();
-        ydocRef.current = null;
-      }
-    };
+    fetchText()
   }, []);
-
-  const handleHistoryChange = (event: SelectChangeEvent<string>) => {
-    const selectedTextId = event.target.value as string;
-    setSelectedTextHistory(selectedTextId);
-    fetTextHistoryData(selectedTextId)
-  };
 
   return (
     <>
       <AppBar position="relative" color="transparent" elevation={0}>
-        <Toolbar sx={{ justifyContent: 'space-between' }}>
+        <Toolbar>
           <Typography variant="h6" noWrap>
             공동 소설 작성:
           </Typography>
-          <FormControl variant="outlined" size="small" style={{ minWidth: 120 }}>
-            <InputLabel id="history-select-label">History</InputLabel>
-            <Select
-              labelId="history-select-label"
-              value={selectedTextHistory || ''}
-              onChange={handleHistoryChange}
-              label="History"
-            >
-              {Texthistories.map((textHistory) => (
-                <MenuItem key={textHistory.textId} value={textHistory.textId}>
-                  {`${textHistory.dateTime} - ${textHistory.penName}`}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+          <Box sx={{ ml: 2, display: 'flex', gap: 1 }}>
+            {activeUsers.map((user, index) => (
+              <Chip key={index} label={user} color="primary" variant="outlined" />
+            ))}
+          </Box>
+          <Box sx={{ flexGrow: 1 }} />
+          <Button
+            variant="contained"
+            color="primary"
+            startIcon={isViewerMode ? <VisibilityOffIcon /> : <VisibilityIcon />}
+            onClick={toggleViewerMode}
+          >
+            {isViewerMode ? 'Edit Mode' : 'Viewer Mode'}
+          </Button>
         </Toolbar>
       </AppBar>
-      <Box sx={{ padding: 2, display: 'flex', flexDirection: 'column', height: '100%' }}>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 2 }}>
-          <Typography variant="body1">{saveMessage ? saveMessage : 'Ctrl+S to save your changes'}</Typography>
-          <Tooltip title="Save Document">
-            <Button
-              variant="contained"
-              color="primary"
-              startIcon={<SaveIcon />}
-              onClick={saveDocument} // 버튼 클릭 시 saveDocument 함수 호출
-            >
-              Save
-            </Button>
-          </Tooltip>
-        </Box>
-        <Box
-          ref={setEditorRef}
-          sx={{
-            flexGrow: 1,
-            border: '1px solid #ccc',
-            borderRadius: '4px',
-            padding: 2,
-            backgroundColor: '#f9f9f9',
-            overflowY: 'auto',
-          }}
-        />
+      <Box sx={{ padding: 2, flexGrow: 1, overflowY: 'auto' }}>
+        <DragDropContext onDragEnd={onDragEnd}>
+          <Droppable droppableId="sentences">
+            {(provided : any) => (
+              <Box
+                {...provided.droppableProps}
+                ref={provided.innerRef}
+                sx={{
+                  marginTop: 2,
+                  padding: 2,
+                  border: '1px solid #ccc',
+                  borderRadius: '4px',
+                  backgroundColor: '#f9f9f9',
+                }}
+              >
+                {content.map((sentence, index) => (
+                  <Draggable key={sentence.id} draggableId={sentence.id} index={index}>
+                    {(provided : any) => (
+                      <Box
+                        ref={provided.innerRef}
+                        {...provided.draggableProps}
+                        sx={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          mb: 1,
+                          position: 'relative',
+                          '&:hover .action-icons, &:hover .drag-icon': { opacity: 1 }
+                        }}
+                        onClick={() => handleLineClick(sentence.id)}
+                      >
+                        {!isViewerMode && (
+                          <Box
+                            {...provided.dragHandleProps}
+                            className="drag-icon"
+                            sx={{
+                              mr: 1,
+                              color: 'lightgray',
+                              fontSize: '20px',
+                              opacity: 0,
+                              transition: 'opacity 0.2s'
+                            }}
+                          >
+                            <DragIndicatorIcon />
+                          </Box>
+                        )}
+                        {editingId === sentence.id && !isViewerMode ? (
+                          <TextField
+                            fullWidth
+                            variant="outlined"
+                            defaultValue={sentence.text}
+                            onBlur={(e) => handleSave(sentence.id, e.target.value)}
+                            onKeyPress={(e) => handleKeyPress(e, sentence.id, index, (e.target as HTMLInputElement).value)}
+                            autoFocus
+                            sx={{ fontSize: '0.875rem' }}
+                          />
+                        ) : (
+                          <Typography variant="body2" sx={{ flexGrow: 1, fontSize: '0.875rem' }}>
+                            {sentence.text
+                              ? sentence.text
+                              : sentence.isEditing
+                                ? <em>작성 중...</em>
+                                : ""}
+                          </Typography>
+                        )}
+                        {!isViewerMode && (
+                          <Box
+                            className="action-icons"
+                            sx={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              opacity: 0,
+                              transition: 'opacity 0.2s',
+                              position: 'absolute',
+                              right: 0
+                            }}
+                          >
+                            <Chip label={sentence.lastEditor} size="small" sx={{ mr: 1 }} />
+                            <IconButton size="small" onClick={() => handleDelete(sentence.id)}>
+                              <DeleteIcon />
+                            </IconButton>
+                          </Box>
+                        )}
+                      </Box>
+                    )}
+                  </Draggable>
+                ))}
+                {provided.placeholder}
+                {!isViewerMode && (
+                  <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
+                    <IconButton onClick={handleAddNewSentenceAtBottom} color="primary">
+                      <AddIcon />
+                    </IconButton>
+                    <Button
+                          variant="contained"
+                          color="primary"
+                          onClick={handleSaveToList}
+                          sx={{ ml: 2 }}
+                        >
+                          저장
+                        </Button>
+                  </Box>
+                )}
+              </Box>
+            )}
+          </Droppable>
+        </DragDropContext>
       </Box>
     </>
   );
