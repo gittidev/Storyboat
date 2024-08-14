@@ -1,7 +1,6 @@
 import SubTopBar from "../components/Commons/SubTopBar"
 import TabBar from "../components/Commons/TabBar"
 import StudioSetting from "../components/StudioSetting/StudioSetting"
-import SubscriptionPlan from "../components/StudioSetting/SubscriptionPlan"
 import TeamSetting from "../components/StudioSetting/TeamSetting"
 import { Container } from "@mui/material"
 import { styled } from "@mui/system"
