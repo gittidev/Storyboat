@@ -1,19 +1,25 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
-import { Box, AppBar, Toolbar, Typography, TextField, IconButton, Chip, Button } from '@mui/material';
+import { FormControl, InputLabel, Select, MenuItem } from '@mui/material';
+import { Box, AppBar, Toolbar, Typography, TextField, IconButton, Chip, Button, Checkbox } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import CheckBoxIcon from '@mui/icons-material/CheckBox';
+import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
+import SelectAllIcon from '@mui/icons-material/SelectAll';
 import * as Y from 'yjs';
 import { WebrtcProvider } from 'y-webrtc';
 import { useParams } from 'react-router-dom';
+import { SelectChangeEvent } from '@mui/material';
 import { useRecoilValue } from 'recoil';
 import { selectedStudioState } from '../../recoil/atoms/studioAtom';
 import { accessTokenState } from '../../recoil/atoms/authAtom';
 import { nameState } from '../../recoil/atoms/userAtom';
 import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
 import axios from 'axios';
+import { TextHistory } from './HistoryDropdown';
 
 const svURL = import.meta.env.VITE_SERVER_URL;
 
@@ -35,10 +41,52 @@ const TextEditPage: React.FC = () => {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [activeUsers, setActiveUsers] = useState<string[]>([]);
   const [isViewerMode, setIsViewerMode] = useState<boolean>(false);
+  const [isCheckMode, setIsCheckMode] = useState<boolean>(false);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+
   const studioId = useRecoilValue(selectedStudioState);
   const token = useRecoilValue(accessTokenState);
-  // const userId = useRecoilValue(userState);
   const userName = useRecoilValue(nameState);
+
+  const [Texthistories, setTextHistories] = useState<TextHistory[]>([])
+  const [selectedTextHistory, setSelectedTextHistory] = useState<string | null>(null)
+
+  const fetchTextHistories = async () => {
+    try {
+      const response = await axios.get(`${svURL}/api/studios/${studioId}/stories/${storyId}/text/histories`, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+      })
+      console.log(response.data.data.content)
+      setTextHistories(response.data.data.content);
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  const fetTextHistoryData = async (textId: string) => {
+    try {
+      const response = await axios.get(`${svURL}/api/studios/${studioId}/stories/${storyId}/text/${textId}`,{
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+      })
+      const script: Sentence[] = JSON.parse(response.data.data);
+      if (ydocRef.current) {
+        // ydocRef.current.clipboard.dangerouslyPasteHTML(script.text);
+        const sharedArray = ydocRef.current.getArray<Sentence>('sentences');
+        ydocRef.current.transact(() => {
+          sharedArray.delete(0, sharedArray.length);
+          sharedArray.insert(0, script);
+        });
+      }
+    } catch (error) {
+      console.error('히스토리 불러오기 실패', error)
+    }
+  }
 
   useEffect(() => {
     const ydoc = new Y.Doc();
@@ -117,8 +165,35 @@ const TextEditPage: React.FC = () => {
     }
   };
 
+  const handleBulkDelete = () => {
+    if (ydocRef.current) {
+      const sharedArray = ydocRef.current.getArray<Sentence>('sentences');
+      setContent((prevContent) => {
+        const newContent = prevContent.filter((sentence) => !selectedIds.has(sentence.id));
+        sharedArray.delete(0, sharedArray.length);
+        sharedArray.insert(0, newContent);
+        return newContent;
+      });
+      setSelectedIds(new Set()); // 선택된 항목 초기화
+    }
+  };
+
   const handleLineClick = (id: string) => {
-    setEditingId(id);
+    if (!isCheckMode) {
+      setEditingId(id);
+    }
+  };
+
+  const toggleSelect = (id: string) => {
+    setSelectedIds((prevSelected) => {
+      const newSelected = new Set(prevSelected);
+      if (newSelected.has(id)) {
+        newSelected.delete(id);
+      } else {
+        newSelected.add(id);
+      }
+      return newSelected;
+    });
   };
 
   const handleSave = (id: string, newText: string) => {
@@ -170,6 +245,20 @@ const TextEditPage: React.FC = () => {
     setIsViewerMode(!isViewerMode);
   };
 
+  const toggleCheckMode = () => {
+    setIsCheckMode(!isCheckMode);
+    setSelectedIds(new Set()); // 체크모드가 변경될 때 선택된 항목 초기화
+  };
+
+  const handleSelectAll = () => {
+    if (selectedIds.size === content.length) {
+      setSelectedIds(new Set()); // 모든 선택 해제
+    } else {
+      const allIds = new Set(content.map((sentence) => sentence.id));
+      setSelectedIds(allIds); // 모든 항목 선택
+    }
+  };
+
   const handleSaveToList = async () => {
     if (ydocRef.current) {
       const sharedArray = ydocRef.current.getArray<Sentence>('sentences');
@@ -185,7 +274,7 @@ const TextEditPage: React.FC = () => {
         if (response.status === 200) {
           console.log(response.data)
           console.log('저장성공')
-          // fetchTextHistories()
+          fetchTextHistories()
         }
       } catch (error) {
         console.error(error)
@@ -218,8 +307,15 @@ const TextEditPage: React.FC = () => {
     }
   }, [studioId, storyId, token]);
 
+  const handleHistoryChange = (event: SelectChangeEvent<string>) => {
+    const selectedTextId = event.target.value as string;
+    setSelectedTextHistory(selectedTextId);
+    fetTextHistoryData(selectedTextId)
+  };
+
   useEffect(() => {
     fetchText()
+    fetchTextHistories()
   }, []);
 
   return (
@@ -229,6 +325,21 @@ const TextEditPage: React.FC = () => {
           <Typography variant="h6" noWrap>
             공동 소설 작성:
           </Typography>
+          <FormControl variant="outlined" size="small" style={{ minWidth: 120 }}>
+            <InputLabel id="history-select-label">History</InputLabel>
+            <Select
+              labelId="history-select-label"
+              value={selectedTextHistory || ''}
+              onChange={handleHistoryChange}
+              label="History"
+            >
+              {Texthistories.map((textHistory) => (
+                <MenuItem key={textHistory.textId} value={textHistory.textId}>
+                  {`${textHistory.dateTime} - ${textHistory.penName}`}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
           <Box sx={{ ml: 2, display: 'flex', gap: 1 }}>
             {activeUsers.map((user, index) => (
               <Chip key={index} label={user} color="primary" variant="outlined" />
@@ -243,6 +354,36 @@ const TextEditPage: React.FC = () => {
           >
             {isViewerMode ? 'Edit Mode' : 'Viewer Mode'}
           </Button>
+          <Button
+            variant="contained"
+            color="secondary"
+            startIcon={isCheckMode ? <CheckBoxIcon /> : <CheckBoxOutlineBlankIcon />}
+            onClick={toggleCheckMode}
+          >
+            {isCheckMode ? 'Cancel' : 'Check Mode'}
+          </Button>
+          {isCheckMode && (
+            <Button
+              variant="contained"
+              color="warning"
+              startIcon={<SelectAllIcon />}
+              onClick={handleSelectAll}
+              sx={{ ml: 1 }}
+            >
+              {selectedIds.size === content.length ? 'Deselect All' : 'Select All'}
+            </Button>
+          )}
+          {isCheckMode && selectedIds.size > 0 && (
+            <Button
+              variant="contained"
+              color="error"
+              startIcon={<DeleteIcon />}
+              onClick={handleBulkDelete}
+              sx={{ ml: 1 }}
+            >
+              Delete Selected
+            </Button>
+          )}
         </Toolbar>
       </AppBar>
       <Box sx={{ padding: 2, flexGrow: 1, overflowY: 'auto' }}>
@@ -290,6 +431,15 @@ const TextEditPage: React.FC = () => {
                             <DragIndicatorIcon />
                           </Box>
                         )}
+                        {isCheckMode && (
+                          <Checkbox
+                            checked={selectedIds.has(sentence.id)}
+                            onClick={(e) => e.stopPropagation()} // 이벤트 전파를 막음
+                            onChange={() => toggleSelect(sentence.id)}
+                            color="primary"
+                            sx={{ mr: 1 }}
+                          />
+                        )}
                         {editingId === sentence.id && !isViewerMode ? (
                           <TextField
                             fullWidth
@@ -309,7 +459,7 @@ const TextEditPage: React.FC = () => {
                                 : ""}
                           </Typography>
                         )}
-                        {!isViewerMode && (
+                        {!isViewerMode && !isCheckMode &&(
                           <Box
                             className="action-icons"
                             sx={{

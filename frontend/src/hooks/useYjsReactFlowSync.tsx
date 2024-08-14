@@ -6,18 +6,17 @@ import {
     useEdgesState,
     applyNodeChanges,
     applyEdgeChanges,
-    type Node,
-    type Edge,
-    type OnConnect,
-    type OnNodesChange,
-    type OnEdgesChange,
+    Node,
+    Edge,
+    OnConnect,
+    OnNodesChange,
+    OnEdgesChange,
     useReactFlow,
 } from '@xyflow/react';
 import { Awareness } from 'y-protocols/awareness';
 import { getRandomColor } from '../utils/getRandomColor';
 import { useRecoilValue } from 'recoil';
-import { userState } from '../recoil/atoms/userAtom';
-import { nameState } from '../recoil/atoms/userAtom';
+import { userState, nameState } from '../recoil/atoms/userAtom';
 
 const initialNodes: Node[] = [];
 const initialEdges: Edge[] = [];
@@ -26,11 +25,9 @@ export const useYjsReactFlowSync = (roomId: string) => {
     const [nodes, setNodes] = useNodesState(initialNodes);
     const [edges, setEdges] = useEdgesState(initialEdges);
     const [isInitialized, setIsInitialized] = useState(false);
-    const penName = useRecoilValue(nameState)
+    const penName = useRecoilValue(nameState);
     const { setViewport } = useReactFlow();
-    // const [awareness, setAwareness] = useState<Awareness>();
     const [users, setUsers] = useState<{ clientId: number; name: string; cursorColor: string }[]>([]);
-    const [cursors, setCursors] = useState<{ clientId: number; cursor: { x: number; y: number; color: string } }[]>([]);
     const userId = useRecoilValue(userState);
 
     const ydocRef = useRef<Y.Doc | null>(null);
@@ -44,32 +41,25 @@ export const useYjsReactFlowSync = (roomId: string) => {
             ydocRef.current = new Y.Doc();
         }
 
-          // 기존에 방이 연결되어 있지 않으면 WebrtcProvider를 생성합니다.
         if (!providerRef.current) {
-        providerRef.current = new WebrtcProvider(roomId, ydocRef.current, {
-            signaling: ['wss://i11c107.p.ssafy.io/signal'],
+            providerRef.current = new WebrtcProvider(roomId, ydocRef.current, {
+                signaling: ['wss://i11c107.p.ssafy.io/signal'],
             });
         } else {
-            // 이미 연결된 방이 있으면 해당 방을 재사용합니다.
             providerRef.current.connect();
         }
 
         if (!awarenessRef.current) {
             awarenessRef.current = providerRef.current.awareness;
             const cursorColor = getRandomColor();
-            
+
             const safeUserId: string = typeof userId === 'string' ? userId : 'Unknown';
-        
+
             awarenessRef.current.setLocalStateField('user', {
                 userId: safeUserId,
-                name : penName,
-                cursor: { x: 0, y: 0, color: cursorColor },
+                name: penName,
+                cursorColor: cursorColor,
             });
-        
-            setUsers((prevUsers) => [
-                ...prevUsers,
-                { clientId: awarenessRef.current!.clientID, name: penName, cursorColor },  // 타입 단언 사용
-            ]);
         }
 
         yNodesMapRef.current = ydocRef.current.getMap('nodes');
@@ -84,6 +74,25 @@ export const useYjsReactFlowSync = (roomId: string) => {
         };
 
         providerRef.current.on('synced', syncInitialState);
+
+        const handleAwarenessUpdate = () => {
+            if (awarenessRef.current) {
+                const states = Array.from(awarenessRef.current.getStates().entries());
+                const updatedUsers = states
+                    .filter(([_, state]) => state.user)
+                    .map(([clientId, state]) => ({
+                        clientId,
+                        name: state.user.name,
+                        cursorColor: state.user.cursorColor,
+                    }));
+                setUsers(updatedUsers);
+            }
+        };
+
+        if (awarenessRef.current) {
+            awarenessRef.current.on('change', handleAwarenessUpdate);
+            handleAwarenessUpdate(); // 초기 상태 설정
+        }
 
         const checkConnection = () => {
             if (providerRef.current && !providerRef.current.connected) {
@@ -103,45 +112,24 @@ export const useYjsReactFlowSync = (roomId: string) => {
         window.addEventListener('mousemove', resetInactivityTimer);
         window.addEventListener('keydown', resetInactivityTimer);
 
-        // Awareness 상태 변경 핸들러
-        const handleAwarenessUpdate = () => {
-        const states = Array.from(awarenessRef.current!.getStates().entries());
-
-        const updatedCursors = states.map(([clientId, state]) => ({
-            clientId,
-            cursor: state.user.cursor,
-        }));
-        setCursors(updatedCursors);
-
-        const updatedUsers = states.map(([clientId, state]) => {
-            // const userId = state.user.userId || 'Unknown'; // null을 처리하기 위해 기본값 설정
-            // const name = 
-            return {
-                clientId,
-                name: penName,
-                cursorColor: state.user.cursor.color, // 사용자 커서 색상도 함께 저장
-            };
-        });
-        setUsers(updatedUsers);
-    };
-
-    awarenessRef.current.on('change', handleAwarenessUpdate);
-
-    return () => {
-        if (providerRef.current) {
-        providerRef.current.destroy();
-          providerRef.current = null; // 여기에 null 설정
-        }
-        if (ydocRef.current) {
-        ydocRef.current.destroy();
-          ydocRef.current = null; // 여기에 null 설정
-        }
-        clearInterval(intervalId);
-        clearTimeout(inactivityTimeout);
-        window.removeEventListener('mousemove', resetInactivityTimer);
-        window.removeEventListener('keydown', resetInactivityTimer);
-    };
-    }, [roomId, setNodes, setEdges]);
+        return () => {
+            if (providerRef.current) {
+                providerRef.current.destroy();
+                providerRef.current = null;
+            }
+            if (ydocRef.current) {
+                ydocRef.current.destroy();
+                ydocRef.current = null;
+            }
+            if (awarenessRef.current) {
+                awarenessRef.current.off('change', handleAwarenessUpdate);
+            }
+            clearInterval(intervalId);
+            clearTimeout(inactivityTimeout);
+            window.removeEventListener('mousemove', resetInactivityTimer);
+            window.removeEventListener('keydown', resetInactivityTimer);
+        };
+    }, [roomId, penName, userId, setNodes, setEdges]);
 
     useEffect(() => {
         const handleNodesUpdate = () => {
@@ -228,7 +216,7 @@ export const useYjsReactFlowSync = (roomId: string) => {
                 }
             });
         });
-    }, []);
+    }, [setNodes, setEdges]);
 
     const deleteEdge = useCallback((id: string) => {
         const doc = ydocRef.current;
@@ -264,46 +252,42 @@ export const useYjsReactFlowSync = (roomId: string) => {
         addNode(newNode);
     }, [addNode]);
 
-    //노드에 엮인 데이터 수정
     const updateNodeField = useCallback(
         (nodeId: string, field: string, value: any) => {
-        ydocRef.current?.transact(() => {
-        const node = yNodesMapRef.current?.get(nodeId);
-        if (node) {
-            const updatedNode = {
-            ...node,
-            data: {
-                ...node.data,
-                [field]: value,
-            },
-            };
-            yNodesMapRef.current?.set(nodeId, updatedNode);
-            
-            // React Flow 상태도 업데이트
-            setNodes((nds) =>
-            nds.map((n) => (n.id === nodeId ? updatedNode : n))
-            );
-        }
-        });
-    },
-    [ydocRef, yNodesMapRef, setNodes]
+            ydocRef.current?.transact(() => {
+                const node = yNodesMapRef.current?.get(nodeId);
+                if (node) {
+                    const updatedNode = {
+                        ...node,
+                        data: {
+                            ...node.data,
+                            [field]: value,
+                        },
+                    };
+                    yNodesMapRef.current?.set(nodeId, updatedNode);
+
+                    setNodes((nds) =>
+                        nds.map((n) => (n.id === nodeId ? updatedNode : n))
+                    );
+                }
+            });
+        },
+        [setNodes]
     );
 
+    const findPathToRoot = (nodeId: string, edges: Edge[]) => {
+        const path = [nodeId];
+        let currentNodeId = nodeId;
 
-    // 부모 관계를 추적하여 루트까지의 경로를 찾아가는 함수
-const findPathToRoot = (nodeId: string, edges: Edge[]) => {
-    const path = [nodeId];
-    let currentNodeId = nodeId;
+        while (true) {
+            const parentEdge = edges.find(edge => edge.target === currentNodeId);
+            if (!parentEdge) break;
+            currentNodeId = parentEdge.source;
+            path.push(currentNodeId);
+        }
 
-    while (true) {
-        const parentEdge = edges.find(edge => edge.target === currentNodeId);
-        if (!parentEdge) break;
-        currentNodeId = parentEdge.source;
-        path.push(currentNodeId);
-    }
-
-    return path;
-};
+        return path;
+    };
 
     return {
         nodes,
@@ -327,8 +311,7 @@ const findPathToRoot = (nodeId: string, edges: Edge[]) => {
         awareness: awarenessRef.current,
         users,
         updateNodeField,
-        cursors,
-        providerRef,
-        findPathToRoot
+        findPathToRoot,
+        providerRef
     };
 };
