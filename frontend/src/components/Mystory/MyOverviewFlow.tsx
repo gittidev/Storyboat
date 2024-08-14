@@ -2,7 +2,7 @@ import React, { useCallback, useState, useMemo, useEffect } from 'react';
 import { ReactFlow, MiniMap, Controls, Background, Panel, Node, Edge } from '@xyflow/react';
 import type { XYPosition, ReactFlowInstance } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { saveFlowToIndexedDB } from '../../utils/indexedDBUtils';
 import { myStudioState } from '../../recoil/atoms/studioAtom';
 import { accessTokenState } from '../../recoil/atoms/authAtom';
@@ -19,17 +19,10 @@ import { isMainNodeModeState } from '../../recoil/atoms/storyAtom';
 import { setMainNodes, updateMainNodesOnDeletion, updateMainNodesOnEdgeDeletion } from "../../utils/plotUtils.ts";
 import type { History } from '../Plot/HistoryDropdown.tsx';
 import { SelectChangeEvent } from '@mui/material';
-import PersonIcon from '@mui/icons-material/Person';
-import { IconButton } from '@mui/material';
 
 const svURL = import.meta.env.VITE_SERVER_URL;
 const flowKey = 'Story';
-const IconWrapper = styled('div')({
-  display: 'flex',
-  flexDirection: 'column', // 세로 정렬
-  alignItems: 'center', // 중앙 정렬
-  position: 'relative',
-});
+
 const createEdgeTypes = (handleDeleteEdge: any) => ({
   custom: (props: any) => (
     <CustomEdge
@@ -67,7 +60,7 @@ const MyOverviewFlow: React.FC = () => {
   const [isMainNodeMode, setIsMainNodeMode] = useRecoilState(isMainNodeModeState);
   const studioId = useRecoilValue(myStudioState)
   const token = useRecoilValue(accessTokenState)
-
+  const navigate = useNavigate();
   const {
     nodes,
     edges,
@@ -85,8 +78,6 @@ const MyOverviewFlow: React.FC = () => {
     yNodesMapRef,
     yEdgesMapRef,
     ydocRef,
-    users,
-    // providerRef,
     updateNode,
   } = useYjsReactFlowSync(roomId);
 
@@ -378,6 +369,11 @@ const MyOverviewFlow: React.FC = () => {
     setIsMainNodeMode((prev) => !prev);
   }, [setIsMainNodeMode]);
 
+  const handleEditButtonClick = () => {
+    // storyId와 함께 edit 페이지로 이동합니다
+    navigate(`/storyboat/mystory/${storyId}/edit`);
+  };
+
   return (
     <div style={{ height: '100vh', width: '100%' }}>
       <ReactFlow
@@ -429,29 +425,7 @@ const MyOverviewFlow: React.FC = () => {
             >
               {isMainNodeMode ? "메인 노드 선택 모드 켜짐" : "메인 노드 선택 모드 꺼짐"}
             </StyledButton>
-
-            <div className="user-list">
-              {users.map((user) => (
-                <IconWrapper key={user.clientId}>
-                  {/* 사람 아이콘 */}
-                  <IconButton
-                    style={{ color: user.cursorColor, marginRight: '8px' }}
-                  >
-                    <PersonIcon />
-                  </IconButton>
-                    {/* <p>{index+1}</p> */}
-                  {/* 사용자 이름과 ID */}
-                  {/* <div style={{ marginRight: '24px' }}>
-                    {user.name} - {user.clientId}
-                  </div> */}
-                  {/* 증가하는 숫자 */}
-                  {/* <NumberBadge>{index + 1}</NumberBadge> */}
-                </IconWrapper>
-                  // <div key={user.clientId} className="user-list-item" style={{color: user.cursorColor}}>
-                  //   {user.name}
-                  // </div>
-))}
-            </div>
+            <StyledButton className="primary" onClick={handleEditButtonClick}>집필하기</StyledButton>
           </div>
         </Panel>
       </ReactFlow>

@@ -24,6 +24,7 @@ const StudioSetting: React.FC = () => {
   const [role, setRole] = useState<string>(''); // 사용자 역할 상태
   const [isOwner, setIsOwner] = useState<boolean>(false); // 오너 여부 상태
   console.log(role)
+  
   useEffect(() => {
     const fetchStudioDetails = async () => {
       try {

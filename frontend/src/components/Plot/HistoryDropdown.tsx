@@ -1,4 +1,3 @@
-
 import type { Node, Edge } from '@xyflow/react';
 
 
@@ -15,6 +14,13 @@ export interface History {
       zoom: number;
     };
   };
+}
+
+export interface TextHistory {
+  textId: string;
+  penName: string;
+  dateTime: string;
+  text : string;
 }
 
 

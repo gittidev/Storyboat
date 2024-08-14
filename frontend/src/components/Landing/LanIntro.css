@@ -1,22 +1,18 @@
 .container {
-  display: flex;
-  flex-direction: column;
-  justify-content: center; /* 수직 중앙 정렬 */
-  align-items: center; /* 수평 중앙 정렬 */
-  height: 53vh; /* 원하는 높이 설정 */
   text-align: center;
-  margin: 20px;
-  border-radius: 8px; /* 선택적으로 둥근 모서리 추가 */
-  padding: 20px; /* 선택적으로 내부 여백 추가 */
   color: white;
   /* color: black; */
 }
 
-.heading {
-  margin-bottom: 10px;
-}
 
 .subheading {
   /* color: #555; */
   color: white;
+}
+
+.background-wrapper {
+  position: relative;
+  width: 100vw; /* 전체 화면 너비를 차지하도록 설정 */
+  height: 115vh; /* 전체 화면 높이를 차지하도록 설정 */
+  overflow: hidden; /* 자식 요소가 요소를 넘어가지 않도록 설정 */
 }
