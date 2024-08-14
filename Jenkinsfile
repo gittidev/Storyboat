@@ -80,15 +80,12 @@ pipeline {
         success {
             script {
                 sendNotification('good', '빌드 성공')
+                cleanWs()
             }
         }
         failure {
             script {
                 sendNotification('danger', '빌드 실패')
-            }
-        }
-        always {
-            script {
                 cleanWs()
             }
         }
