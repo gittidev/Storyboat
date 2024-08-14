@@ -17,7 +17,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @Getter
-@SQLDelete(sql = "UPDATE user SET is_deleted = true WHERE user_id = ?")
+//@SQLDelete(sql = "UPDATE user SET is_deleted = true WHERE user_id = ?")
 @FilterDef(name = "deletedUserFilter", parameters = @ParamDef(name = "isDeleted", type = Boolean.class))
 @Filter(name = "deletedUserFilter", condition = "is_deleted = :isDeleted")
 public class User {
@@ -54,6 +54,8 @@ public class User {
     public void revokeUser() {
         this.isDeleted = false;
     }
+
+    public void deleteUser() { this.isDeleted = true; }
 
     public void updateProfile(Profile profile) {
         this.profile = profile;
