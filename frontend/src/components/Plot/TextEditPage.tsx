@@ -33,7 +33,7 @@ const TextEditPage: React.FC = () => {
 
   const [Texthistories, setTextHistories] = useState<TextHistory[]>([])
   const [selectedTextHistory, setSelectedTextHistory] = useState<string | null>(null)
-     
+          
   const fetchTextHistories = async () => {
     try {
       const response = await axios.get(`${svURL}/api/studios/${studioId}/stories/${storyId}/text/histories`, {
