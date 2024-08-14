@@ -22,6 +22,6 @@ module.exports = {
     ],
     'no-unused-vars': 'warn', // 경고로 설정
     '@typescript-eslint/no-unused-vars': ['warn'], // 경고로 설정
-    '@typescript-eslint/no-explicit-any': 'off',
+    // '@typescript-eslint/no-explicit-any': 'off',
   },
 };
