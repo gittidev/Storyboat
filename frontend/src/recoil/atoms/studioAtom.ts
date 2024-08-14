@@ -1,5 +1,6 @@
 import { atom } from 'recoil';
-import { StudioType, CharacterType, MemberType, IdeaType, StoryType, FindTeamType } from '../../types/StudioType';
+import { StudioType,  MemberType, IdeaType, StoryType, FindTeamType } from '../../types/StudioType';
+import { Character } from '../../types/Chartype';
 
 //팀 Atom
 export const teamState = atom({
@@ -78,17 +79,18 @@ export const myIdeaState = atom<IdeaType[]>({
 
 
 
-//캐릭터 Atom
-export const myCharState = atom<CharacterType[]>({
-  key: 'myCharState',
+// 모든 캐릭터 목록 Atom
+export const charactersState = atom<Character[]>({
+  key: 'charactersState',
   default: [],
 });
 
-//캐릭터 Atom
-export const charState = atom<CharacterType[]>({
-  key: 'charState',
-  default: [],
+// 선택된 캐릭터 Atom
+export const selectedCharacterState = atom<Character | null>({
+  key: 'selectedCharacterState',
+  default: null,
 });
+
 
 // 팀찾기 Atom
 export const findTeamState = atom<FindTeamType[]>({
