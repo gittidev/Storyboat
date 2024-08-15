@@ -305,8 +305,11 @@ const TextEditPage: React.FC = () => {
       const script: Sentence[] = JSON.parse(response.data.data);
       if (ydocRef.current) {
         const sharedArray = ydocRef.current.getArray<Sentence>('sentences');
-        ydocRef.current.transact(() => {
-          sharedArray.delete(0, sharedArray.length);
+        ydocRef.current?.transact(() => {
+          while (sharedArray.length > 0) {
+            sharedArray.delete(sharedArray.length - 1, 1);
+          }
+          // sharedArray.delete(0, sharedArray.length);
           sharedArray.insert(0, script);
         });
       }
@@ -326,18 +329,8 @@ const TextEditPage: React.FC = () => {
   };
 
   useEffect(() => {
-    // fetchText()
-    // fetchText(); // 첫 번째 사용자가 들어오면 fetchText 호출
+    fetchText()
     fetchTextHistories()
-    // console.log(activeUsers)
-    // if (activeUsers.length === 1) {
-    // }
-    if (ydocRef.current) {
-      const sharedArray = ydocRef.current.getArray<Sentence>('sentences');
-      if(sharedArray.length==0){
-        fetchText()
-      }
-    }
   }, [studioId, storyId]);
 
   return (
@@ -347,6 +340,9 @@ const TextEditPage: React.FC = () => {
           <Typography variant="h6" noWrap>
             공동 소설 작성 
           </Typography>
+          <Button onClick={fetchText} color="inherit">
+            새로고침
+          </Button>
           <FormControl variant="outlined" size="small" style={{ minWidth: 120 }}>
             <InputLabel id="history-select-label">History</InputLabel>
             <Select
