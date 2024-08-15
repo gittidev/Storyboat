@@ -1,10 +1,13 @@
 package com.ssafy.storyboat.domain.studio.application;
 
 import com.ssafy.storyboat.common.auth.dto.CustomOAuth2User;
-import com.ssafy.storyboat.common.dto.ApiResponse;
 import com.ssafy.storyboat.common.dto.Role;
-import com.ssafy.storyboat.common.exception.*;
+import com.ssafy.storyboat.common.exception.ConflictException;
+import com.ssafy.storyboat.common.exception.ForbiddenException;
+import com.ssafy.storyboat.common.exception.ResourceNotFoundException;
+import com.ssafy.storyboat.common.exception.UnauthorizedException;
 import com.ssafy.storyboat.domain.character.entity.StudioCharacter;
+import com.ssafy.storyboat.domain.character.repository.CharacterRepository;
 import com.ssafy.storyboat.domain.studio.application.authorization.StudioOwnerAuthorization;
 import com.ssafy.storyboat.domain.studio.application.authorization.StudioReadAuthorization;
 import com.ssafy.storyboat.domain.studio.dto.StudioMemberFindAllResponse;
@@ -16,15 +19,12 @@ import com.ssafy.storyboat.domain.studio.repository.StudioUserRepository;
 import com.ssafy.storyboat.domain.user.application.UserService;
 import com.ssafy.storyboat.domain.user.entity.Profile;
 import com.ssafy.storyboat.domain.user.entity.User;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.PersistenceException;
+import com.ssafy.storyboat.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.security.PrivateKey;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,9 +36,10 @@ import java.util.Optional;
 public class StudioService {
 
     private final StudioRepository studioRepository;
-    private final EntityManagerFactory entityManagerFactory;
     private final StudioUserRepository studioUserRepository;
     private final UserService userService;
+    private final UserRepository userRepository;
+    private final CharacterRepository characterRepository;
 
 
     @Transactional(readOnly = true)
@@ -84,50 +85,35 @@ public class StudioService {
 
     @Transactional
     public void createStudio(CustomOAuth2User customOAuth2User, String name, String description) {
-        EntityManager entityManager = entityManagerFactory.createEntityManager();
 
-        ApiResponse<?> response = null;
-        try {
-            entityManager.getTransaction().begin();  // 트랜잭션 시작
+        // 1. 유저 조회
+        Long userId = customOAuth2User.getUserId();
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UnauthorizedException("로그인 유저 정보 조회 실패"));
 
-            // 1. 유저 조회
-            Long userId = customOAuth2User.getUserId();
-            User user = entityManager.find(User.class, userId);
-            if (user == null) {
-                throw new UnauthorizedException("로그인 유저 정보 조회 실패");
-            }
+        // 2. 개인 스튜디오 생성해 영속
+        Studio studio = Studio.builder()
+                .name(name)
+                // description은 null이 입력된다면 ""으로 초기화
+                .description(description == null ? "" : description)
+                .studioUsers(new ArrayList<>())
+                .build();
 
-            // 2. 개인 스튜디오 생성해 영속
-            Studio studio = Studio.builder()
-                    .name(name)
-                    // description은 null이 입력된다면 ""으로 초기화
-                    .description(description == null ? "" : description)
-                    .studioUsers(new ArrayList<>())
-                    .build();
+        Studio savedStudio = studioRepository.save(studio);
 
-            entityManager.persist(studio);
+        // 3. StudioUser 생성해 persist
+        StudioUser studioUser = StudioUser.builder()
+                .user(user)
+                .studio(savedStudio)
+                .role(Role.ROLE_OWNER)
+                .createdAt(LocalDateTime.now())
+                .build();
 
-            // 3. StudioUser 생성해 persist
-            StudioUser studioUser = StudioUser.builder()
-                    .user(user)
-                    .studio(studio)
-                    .role(Role.ROLE_OWNER)
-                    .createdAt(LocalDateTime.now())
-                    .build();
+        studioUserRepository.save(studioUser);
 
-            entityManager.persist(studioUser);
-
-            // 4. Default Character 생성해 Persist
-            StudioCharacter studioCharacter = makeDefaultCharacter(studio);
-            entityManager.persist(studioCharacter);
-
-            entityManager.getTransaction().commit();  // 트랜잭션 커밋
-        } catch (PersistenceException e) {
-            if (entityManager.getTransaction().isActive()) {
-                entityManager.getTransaction().rollback();
-            }
-            throw new InternalServerErrorException("DB 저장 실패");
-        }
+        // 4. Default Character 생성해 Persist
+        StudioCharacter studioCharacter = makeDefaultCharacter(studio);
+        characterRepository.save(studioCharacter);
     }
 
     @Transactional
