@@ -69,7 +69,7 @@ const TextEditPage: React.FC = () => {
 
   const fetTextHistoryData = async (textId: string) => {
     try {
-      const response = await axios.get(`${svURL}/api/studios/${studioId}/stories/${storyId}/text/${textId}`,{
+      const response = await axios.get(`${svURL}/api/studios/${studioId}/stories/${storyId}/text/${textId}`, {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`,
@@ -90,13 +90,22 @@ const TextEditPage: React.FC = () => {
   }
 
   useEffect(() => {
-    const ydoc = new Y.Doc();
-    ydocRef.current = ydoc;
+    // const ydoc = new Y.Doc();
+    // ydocRef.current = ydoc;
 
-    const provider = new WebrtcProvider(roomId, ydoc, {
-      signaling: ['wss://i11c107.p.ssafy.io/signal'],
-    });
-    providerRef.current = provider;
+    if (!ydocRef.current) {
+      ydocRef.current = new Y.Doc();
+    }
+    const ydoc = ydocRef.current
+
+    if (!providerRef.current) {
+      providerRef.current = new WebrtcProvider(roomId, ydocRef.current, {
+        signaling: ['wss://i11c107.p.ssafy.io/signal'],
+      });
+    } else {
+      providerRef.current.connect();
+    }
+    const provider = providerRef.current;
 
     const sharedArray = ydoc.getArray<Sentence>('sentences');
 
@@ -317,10 +326,10 @@ const TextEditPage: React.FC = () => {
 
   useEffect(() => {
     // fetchText()
+    fetchText(); // 첫 번째 사용자가 들어오면 fetchText 호출
     fetchTextHistories()
     // console.log(activeUsers)
     // if (activeUsers.length === 1) {
-      fetchText(); // 첫 번째 사용자가 들어오면 fetchText 호출
     // }
   }, [studioId, storyId]);
 
@@ -395,7 +404,7 @@ const TextEditPage: React.FC = () => {
       <Box sx={{ padding: 2, flexGrow: 1, overflowY: 'auto' }}>
         <DragDropContext onDragEnd={onDragEnd}>
           <Droppable droppableId="sentences">
-            {(provided : any) => (
+            {(provided: any) => (
               <Box
                 {...provided.droppableProps}
                 ref={provided.innerRef}
@@ -409,7 +418,7 @@ const TextEditPage: React.FC = () => {
               >
                 {content.map((sentence, index) => (
                   <Draggable key={sentence.id} draggableId={sentence.id} index={index}>
-                    {(provided : any) => (
+                    {(provided: any) => (
                       <Box
                         ref={provided.innerRef}
                         {...provided.draggableProps}
@@ -465,7 +474,7 @@ const TextEditPage: React.FC = () => {
                                 : ""}
                           </Typography>
                         )}
-                        {!isViewerMode && !isCheckMode &&(
+                        {!isViewerMode && !isCheckMode && (
                           <Box
                             className="action-icons"
                             sx={{
@@ -494,13 +503,13 @@ const TextEditPage: React.FC = () => {
                       <AddIcon />
                     </IconButton>
                     <Button
-                          variant="contained"
-                          color="primary"
-                          onClick={handleSaveToList}
-                          sx={{ ml: 2 }}
-                        >
-                          저장
-                        </Button>
+                      variant="contained"
+                      color="primary"
+                      onClick={handleSaveToList}
+                      sx={{ ml: 2 }}
+                    >
+                      저장
+                    </Button>
                   </Box>
                 )}
               </Box>
