@@ -104,7 +104,6 @@ const TextEditPage: React.FC = () => {
       });
     } else {
       providerRef.current.connect();
-
     }
     const provider = providerRef.current;
 
@@ -372,8 +371,11 @@ const TextEditPage: React.FC = () => {
       <AppBar position="relative" color="transparent" elevation={0}>
         <Toolbar>
           <Typography variant="h6" noWrap>
-            공동 소설 작성:
+            공동 소설 작성 
           </Typography>
+          <Button onClick={fetchText} color="inherit">
+            새로고침
+          </Button>
           <FormControl variant="outlined" size="small" style={{ minWidth: 120 }}>
             <InputLabel id="history-select-label">History</InputLabel>
             <Select
