@@ -15,31 +15,31 @@ public class EpubService {
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
              ZipArchiveOutputStream zipOut = new ZipArchiveOutputStream(baos)) {
 
-            // Add mimetype file
+            // Add mimetype file (must be the first file, and uncompressed)
             ZipArchiveEntry mimetypeEntry = new ZipArchiveEntry("mimetype");
             zipOut.putArchiveEntry(mimetypeEntry);
             zipOut.write("application/epub+zip".getBytes(StandardCharsets.UTF_8));
             zipOut.closeArchiveEntry();
 
-            // Add container.xml
+            // Add META-INF/container.xml
             ZipArchiveEntry containerEntry = new ZipArchiveEntry("META-INF/container.xml");
             zipOut.putArchiveEntry(containerEntry);
             String containerXml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
                     + "<container version=\"1.0\" xmlns=\"urn:oasis:names:tc:opendocument:xmlns:container\">"
-                    + "<rootfiles><rootfile full-path=\"OEBPS/content.xhtml\" media-type=\"application/xhtml+xml\"/></rootfiles>"
+                    + "<rootfiles><rootfile full-path=\"OEBPS/content.opf\" media-type=\"application/oebps-package+xml\"/></rootfiles>"
                     + "</container>";
             zipOut.write(containerXml.getBytes(StandardCharsets.UTF_8));
             zipOut.closeArchiveEntry();
 
-            // Add content.xhtml
+            // Add OEBPS/content.xhtml
             ZipArchiveEntry contentEntry = new ZipArchiveEntry("OEBPS/content.xhtml");
             zipOut.putArchiveEntry(contentEntry);
-            String contentXhtml = "<html xmlns=\"http://www.w3.org/1999/xhtml\"><head><title>" + title + "</title></head><body><h1>" + title + "</h1><p>"
-                    + content + "</p></body></html>";
+            String contentXhtml = "<html xmlns=\"http://www.w3.org/1999/xhtml\"><head><title>" + title + "</title></head>"
+                    + "<body><h1>Chapter 1</h1><p>" + content + "</p></body></html>";
             zipOut.write(contentXhtml.getBytes(StandardCharsets.UTF_8));
             zipOut.closeArchiveEntry();
 
-            // Add content.opf
+            // Add OEBPS/content.opf
             ZipArchiveEntry opfEntry = new ZipArchiveEntry("OEBPS/content.opf");
             zipOut.putArchiveEntry(opfEntry);
             String contentOpf = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
@@ -52,7 +52,7 @@ public class EpubService {
             zipOut.write(contentOpf.getBytes(StandardCharsets.UTF_8));
             zipOut.closeArchiveEntry();
 
-            // Add toc.ncx
+            // Add OEBPS/toc.ncx
             ZipArchiveEntry tocEntry = new ZipArchiveEntry("OEBPS/toc.ncx");
             zipOut.putArchiveEntry(tocEntry);
             String tocNcx = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
@@ -60,7 +60,7 @@ public class EpubService {
                     + "<head><meta name=\"dtb:uid\" content=\"unique-id\"/></head>"
                     + "<docTitle><title>" + title + "</title></docTitle>"
                     + "<navMap><navPoint id=\"navPoint-1\" playOrder=\"1\">"
-                    + "<navLabel><text>" + title + "</text></navLabel>"
+                    + "<navLabel><text>Chapter 1</text></navLabel>"
                     + "<content src=\"content.xhtml\"/></navPoint></navMap></ncx>";
             zipOut.write(tocNcx.getBytes(StandardCharsets.UTF_8));
             zipOut.closeArchiveEntry();
