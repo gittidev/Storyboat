@@ -17,8 +17,13 @@ public class EpubService {
 
             // Add mimetype file (must be the first file, and uncompressed)
             ZipArchiveEntry mimetypeEntry = new ZipArchiveEntry("mimetype");
+            mimetypeEntry.setMethod(ZipArchiveEntry.STORED); // Ensure the mimetype is uncompressed
+            byte[] mimetypeBytes = "application/epub+zip".getBytes(StandardCharsets.UTF_8);
+            mimetypeEntry.setSize(mimetypeBytes.length);
+            mimetypeEntry.setCrc(calculateCRC32(mimetypeBytes)); // Set the correct CRC32 checksum
+
             zipOut.putArchiveEntry(mimetypeEntry);
-            zipOut.write("application/epub+zip".getBytes(StandardCharsets.UTF_8));
+            zipOut.write(mimetypeBytes);
             zipOut.closeArchiveEntry();
 
             // Add META-INF/container.xml
@@ -69,4 +74,12 @@ public class EpubService {
             return baos.toByteArray();
         }
     }
+
+    // Method to calculate CRC32 checksum
+    private long calculateCRC32(byte[] data) {
+        java.util.zip.CRC32 crc32 = new java.util.zip.CRC32();
+        crc32.update(data);
+        return crc32.getValue();
+    }
 }
+
