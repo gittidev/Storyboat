@@ -161,35 +161,56 @@ const CharBoxPage: React.FC = () => {
                 aria-describedby="modal-description"
             >
                 <Box sx={{
-                    position: 'absolute',
-                    top: '50%',
-                    left: '50%',
-                    transform: 'translate(-50%, -50%)',
-                    width: '50%',
-                    height: '50%',
-                    bgcolor: 'background.paper',
-                    p: 4,
-                    borderRadius: '12px',
-                    display: 'flex',
-                    alignItems: 'flex-start',
-                    gap: 1,
-                    overflow: 'hidden'
+                        position: 'absolute',
+                        top: '50%',
+                        left: '50%',
+                        transform: 'translate(-50%, -50%)',
+                        width: '60%', 
+                        height: '60%', 
+                        bgcolor: 'background.paper',
+                    
+                        pt: 6,  // Padding top
+                        pr: 6,  // Padding right
+                        pb: 6,  // Padding bottom
+                        pl: 2,  // Padding left
+
+                        borderRadius: '12px', 
+                        display: 'flex',
+                        alignItems: 'flex-start',
+                        gap: 1, 
+                        overflow: 'hidden'
                 }}>
                     {selectedCharacter && (
                         <>
-                            <Box sx={{ flexShrink: 0, width: '45%', height: 'auto', overflow: 'hidden' }}>
+                            <Box 
+                            
+                            sx={{
+                                flexShrink: 0,
+                                width: '300px',
+                                height: '300px',
+                                overflow: 'hidden',
+                                display: 'flex', // Center the image inside the box
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                backgroundColor: 'white'
+                            }}
+                            
+                            >
                                 <CardMedia
                                     component="img"
                                     alt={selectedCharacter.name}
                                     image={selectedCharacter.imageUrl}
                                     sx={{
-                                        width: '90%',
-                                        height: 'auto',
-                                        objectFit: 'cover'
+                                        maxWidth: '88%',
+                                        maxHeight: '88%',
+                                        objectFit: 'contain',
+                                        marginBottom: '16px' ,
+                                        marginLeft: '100px',     // Add margin to the left of the image
+                                        marginRight: '100px',
                                     }}
                                 />
                             </Box>
-                            <Box sx={{ flexGrow: 1, overflowY: 'auto' }}>
+                            <Box sx={{ flexGrow: 1, height: '100%',  overflowY: 'auto' }}>
                                 <Typography id="modal-title" variant="h5" component="h2" gutterBottom>
                                     {selectedCharacter.name}
                                 </Typography>

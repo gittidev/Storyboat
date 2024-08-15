@@ -47,7 +47,7 @@ const LanReview: React.FC = () => {
             {/* 4.2  */}
           </Typography>
           <Typography variant="body1" sx={{ marginBottom: 2 }}>
-            리뷰 4,026만개
+            리뷰 12개
           </Typography>
         </div>
         <div className='LanReview2'>
