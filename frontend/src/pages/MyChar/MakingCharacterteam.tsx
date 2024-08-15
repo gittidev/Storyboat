@@ -1,3 +1,5 @@
+// MakingCharacterteam.tsx
+
 import React, { useState, useEffect } from 'react';
 import {
   Box, Button, Dialog, DialogActions, DialogContent, DialogTitle,
@@ -5,7 +7,7 @@ import {
 } from '@mui/material';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useRecoilState } from 'recoil';
 import { accessTokenState } from '../../recoil/atoms/authAtom';
 import { myStudioState, selectedStudioState } from '../../recoil/atoms/studioAtom';
 import SubTopBar from '../../components/Commons/SubTopBar';
@@ -23,31 +25,29 @@ const MakingCharacterteam: React.FC<MakingCharacterteamProps> = ({ onCharacterCr
   const navigate = useNavigate();
   const token = useRecoilValue(accessTokenState);
   const myStudioId = useRecoilValue(myStudioState);
-  const selectedStudioId = useRecoilValue(selectedStudioState);
+  const [selectedStudioId] = useRecoilState(selectedStudioState);
   const [bringmyCharacterId, setBringmyCharacterId] = useState<string>('');
   const [myStudioCharacters, setMyStudioCharacters] = useState<Character[]>([]);
-  // const [selectedStudioCharacters, setSelectedStudioCharacters] = useState<Character[]>([]);
   const [open, setOpen] = useState<boolean>(false);
 
   // Fetch characters from selected studio
-  // Fetch characters from selected studio
-useEffect(() => {
-  const fetchSelectedStudioCharacters = async () => {
-    try {
-      await axios.get<{ message: string, data: Character[] }>(
-        `${svURL}/api/studios/${selectedStudioId}/characters`,
-        { headers: { 'Authorization': `Bearer ${token}` } }
-      );
-      // setSelectedStudioCharacters(response.data.data); // 필요시 주석 해제
-    } catch (error) {
-      console.error('Error fetching characters from selected studio:', error);
-    }
-  };
+  useEffect(() => {
+    const fetchSelectedStudioCharacters = async () => {
+      try {
+        await axios.get<{ message: string, data: Character[] }>(
+          `${svURL}/api/studios/${selectedStudioId}/characters`,
+          { headers: { 'Authorization': `Bearer ${token}` } }
+        );
+        // Optional: Handle selected studio characters if needed
+      } catch (error) {
+        console.error('Error fetching characters from selected studio:', error);
+      }
+    };
 
-  if (selectedStudioId) {
-    fetchSelectedStudioCharacters();
-  }
-}, [token, selectedStudioId]);
+    if (selectedStudioId) {
+      fetchSelectedStudioCharacters();
+    }
+  }, [token, selectedStudioId]);
 
   // Fetch characters from my studio
   useEffect(() => {

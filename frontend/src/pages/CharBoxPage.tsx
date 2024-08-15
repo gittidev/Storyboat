@@ -1,5 +1,4 @@
 // CharBoxPage.tsx
-
 import React, { useState, useEffect } from 'react';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
@@ -16,7 +15,6 @@ import { accessTokenState } from '../recoil/atoms/authAtom';
 import { selectedStudioState, charactersState, selectedCharacterState } from '../recoil/atoms/studioAtom';
 import MakingCharacterteam from './MyChar/MakingCharacterteam';
 import EditCharacterteam from './MyChar/EditCharacterteam';
-
 
 const svURL = import.meta.env.VITE_SERVER_URL;
 
@@ -47,7 +45,9 @@ const CharBoxPage: React.FC = () => {
                 console.error('Error fetching characters:', error);
             }
         };
-        loadCharacters();
+        if (SelectedStudioId) {
+            loadCharacters();
+        }
     }, [token, SelectedStudioId, setCharacters]);
 
     const handleCharacterClick = (character: Character) => {
@@ -62,10 +62,10 @@ const CharBoxPage: React.FC = () => {
     };
 
     const handleUpdate = async () => {
-        if (selectedCharacter) {
+        if (SelectedStudioId) {
             try {
                 const response = await axios.get<{ message: string, data: Character[] }>(
-                    `${svURL}/api/studios/${SelectedStudioId}/characters/${selectedCharacter.id}/${SelectedStudioId}`,
+                    `${svURL}/api/studios/${SelectedStudioId}/characters`,
                     {
                         headers: {
                             'Authorization': `Bearer ${token}`,
@@ -77,10 +77,9 @@ const CharBoxPage: React.FC = () => {
                 console.error('Error fetching characters:', error);
             }
         } else {
-            console.error('No character selected');
+            console.error('No studio selected');
         }
     };
-    
 
     const handleDelete = async () => {
         if (selectedCharacter) {
@@ -110,8 +109,8 @@ const CharBoxPage: React.FC = () => {
         setSearchTerm(event.target.value);
     };
 
-    const handleCharacterCreated = async () => {
-        await handleUpdate(); // Update the character list after creation
+    const handleCharacterCreated = () => {
+        handleUpdate(); // Update the character list after creation
     };
 
     return (
