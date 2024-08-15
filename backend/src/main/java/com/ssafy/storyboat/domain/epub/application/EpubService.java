@@ -11,7 +11,7 @@ import java.nio.charset.StandardCharsets;
 @Service
 public class EpubService {
 
-    public byte[] createEpub(String content) throws IOException {
+    public byte[] createEpub(String title, String content) throws IOException {
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
              ZipArchiveOutputStream zipOut = new ZipArchiveOutputStream(baos)) {
 
@@ -34,7 +34,7 @@ public class EpubService {
             // Add content.xhtml
             ZipArchiveEntry contentEntry = new ZipArchiveEntry("OEBPS/content.xhtml");
             zipOut.putArchiveEntry(contentEntry);
-            String contentXhtml = "<html xmlns=\"http://www.w3.org/1999/xhtml\"><head><title>My eBook</title></head><body><h1>Chapter 1</h1><p>"
+            String contentXhtml = "<html xmlns=\"http://www.w3.org/1999/xhtml\"><head><title>" + title + "</title></head><body><h1>" + title + "</h1><p>"
                     + content + "</p></body></html>";
             zipOut.write(contentXhtml.getBytes(StandardCharsets.UTF_8));
             zipOut.closeArchiveEntry();
@@ -45,7 +45,7 @@ public class EpubService {
             String contentOpf = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
                     + "<package xmlns=\"http://www.idpf.org/2007/opf\" version=\"2.0\">"
                     + "<metadata xmlns:dc=\"http://purl.org/dc/elements/1.1/\">"
-                    + "<dc:title>My eBook</dc:title><dc:creator>Author Name</dc:creator>"
+                    + "<dc:title>" + title + "</dc:title><dc:creator>Author Name</dc:creator>"
                     + "<dc:identifier id=\"book-id\">unique-id</dc:identifier></metadata>"
                     + "<manifest><item id=\"item1\" href=\"content.xhtml\" media-type=\"application/xhtml+xml\"/></manifest>"
                     + "<spine><itemref idref=\"item1\"/></spine></package>";
@@ -58,9 +58,9 @@ public class EpubService {
             String tocNcx = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
                     + "<ncx xmlns=\"http://www.daisy.org/z3986/2005/ncx/\" version=\"2005-1\">"
                     + "<head><meta name=\"dtb:uid\" content=\"unique-id\"/></head>"
-                    + "<docTitle><title>My eBook</title></docTitle>"
+                    + "<docTitle><title>" + title + "</title></docTitle>"
                     + "<navMap><navPoint id=\"navPoint-1\" playOrder=\"1\">"
-                    + "<navLabel><text>Chapter 1</text></navLabel>"
+                    + "<navLabel><text>" + title + "</text></navLabel>"
                     + "<content src=\"content.xhtml\"/></navPoint></navMap></ncx>";
             zipOut.write(tocNcx.getBytes(StandardCharsets.UTF_8));
             zipOut.closeArchiveEntry();

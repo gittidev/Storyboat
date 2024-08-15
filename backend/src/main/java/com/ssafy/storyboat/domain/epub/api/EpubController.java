@@ -2,6 +2,7 @@ package com.ssafy.storyboat.domain.epub.api;
 
 import com.ssafy.storyboat.common.exception.InternalServerErrorException;
 import com.ssafy.storyboat.domain.epub.application.EpubService;
+import com.ssafy.storyboat.domain.epub.dto.EpubRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -21,9 +22,9 @@ public class EpubController {
     private final EpubService epubService;
 
     @PostMapping("/create")
-    public ResponseEntity<?> createEpub(@RequestBody String content) {
+    public ResponseEntity<byte[]> createEpub(@RequestBody EpubRequest request) {
         try {
-            byte[] epubBytes = epubService.createEpub(content);
+            byte[] epubBytes = epubService.createEpub(request.getTitle(), request.getText());
 
             HttpHeaders headers = new HttpHeaders();
             headers.add(HttpHeaders.CONTENT_TYPE, "application/epub+zip");
@@ -31,7 +32,7 @@ public class EpubController {
 
             return new ResponseEntity<>(epubBytes, headers, HttpStatus.OK);
         } catch (IOException e) {
-            throw new InternalServerErrorException("IO Exception 발생");
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }
