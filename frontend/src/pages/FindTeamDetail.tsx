@@ -155,6 +155,9 @@ const FindTeamDetail: React.FC = () => {
             variant="contained"
             color="primary"
             onClick={handleJoinRequest}
+            sx={{backgroundColor :"#77E4C8",    '&:hover': {
+              backgroundColor: "#4C3BCF" // hover 시 배경색 변경
+            }, }}
           >
             참여 요청
           </Button>

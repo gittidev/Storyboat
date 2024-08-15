@@ -46,7 +46,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
                     sx={{ height: "100%" }}
                 >
                     <MenuItem value="title">제목</MenuItem>
-                    <MenuItem value="category">태그</MenuItem>
+                    {/* <MenuItem value="category">태그</MenuItem> */}
                 </Select>
             </FormControl>
 
