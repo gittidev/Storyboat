@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
+import java.util.Base64;
 
 @RestController
 @RequiredArgsConstructor
@@ -24,8 +25,10 @@ public class EpubController {
     @PostMapping("/create")
     public ResponseEntity<byte[]> createEpub(@RequestBody EpubRequest request) {
         try {
-            byte[] epubBytes = epubService.createEpub(request.getTitle(), request.getText());
+            byte[] epubBytes =
+                    epubService.createEpub(request.getTitle(), request.getText());
 
+            Base64.getEncoder().encode(epubBytes);
             HttpHeaders headers = new HttpHeaders();
             headers.add(HttpHeaders.CONTENT_TYPE, "application/epub+zip");
             headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=book.epub");
