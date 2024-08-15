@@ -96,6 +96,7 @@ const TextEditPage: React.FC = () => {
     if (!ydocRef.current) {
       ydocRef.current = new Y.Doc();
     }
+
     const ydoc = ydocRef.current
 
     if (!providerRef.current) {
@@ -326,11 +327,17 @@ const TextEditPage: React.FC = () => {
 
   useEffect(() => {
     // fetchText()
-    fetchText(); // 첫 번째 사용자가 들어오면 fetchText 호출
+    // fetchText(); // 첫 번째 사용자가 들어오면 fetchText 호출
     fetchTextHistories()
     // console.log(activeUsers)
     // if (activeUsers.length === 1) {
     // }
+    if (ydocRef.current) {
+      const sharedArray = ydocRef.current.getArray<Sentence>('sentences');
+      if(sharedArray.length==0){
+        fetchText()
+      }
+    }
   }, [studioId, storyId]);
 
   return (
@@ -338,7 +345,7 @@ const TextEditPage: React.FC = () => {
       <AppBar position="relative" color="transparent" elevation={0}>
         <Toolbar>
           <Typography variant="h6" noWrap>
-            공동 소설 작성:
+            공동 소설 작성 
           </Typography>
           <FormControl variant="outlined" size="small" style={{ minWidth: 120 }}>
             <InputLabel id="history-select-label">History</InputLabel>
