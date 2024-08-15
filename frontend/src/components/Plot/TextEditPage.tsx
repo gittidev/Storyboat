@@ -69,7 +69,7 @@ const TextEditPage: React.FC = () => {
 
   const fetTextHistoryData = async (textId: string) => {
     try {
-      const response = await axios.get(`${svURL}/api/studios/${studioId}/stories/${storyId}/text/${textId}`,{
+      const response = await axios.get(`${svURL}/api/studios/${studioId}/stories/${storyId}/text/${textId}`, {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`,
@@ -90,13 +90,23 @@ const TextEditPage: React.FC = () => {
   }
 
   useEffect(() => {
-    const ydoc = new Y.Doc();
-    ydocRef.current = ydoc;
+    // const ydoc = new Y.Doc();
+    // ydocRef.current = ydoc;
 
-    const provider = new WebrtcProvider(roomId, ydoc, {
-      signaling: ['wss://i11c107.p.ssafy.io/signal'],
-    });
-    providerRef.current = provider;
+    if (!ydocRef.current) {
+      ydocRef.current = new Y.Doc();
+    }
+    const ydoc = ydocRef.current
+
+    if (!providerRef.current) {
+      providerRef.current = new WebrtcProvider(roomId, ydocRef.current, {
+        signaling: ['wss://i11c107.p.ssafy.io/signal'],
+      });
+    } else {
+      providerRef.current.connect();
+
+    }
+    const provider = providerRef.current;
 
     const sharedArray = ydoc.getArray<Sentence>('sentences');
 
@@ -292,18 +302,22 @@ const TextEditPage: React.FC = () => {
           'Authorization': `Bearer ${token}`,
         },
       });
+      
       const script: Sentence[] = JSON.parse(response.data.data);
+      
       if (ydocRef.current) {
         const sharedArray = ydocRef.current.getArray<Sentence>('sentences');
+        
         ydocRef.current.transact(() => {
-          sharedArray.delete(0, sharedArray.length);
-          sharedArray.insert(0, script);
+          // sharedArray.delete(0, sharedArray.length);
+          if (sharedArray.length === 0) {
+            sharedArray.insert(0, script);
+          }
         });
       }
-      console.log(script)
-      // if (ydocRef.current) {
-      //   ydocRef.current.clipboard.dangerouslyPasteHTML(script.text);
-      // }
+  
+      console.log("스크립트 데이터:", script);
+  
     } catch (error) {
       console.error('원고를 가져오지 못하였습니다:', error);
     }
@@ -316,13 +330,42 @@ const TextEditPage: React.FC = () => {
   };
 
   useEffect(() => {
-    // fetchText()
-    fetchTextHistories()
-    // console.log(activeUsers)
-    // if (activeUsers.length === 1) {
-      fetchText(); // 첫 번째 사용자가 들어오면 fetchText 호출
-    // }
+    async function initialize() {
+      if (ydocRef.current) {
+        const ydoc = ydocRef.current;
+  
+        // sharedArray 초기화 대기
+        const sharedArray = await waitForSharedArrayInitialization(ydoc);
+        
+        if (sharedArray) {
+          await fetchText(); // sharedArray 초기화 후 fetchText 실행
+          fetchTextHistories();
+        } else {
+          console.error("sharedArray 초기화 실패");
+        }
+      }
+    }
+  
+    initialize();
   }, [studioId, storyId]);
+  
+  async function waitForSharedArrayInitialization(ydoc: Y.Doc): Promise<Y.Array<Sentence>> {
+    return new Promise((resolve) => {
+      const sharedArray = ydoc.getArray<Sentence>('sentences');
+  
+      // sharedArray가 초기화되었는지 확인
+      if (sharedArray.length > 0) {
+        resolve(sharedArray);
+      } else {
+        // 옵저버를 사용하여 sharedArray가 초기화될 때까지 대기
+        sharedArray.observe(() => {
+          if (sharedArray.length > 0) {
+            resolve(sharedArray);
+          }
+        });
+      }
+    });
+  }
 
   return (
     <>
@@ -395,7 +438,7 @@ const TextEditPage: React.FC = () => {
       <Box sx={{ padding: 2, flexGrow: 1, overflowY: 'auto' }}>
         <DragDropContext onDragEnd={onDragEnd}>
           <Droppable droppableId="sentences">
-            {(provided : any) => (
+            {(provided: any) => (
               <Box
                 {...provided.droppableProps}
                 ref={provided.innerRef}
@@ -409,7 +452,7 @@ const TextEditPage: React.FC = () => {
               >
                 {content.map((sentence, index) => (
                   <Draggable key={sentence.id} draggableId={sentence.id} index={index}>
-                    {(provided : any) => (
+                    {(provided: any) => (
                       <Box
                         ref={provided.innerRef}
                         {...provided.draggableProps}
@@ -465,7 +508,7 @@ const TextEditPage: React.FC = () => {
                                 : ""}
                           </Typography>
                         )}
-                        {!isViewerMode && !isCheckMode &&(
+                        {!isViewerMode && !isCheckMode && (
                           <Box
                             className="action-icons"
                             sx={{
@@ -494,13 +537,13 @@ const TextEditPage: React.FC = () => {
                       <AddIcon />
                     </IconButton>
                     <Button
-                          variant="contained"
-                          color="primary"
-                          onClick={handleSaveToList}
-                          sx={{ ml: 2 }}
-                        >
-                          저장
-                        </Button>
+                      variant="contained"
+                      color="primary"
+                      onClick={handleSaveToList}
+                      sx={{ ml: 2 }}
+                    >
+                      저장
+                    </Button>
                   </Box>
                 )}
               </Box>
