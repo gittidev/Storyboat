@@ -4,12 +4,15 @@
   text-align: center;
   color: white;
   background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px); 
-  border-radius: 10px; 
-  padding: 20px; 
-  width: 45%; 
-  max-width: 1200px; 
-  margin: 0 auto; 
+  backdrop-filter: blur(15px) saturate(150%);
+  border-radius: 15px;
+  padding: 40px; /* 패딩을 더 크게 조정 */
+  width: 60%; /* 박스의 너비를 60%로 증가 */
+  max-width: 1400px; /* 최대 너비를 1400px로 확장 */
+  margin: 0 auto;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1), 0 6px 20px rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transform: perspective(1000px) rotateX(3deg) rotateY(-3deg);
 }
 
 

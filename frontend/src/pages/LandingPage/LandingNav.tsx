@@ -73,7 +73,6 @@ const LandingNav: React.FC = () => {
             sx={{
                 height: navHeight, 
                 backgroundColor: 'rgba(0, 0, 0, 0)',  // Transparent background
-                // backdropFilter: 'blur(10px)', 
                 top: 0,
                 left: 0,
                 right: 0,
@@ -124,6 +123,7 @@ const LandingNav: React.FC = () => {
                                     key={item.name}
                                     color="inherit"
                                     onClick={() => handleNavigation(item.path)}
+                                    sx={{ fontSize: '1.2rem' }}  // 글씨 크기 조정
                                 >
                                     {item.name}
                                 </Button>
@@ -135,6 +135,7 @@ const LandingNav: React.FC = () => {
                                     key={item.name}
                                     color="inherit"
                                     onClick={() => handleNavigation(item.path)}
+                                    sx={{ fontSize: '1.2rem' }}  // 글씨 크기 조정
                                 >
                                     {item.name}
                                 </Button>

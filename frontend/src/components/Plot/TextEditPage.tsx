@@ -371,7 +371,7 @@ const TextEditPage: React.FC = () => {
       <AppBar position="relative" color="transparent" elevation={0}>
         <Toolbar>
           <Typography variant="h6" noWrap>
-            공동 소설 작성 
+            소설 작성 
           </Typography>
           <Button onClick={fetchText} color="inherit">
             새로고침

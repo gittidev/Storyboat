@@ -33,11 +33,11 @@ const Lanmid: React.FC = () => {
       }}
       className="background-wrapper"
     >
-      <div className="container-lan">
-        <h2 className="heading-lan"><span className='blue'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AI를 활용한 그림그리기, 글쓰기 기능</span>까지</h2>
-        <h2>함께 소설을 작성하고 싶은 당신을 위한 최고의 서비스</h2>
-        {/*         <p className="subheading">동료 작가들과 협력하여 <br />보다 편리하게 멋진 원고를 작성해보세요 😊</p> */}
-      </div>
+    <div className="container-lan">
+    <h2 className="heading-lan"><span className='blue'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;실시간으로 함께 만들어가는 협업 스토리</span></h2>
+    <h2>당신과 동료들이 함께 써 내려가는 최고의 창작 플랫폼</h2>
+    {/* <p className="subheading">같은 열정으로 모인 작가들과<br />더 쉽게, 더 멋진 이야기를 만들어보세요 😊</p> */}
+    </div>
     </Box>
   );
 };

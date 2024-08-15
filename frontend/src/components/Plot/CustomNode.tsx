@@ -1,11 +1,12 @@
-import React, {memo, useState, useEffect} from 'react';
-import {Handle, Position, NodeResizeControl, useReactFlow} from '@xyflow/react';
-import {Button, Card, CardContent, CardHeader, CardActions, TextField} from '@mui/material';
-import {styled} from '@mui/system';
+import React, { memo, useState, useEffect, useCallback } from 'react';
+import { Handle, Position, NodeResizeControl, useReactFlow } from '@xyflow/react';
+import { Button, Card, CardContent, CardHeader, CardActions, TextField, IconButton } from '@mui/material';
+import EditIcon from '@mui/icons-material/Edit';
+import CloseIcon from '@mui/icons-material/Close';
 
-import {ResizeIcon} from '../../assets/asset';
-import {useYjsReactFlowSync} from '../../hooks/useYjsReactFlowSync';
-import {useParams} from 'react-router-dom';
+import { ResizeIcon } from '../../assets/asset';
+import { useYjsReactFlowSync } from '../../hooks/useYjsReactFlowSync';
+import { useParams } from 'react-router-dom';
 
 export interface CustomNodeProps {
     id: string;
@@ -20,27 +21,12 @@ export interface CustomNodeProps {
     handleSetMain: (id: string) => void;
 }
 
-const StyledButton = styled(Button)`
-    background-color: #c1f0c1;
-    border-radius: 4px;
-    padding: 3px 5px;
-    margin: 2px;
-    min-width: 50px;
-    min-height: 16px;
-    font-size: small;
-    text-align: center;
-    box-shadow: 0px 2px 4px rgba(95, 255, 146, 0.1);
-
-    &:hover {
-        background-color: #a8d5a8;
-    }
-`;
 
 const controlStyle = {
     background: 'transparent',
     border: 'none',
-    width: '10px',
-    height: '10px',
+    width: '20px',
+    height: '20px',
 };
 
 const handleStyle = {
@@ -52,30 +38,26 @@ const handleStyle = {
     boxShadow: '0px 4px 8px rgba(106, 27, 154, 0.4)',
 };
 
-const CustomNode: React.FC<CustomNodeProps> = ({id, data, deleteNode}) => {
-    const {storyId} = useParams<{ storyId: string }>();
+const CustomNode: React.FC<CustomNodeProps> = ({ id, data, deleteNode }) => {
+    const { storyId } = useParams<{ storyId: string }>();
     const roomId = storyId || `default_room_${Date.now()}`;
-    const {updateNode} = useYjsReactFlowSync(roomId);
-    const {setNodes} = useReactFlow();
+    const { updateNode } = useYjsReactFlowSync(roomId);
+    const { setNodes } = useReactFlow();
 
     const [isEditingPlot, setEditingPlot] = useState(false);
-    const [_, setTextEditDialogOpen] = useState(false);
     const [label, setLabel] = useState(data.label);
     const [content, setContent] = useState(data.content);
-    const [text, setText] = useState(data.text);
     const [isMain, setIsMain] = useState(data.isMain);
 
-    console.log(setText)
     useEffect(() => {
-        // data.label이나 data.content가 변경되면 label과 content의 상태를 업데이트
         setLabel(data.label);
         setContent(data.content);
         setIsMain(data.isMain);
-    }, [data.label, data.content]);
+    }, [data.label, data.content, data.isMain]);
 
-    const saveChanges = () => {
-        const updatedData = {label, content, text, isMain};
-        updateNode(id, {data: updatedData}); // Yjs와 React Flow 상태를 업데이트
+    const saveChanges = useCallback(() => {
+        const updatedData = { label, content, isMain };
+        updateNode(id, { data: updatedData });
         setNodes((nds) =>
             nds.map((n) => {
                 if (n.id === id) {
@@ -88,40 +70,19 @@ const CustomNode: React.FC<CustomNodeProps> = ({id, data, deleteNode}) => {
             })
         );
         setEditingPlot(false);
-        setTextEditDialogOpen(false);
-    };
+    }, [id, label, content, isMain, updateNode, setNodes]);
 
-    const handleDeleteNode = () => {
+    const handleDeleteNode = useCallback(() => {
         if (typeof deleteNode === 'function') {
             deleteNode(id);
         } else {
             console.error('deleteNode is not a function');
         }
-    };
+    }, [deleteNode, id]);
 
-    const handleEditText = () => {
-        setTextEditDialogOpen(true);
-    };
-
-    // const handleTextDialogClose = () => {
-    //     setTextEditDialogOpen(false);
-    // };
-
-    // const handleTextSave = (newText: string) => {
-    //   setText(newText);
-    //   updateNode(id, { data: { ...data, text: newText } });
-    //   setTextEditDialogOpen(false);
-    //   saveChanges();
-    // };
-
-    // const handleTextSave = () => {
-    //   setText('')
-    // };
-    // console.log(handleTextSave)
-
-    const handlePlotSave = () => {
-        saveChanges();
-    };
+    const handleEditText = useCallback(() => {
+        setEditingPlot(!isEditingPlot);
+    }, [isEditingPlot]);
 
     const handleClick = () => {
         if (data.onNodeClick) {
@@ -132,22 +93,25 @@ const CustomNode: React.FC<CustomNodeProps> = ({id, data, deleteNode}) => {
 
     return (
         <>
-            <NodeResizeControl style={controlStyle} minWidth={150} minHeight={150}>
+            <NodeResizeControl style={controlStyle} minWidth={200} minHeight={200}>
                 <ResizeIcon/>
             </NodeResizeControl>
 
             <Card
                 variant="outlined"
                 style={{
-                    minWidth: '150px',
-                    minHeight: '100px',
+                    minWidth: '200px',
+                    minHeight: '150px',
                     width: '100%',
                     height: '100%',
                     margin: '0px',
                     padding: '0px',
-                    backgroundColor: data.isMain ? '#fff9c4' : 'white',
-                    border: data.isMain ? '2px solid #ffc107' : '1px solid rgba(0, 0, 0, 0.12)',
-                    boxShadow: data.isMain ? '0 0 10px rgba(255, 193, 7, 0.5)' : 'none',
+                    // backgroundColor: isMain ? 'rgba(255, 223, 186, 0.9)' : 'rgba(255, 255, 255, 0.25)',
+                    backdropFilter: 'blur(10px)',
+                    borderRadius: '15px',
+                    border: isMain ? '2px solid #ff9800' : '1px solid rgba(255, 255, 255, 0.3)',
+                    boxShadow: isMain ? '0 4px 30px rgba(255, 152, 0, 0.5)' : '0 4px 30px rgba(0, 0, 0, 0.1)',
+                    overflow: 'hidden',
                 }}
                 onClick={handleClick}
             >
@@ -159,28 +123,33 @@ const CustomNode: React.FC<CustomNodeProps> = ({id, data, deleteNode}) => {
                             variant="outlined"
                             size="small"
                             fullWidth
+                            multiline
+                            rows={1}
+                            maxRows={3}
+                            style={{ transition: 'height 0.2s ease-in-out' }}
                         />
                     ) : (
                         label
                     )}
-                    titleTypographyProps={{variant: 'subtitle1', align: 'center', fontSize: 'small', fontWeight: '600'}}
-                    style={{backgroundColor: '#ffc9c9', padding: '2px'}}
-                />
-                <CardActions
+                    titleTypographyProps={{ variant: 'subtitle1', align: 'center', fontSize: 'small', fontWeight: '600' }}
                     style={{
-                        display: 'flex',
-                        justifyContent: 'center',
-                        backgroundColor: '#ffffff',
-                        padding: '0',
-                        WebkitJustifyContent: 'space-evenly',
+                        backgroundColor: '#e0f7fa',
+                        padding: '8px',
+                        borderBottom: '1px solid #b2ebf2',
                     }}
-                >
-                    <StyledButton onClick={() => setEditingPlot(!isEditingPlot)}>✒️플롯</StyledButton>
-                    <StyledButton onClick={handleEditText}>📝집필</StyledButton>
-                    <StyledButton onClick={handleDeleteNode}>❌삭제</StyledButton>
-                </CardActions>
+                    action={
+                        <>
+                            <IconButton onClick={handleEditText} size="small">
+                                <EditIcon />
+                            </IconButton>
+                            <IconButton onClick={handleDeleteNode} size="small">
+                                <CloseIcon />
+                            </IconButton>
+                        </>
+                    }
+                />
 
-                <CardContent style={{padding: '10px'}}>
+                <CardContent style={{ padding: '10px', backgroundColor: '#ffffff' }}>
                     {isEditingPlot ? (
                         <TextField
                             value={content}
@@ -188,10 +157,13 @@ const CustomNode: React.FC<CustomNodeProps> = ({id, data, deleteNode}) => {
                             variant="outlined"
                             size="small"
                             multiline
+                            rows={3}
+                            maxRows={6}
                             fullWidth
+                            style={{ transition: 'height 0.2s ease-in-out' }}
                         />
                     ) : (
-                        <div style={{padding: '10px'}}>{content}</div>
+                        <div style={{ padding: '10px' }}>{content}</div>
                     )}
                 </CardContent>
 
@@ -200,24 +172,22 @@ const CustomNode: React.FC<CustomNodeProps> = ({id, data, deleteNode}) => {
                         style={{
                             display: 'flex',
                             justifyContent: 'center',
-                            backgroundColor: '#ffffff',
+                            backgroundColor: 'rgba(255, 255, 255, 0.25)',
                             padding: '0',
                         }}
                     >
-                        <Button onClick={handlePlotSave} color="primary" variant="contained" size="small">
+                        <Button onClick={saveChanges} color="primary" variant="contained" size="small">
                             Save
                         </Button>
-                        <Button onClick={() => setEditingPlot(false)} color="secondary" variant="contained"
-                                size="small">
+                        <Button onClick={() => setEditingPlot(false)} color="secondary" variant="contained" size="small">
                             Cancel
                         </Button>
                     </CardActions>
                 )}
             </Card>
 
-            <Handle type="target" position={Position.Left} style={{...handleStyle, left: '-8px'}}/>
-            <Handle type="source" position={Position.Right} style={{...handleStyle, right: '-8px'}}/>
-
+            <Handle type="target" position={Position.Left} style={{ ...handleStyle, left: '-8px' }} />
+            <Handle type="source" position={Position.Right} style={{ ...handleStyle, right: '-8px' }} />
         </>
     );
 };

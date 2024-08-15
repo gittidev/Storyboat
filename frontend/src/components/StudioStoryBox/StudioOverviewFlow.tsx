@@ -3,7 +3,6 @@ import {ReactFlow, MiniMap, Controls, Background, Panel, Node, Edge} from '@xyfl
 import type {XYPosition, ReactFlowInstance} from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import {useParams, useNavigate} from 'react-router-dom';
-import {saveFlowToIndexedDB} from '../../utils/indexedDBUtils';
 import {accessTokenState} from '../../recoil/atoms/authAtom';
 import {useRecoilValue} from 'recoil';
 import api from '../../apis/api';
@@ -23,25 +22,67 @@ import PersonIcon from '@mui/icons-material/Person';
 import {IconButton} from '@mui/material';
 
 const svURL = import.meta.env.VITE_SERVER_URL;
-const flowKey = 'Story';
 
-const UserContainer = styled('div')({
-    display: 'flex',
-    flexDirection: 'row', // 세로 정렬
-    alignItems: 'center', // 중앙 정렬
-    flexWrap: 'wrap', // 필요시 줄 바꿈
-    gap: '8px', // 사용자 간 간격
-    // gap: '2px', // 아이콘 사이의 간격
-});
+const GlassPanel = styled(Panel)`
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 15px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 95%;
+`;
 
-const IconWrapper = styled('div')({
-    display: 'flex',
-    flexDirection: 'row', // 가로 정렬로 변경
-    alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.8)', // 배경색 추가
-    borderRadius: '20px', // 둥근 모서리
-    padding: '4px 8px', // 내부 여백
-});
+const IconWrapper = styled('div')`
+    display: flex;
+    align-items: center;
+    border-radius: 50%;
+    padding: 4px;
+    margin-right: 8px;
+`;
+
+const UserContainer = styled('div')`
+    display: flex;
+    align-items: center;
+    gap: 10px;
+`;
+
+
+
+const StyledButton = styled(Button)<{ bgColor?: string }>`
+    margin-left: 8px;
+    color: white;
+    &:first-of-type {
+        margin-left: 0;
+    }
+    background-color: ${({ bgColor }) => bgColor || 'rgba(255, 255, 255, 0.25)'};
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+
+    &:hover {
+        background-color: ${({ bgColor }) => bgColor || 'rgba(255, 255, 255, 0.25)'};
+        box-shadow: 0 4px 40px rgba(0, 0, 0, 0.2);
+    }
+
+        background-color: ${(props) => {
+        switch (props.className) {
+            case 'primary':
+                return '#4ee956'; // 기본 색상
+            case 'secondary':
+                return '#ff5b6e'; // 다른 색상
+            case 'third':
+                return '#6a9cff'; // 또 다른 색상
+            case 'tertiary':
+                return '#8f8fff'; // 또 다른 색상
+            default:
+                return '#88a2ff'; // 기본 색상
+        }
+        
+    }};
+`;
 
 const createEdgeTypes = (handleDeleteEdge: any) => ({
     custom: (props: any) => (
@@ -51,26 +92,6 @@ const createEdgeTypes = (handleDeleteEdge: any) => ({
         />
     ),
 });
-
-const StyledButton = styled(Button)`
-    margin: 0px 2px;
-    padding: 2px;
-    background-color: ${(props) => {
-        switch (props.className) {
-            case 'primary':
-                return '#4ee956'; // 기본 색상
-            case 'secondary':
-                return '#ff6a7b'; // 다른 색상
-            case 'third':
-                return '#6a9cff'; // 또 다른 색상
-            case 'tertiary':
-                return '#8f8fff'; // 또 다른 색상
-            default:
-                return '#c5ffbd'; // 기본 색상
-        }
-    }};
-    color: white;
-`;
 
 const StudioOverviewFlow: React.FC = () => {
 
@@ -255,10 +276,6 @@ const StudioOverviewFlow: React.FC = () => {
         setNodes([]);
         setEdges([]);
 
-        // if (rfInstance) {
-        //   rfInstance.setNodes([]);
-        //   rfInstance.setEdges([]);
-        // }
     }, [setNodes, setEdges, ydocRef, yNodesMapRef, yEdgesMapRef]);
 
     // 노드 클릭 핸들러
@@ -343,17 +360,6 @@ const StudioOverviewFlow: React.FC = () => {
         addNode(newNode);
     }, [addNode]);
 
-    const onTemporarySave = useCallback(async () => {
-        if (rfInstance) {
-            const flow = {
-                nodes,
-                edges,
-                viewport: rfInstance.getViewport(),
-            };
-            await saveFlowToIndexedDB(flowKey, flow);
-        }
-    }, [rfInstance, nodes, edges]);
-
     const handleSave = useCallback(async () => {
         if (rfInstance) {
             const updatedNodes = nodes.map(node => ({
@@ -423,56 +429,57 @@ const StudioOverviewFlow: React.FC = () => {
                 <Background/>
                 <Controls/>
                 <MiniMap nodeStrokeColor={"transparent"} nodeColor={"#e2e2e2"} maskStrokeColor={"none"} pannable
-                         zoomable nodeStrokeWidth={3} maskColor={"rgb(240, 240, 240, 0.6)"}/>
+                        zoomable nodeStrokeWidth={3} maskColor={"rgb(240, 240, 240, 0.6)"}/>
 
-                <Panel position="top-right" style={{display: 'flex', justifyContent: 'space-between', width: '95%'}}>
-                    <FormControl variant="outlined" size="small" style={{minWidth: 120}}>
-                        <InputLabel id="history-select-label">History</InputLabel>
-                        <Select
-                            labelId="history-select-label"
-                            value={selectedHistory || ''}
-                            onChange={handleHistoryChange}
-                            label="History"
-                        >
-                            {histories.map((history) => (
-                                <MenuItem key={history.storyId} value={history.storyId}>
-                                    {/* {history.storyId} */}
-                                    {`${history.dateTime} - ${history.penName}`}
-                                </MenuItem>
-                            ))}
-                        </Select>
-                    </FormControl>
-                    <div>
-                        <StyledButton className="primary" onClick={handleSave}>저장하기</StyledButton>
-                        <StyledButton className="third" onClick={onTemporarySave}>임시저장</StyledButton>
-                        <StyledButton className="tertiary" onClick={addCustomNode}>플롯추가</StyledButton>
-                        <StyledButton className="secondary" onClick={deleteAllNodes}>전체삭제</StyledButton>
-                        <StyledButton
-                            variant="contained"
-                            color={isMainNodeMode ? "success" : "primary"}
-                            onClick={toggleMainNodeMode}
-                        >
-                            {isMainNodeMode ? "메인 노드 선택 모드 켜짐" : "메인 노드 선택 모드 꺼짐"}
-                        </StyledButton>
-                        <StyledButton className="primary" onClick={handleEditButtonClick}>공동 집필하기</StyledButton>
-                        <div className="user-list">
-                            <UserContainer>
-                                {users.map((user) => (
-                                    <IconWrapper key={user.clientId} style={{borderColor: user.cursorColor}}>
-                                        <IconButton
-                                            style={{color: user.cursorColor, padding: '4px'}}
-                                        >
-                                            <PersonIcon/>
-                                        </IconButton>
-                                        <Typography variant="body2" style={{marginLeft: '4px'}}>
-                                            {user.name}
-                                        </Typography>
-                                    </IconWrapper>
-                                ))}
-                            </UserContainer>
-                        </div>
-                    </div>
-                </Panel>
+<GlassPanel position="top-right">
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+                <FormControl variant="outlined" size="small" style={{ minWidth: 120, marginRight: '16px' }}>
+                    <InputLabel id="history-select-label">History</InputLabel>
+                    <Select
+                        labelId="history-select-label"
+                        value={selectedHistory || ''}
+                        onChange={handleHistoryChange}
+                        label="History"
+                    >
+                        {histories.map((history) => (
+                            <MenuItem key={history.storyId} value={history.storyId}>
+                                {`${history.dateTime} - ${history.penName}`}
+                            </MenuItem>
+                        ))}
+                    </Select>
+                </FormControl>
+                <StyledButton
+                    variant="contained"
+                    bgColor={isMainNodeMode ? '#FFD700' : '#808080'}  // 노랑(#FFD700) 및 회색(#808080) 배경색 설정
+                    onClick={toggleMainNodeMode}
+                >
+                    {isMainNodeMode ? "메인 노드 선택 모드 On" : "메인 노드 선택 모드 Off"}
+                </StyledButton>
+                <StyledButton variant="contained" className="secondary" onClick={deleteAllNodes}>전체삭제</StyledButton>
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+
+            <UserContainer>
+                    {users.map((user) => (
+                        <IconWrapper>
+                            <IconButton
+                                style={{ color: user.cursorColor, padding: '4px' }}
+                            >
+                                <PersonIcon />
+                            </IconButton>
+                            <Typography variant="body2" style={{ marginLeft: '4px' }}>
+                                {user.name}
+                            </Typography>
+                        </IconWrapper>
+                    ))}
+                </UserContainer>
+                <StyledButton className="primary" onClick={handleEditButtonClick}>공동 집필하기</StyledButton>
+                <StyledButton className="secondary" onClick={addCustomNode}>플롯추가</StyledButton>
+                <StyledButton className="primary" onClick={handleSave}>저장하기</StyledButton>
+
+            </div>
+        </GlassPanel>
             </ReactFlow>
         </div>
     );
