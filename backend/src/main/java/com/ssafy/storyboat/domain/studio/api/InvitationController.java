@@ -128,6 +128,9 @@ public class InvitationController {
         Long userId = user.getUserId();
 
         InvitationCode invitationCode = invitationService.findInvitationCode(studioId, userId);
+        if (invitationCode == null) {
+            return ResponseEntity.ok(ApiResponse.success("코드가 없습니다."));
+        }
         return ResponseEntity.ok(ApiResponse.success("https://i11c107.p.ssafy.io/api/invitations/code/join/" + invitationCode.getCode(), "모집 코드 조회 성공"));
     }
 
