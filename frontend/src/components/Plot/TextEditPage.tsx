@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, useCallback } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { FormControl, InputLabel, Select, MenuItem } from '@mui/material';
 import { Box, AppBar, Toolbar, Typography, TextField, IconButton, Chip, Button, Checkbox } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -47,6 +47,7 @@ const TextEditPage: React.FC = () => {
   const studioId = useRecoilValue(selectedStudioState);
   const token = useRecoilValue(accessTokenState);
   const userName = useRecoilValue(nameState);
+
 
   const [Texthistories, setTextHistories] = useState<TextHistory[]>([])
   const [selectedTextHistory, setSelectedTextHistory] = useState<string | null>(null)
@@ -109,6 +110,7 @@ const TextEditPage: React.FC = () => {
         .map((state: any) => state.user?.name)
         .filter((name): name is string => !!name);
       setActiveUsers(users);
+      // console.log(users)
     });
 
     return () => {
@@ -282,7 +284,7 @@ const TextEditPage: React.FC = () => {
     }
   };
 
-  const fetchText = useCallback(async () => {
+  const fetchText = async () => {
     try {
       const response = await axios.get(`${svURL}/api/studios/${studioId}/stories/${storyId}/text`, {
         headers: {
@@ -305,7 +307,7 @@ const TextEditPage: React.FC = () => {
     } catch (error) {
       console.error('원고를 가져오지 못하였습니다:', error);
     }
-  }, [studioId, storyId, token]);
+  };
 
   const handleHistoryChange = (event: SelectChangeEvent<string>) => {
     const selectedTextId = event.target.value as string;
@@ -314,9 +316,13 @@ const TextEditPage: React.FC = () => {
   };
 
   useEffect(() => {
-    fetchText()
+    // fetchText()
     fetchTextHistories()
-  }, []);
+    // console.log(activeUsers)
+    // if (activeUsers.length === 1) {
+      fetchText(); // 첫 번째 사용자가 들어오면 fetchText 호출
+    // }
+  }, [studioId, storyId]);
 
   return (
     <>

@@ -120,7 +120,7 @@ const App: React.FC = () => {
 
   const theme = createTheme({
     typography: {
-      fontFamily: "'Noto Sans KR', sans-serif",
+      fontFamily: "SBAggroB"
     },
   });
 
