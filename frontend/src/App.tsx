@@ -1,12 +1,10 @@
 import React, { useEffect } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { createTheme, ThemeProvider } from '@mui/material';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import { refreshTokenState, accessTokenState } from './recoil/atoms/authAtom';
 import { myStudioState } from './recoil/atoms/studioAtom';
 import api from './apis/api';
-// import axios from 'axios';
-// Import pages
 import MainPage from './pages/MainPage';
 import LandingPage from './pages/LandingPage/LandingPage';
 import LoginLoadingPage from './pages/LoginLoadingPage';
@@ -35,6 +33,7 @@ import ProtectedRoute from './ProtecedRoute';
 // const svURL = import.meta.env.VITE_SERVER_URL;
 import MyTextEditPage from './components/Mystory/MyTextEditPage'
 import { nameState } from './recoil/atoms/userAtom';
+
 
 const App: React.FC = () => {
   const [accessToken, setAccessToken] = useRecoilState(accessTokenState);
@@ -133,6 +132,7 @@ const App: React.FC = () => {
           <Route path="/login/loading" element={<LoginLoadingPage />} />
           <Route element={<ProtectedRoute isAuthentication={refreshToken} redirectPath="/login" />}>
             <Route path="storyboat" element={<MainPage />}>
+            <Route index element={<Navigate to="mystory" replace />} />
               {/* 네브바에서 라우팅 */}
               <Route path="recent" element={<RecentPage />} />
               <Route path="mystory" element={<MyStoryPage />} />

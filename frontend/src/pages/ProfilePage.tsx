@@ -29,7 +29,7 @@ const ProfilePage: React.FC = () => {
 
             {/* 내용 들어갈 부분 */}
             <BorderBox>
-                <Box sx={{ display: 'flex', justifyContent: 'center', padding:'10px' }}>
+                <Box sx={{ display: 'flex', justifyContent: 'center', padding:'20px' }}>
                 <Box sx={{ width: '90%' }}>
                     <TabBar labels={labels} childrenComponents={childrenComponents} />
                 </Box>

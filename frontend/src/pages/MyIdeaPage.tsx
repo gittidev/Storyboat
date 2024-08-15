@@ -128,7 +128,7 @@ const MyIdeaPage: React.FC = () => {
           <SubTopBar title={'개인 아이디어 보관함'} content="나만의 아이디어를 작성하세요" />
         </Box>
         <Box sx={{ flexShrink: 0 }}>
-          <CustomButton content='+ 생성하기' bgcolor="lightgreen" hoverBgColor="green" onClick={handleOpen} />
+          <CustomButton content='+ 생성하기' bgcolor="#77E4C8" hoverBgColor="#4C3BCF" onClick={handleOpen} />
         </Box>
       </Box>
       

@@ -25,7 +25,7 @@ const FindTeamPage: React.FC = () => {
     const accessToken = useRecoilValue(accessTokenState);
     const [page, setPage] = useState(0); // 페이지를 0부터 시작하도록 수정
     const [totalPages, setTotalPages] = useState(1);
-    const itemsPerPage = 4; // 페이지 당 항목 수 설정
+    const itemsPerPage = 6; // 페이지 당 항목 수 설정
 
     const fetchFindTeams = async () => {
         try {
@@ -102,12 +102,11 @@ const FindTeamPage: React.FC = () => {
                     <SubTopBar title='항해하기' content="현재 팀원을 모집중인 스튜디오를 찾아보세요." />
                 </Box>
                 <Box sx={{ flexShrink: 0 }}>
-                    <CustomButton content='+ 팀원 모집하기' bgcolor="lightgreen" hoverBgColor="green" onClick={handleOpen} />
+                    <CustomButton content='+ 팀원 모집하기' bgcolor="#77E4C8" hoverBgColor="#4C3BCF" onClick={handleOpen} />
                 </Box>
             </Box>
     
             <CustomModal open={open} onClose={handleClose}>
-               
                 <FindTeamForm onSave={handleSave} onClose={handleClose} />
             </CustomModal>
 
@@ -118,74 +117,6 @@ const FindTeamPage: React.FC = () => {
                     <SearchBar onSearch={handleSearch} />
                 </Box>
                 
-
-
-{/* 
-
-                    <Box
-                        sx={{
-                            display: "flex",
-                            height: "90vh",
-                            flexDirection: "row",
-                            flexWrap: "wrap",
-                            alignItems: "flex-start",
-                            width: "100%", // 전체 너비를 100%로 설정
-                            paddingLeft: '5%',
-                            paddingRight: '5%', // paddingRight를 5%로 조정
-                            gap: '3%', // gap을 3%로 유지
-                        }}
-                    >
-                        {Array.isArray(findTeams) && findTeams.length > 0 ? (
-                            findTeams.map((findTeam, index) => (
-                                <Box
-                                    key={index}
-                                    sx={{
-                                        height: '10vh', // 자동 높이 설정
-                                        width: 'calc(50% - 1.5%)', // 두 열을 맞추기 위한 너비 설정 (gap을 고려하여 차감)
-                                        borderRadius: '4px',
-                                    }}
-                                >
-                                    <FindteamBox
-                                        title={findTeam.title}
-                                        description={findTeam.description}
-                                        studioId={findTeam.studioId}
-                                        tags={findTeam.tags}
-                                    />
-                                </Box>
-                            ))
-                        ) : (
-                            <p>팀을 만들어주세요 👨‍👨‍👧‍👦</p>
-                        )}
-                        <Box 
-                            sx={{ 
-                                display: 'flex', 
-                                justifyContent: 'center', 
-                                alignItems: 'center', 
-                                marginTop: '20px', 
-                                width: '100%' 
-                            }}
-                        >
-                            <Pagination 
-                                count={totalPages} 
-                                page={page + 1} 
-                                onChange={handlePageChange} 
-                                sx={{
-                                    '& .MuiPaginationItem-root': {
-                                        color: 'rgb(173, 216, 230) !important',
-                                    },
-                                    '& .Mui-selected': {
-                                        backgroundColor: 'rgb(173, 216, 230) !important',
-                                        color: 'white !important' ,
-                                    },
-                                    '& .MuiPaginationItem-ellipsis': {
-                                        color: 'rgb(173, 216, 230) !important',
-                                    },
-                                }}
-                            />
-                        </Box>
-                    </Box>
- */}
-
 <Box
     sx={{
         display: 'grid',
@@ -223,7 +154,7 @@ const FindTeamPage: React.FC = () => {
         justifyContent: 'center', // 가로 중앙 정렬
         alignItems: 'center', // 세로 중앙 정렬
         position: 'fixed', // 고정 위치
-        bottom: '20px', // 바닥에서의 거리
+        bottom: '50px', // 바닥에서의 거리
         left: '60%', // 왼쪽에서 중앙으로 위치 조정
         transform: 'translateX(-50%)', // X축 중앙 정렬
         width: '100%', // 전체 너비

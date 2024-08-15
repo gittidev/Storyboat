@@ -32,18 +32,23 @@ const StyledButton = styled('button')<ButtonProps>`
   align-items: center;
   justify-content: center;
   white-space: nowrap;
-  background-color: ${(props) => props.bgcolor || '#a8e4a0'};
+  background-color: ${(props) => props.bgcolor || '#4053ff'};
   writing-mode: horizontal-tb; /* 텍스트를 가로로 표시 */
+
+  font-family: 'Roboto', sans-serif;
+  font-weight: ${(props) => props.fontWeight || '700'};
+  
   :hover {
     background-color: ${(props) => props.hoverBgColor || 'lightgreen'};
+
   }
 
   :disabled {
     cursor: not-allowed;
     background-color: lightgray;
   }
-  font-weight: ${(props) => props.fontWeight || ''};
-`
+`;
+
 
 
 const CustomButton: React.FC<ButtonProps> = (props) => {
