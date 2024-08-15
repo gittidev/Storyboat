@@ -53,6 +53,13 @@ dependencies {
 
 	// webSocket
 	implementation 'org.springframework.boot:spring-boot-starter-websocket'
+
+	// EPUB 파일 생성을 위한 의존성 추가
+	// https://mvnrepository.com/artifact/org.apache.commons/commons-compress
+	implementation group: 'org.apache.commons', name: 'commons-compress', version: '1.27.0'
+	// https://mvnrepository.com/artifact/org.apache.poi/poi
+	implementation group: 'org.apache.poi', name: 'poi', version: '5.3.0'
+
 }
 
 tasks.named('test') {
