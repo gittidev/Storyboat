@@ -97,7 +97,7 @@ const TeamSetting = () => {
             } else {
                 const postResponse = await axios.post(
                     `${svURL}/api/invitations/code/${selectedStudioId}`,
-
+                    {},
                     {
                         headers: {
                             'Authorization': `Bearer ${accessToken}`,

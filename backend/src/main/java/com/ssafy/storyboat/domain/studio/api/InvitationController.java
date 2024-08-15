@@ -120,13 +120,11 @@ public class InvitationController {
         Long userId = user.getUserId();
         String code = invitationService.makeInvitationCode(studioId, userId);
         return ResponseEntity.ok(ApiResponse.success("https://i11c107.p.ssafy.io/api/invitations/code/join/" + code, "모집 코드 생성 성공"));
-
     }
 
     @GetMapping("/code/{studioId}")
     public ResponseEntity<?> showInvitationCode(@AuthenticationPrincipal final CustomOAuth2User user, @PathVariable Long studioId) {
         Long userId = user.getUserId();
-
         InvitationCode invitationCode = invitationService.findInvitationCode(studioId, userId);
         if (invitationCode == null) {
             return ResponseEntity.ok(ApiResponse.success("코드가 없습니다."));
