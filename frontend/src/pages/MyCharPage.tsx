@@ -150,7 +150,7 @@ const MyCharPage: React.FC = () => {
                 width: '60%', 
                 height: '60%', 
                 bgcolor: 'background.paper',
-              
+
                 pt: 6,  // Padding top
                 pr: 6,  // Padding right
                 pb: 6,  // Padding bottom

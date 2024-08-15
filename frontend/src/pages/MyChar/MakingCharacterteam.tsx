@@ -114,14 +114,12 @@ const MakingCharacterteam: React.FC<MakingCharacterteamProps> = ({ onCharacterCr
         <Box sx={{ flexShrink: 0, display: 'flex', gap: 1 }}>
           <CustomButton 
             content="내 캐릭터 업로드" 
-            bgcolor="lightgreen" 
-            hoverBgColor="green" 
+            bgcolor="#77E4C8" hoverBgColor="#4C3BCF"
             onClick={handleOpen} 
           />
           <CustomButton 
             content="AI 활용하기" 
-            bgcolor="lightblue" 
-            hoverBgColor="blue" 
+            bgcolor="#9a67ff" hoverBgColor="#4C3BCF"
             onClick={() => navigate('/storyboat/AIPaintingPage')}
           />
         </Box>

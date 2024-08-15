@@ -199,6 +199,7 @@ export default function NavBar() {
                 content={open ? "스튜디오 생성하기" : "+"} 
                 width={open ? "200px" : "40px"} 
                 onClick={handleOpen} 
+                bgcolor="#77E4C8" hoverBgColor="#4C3BCF"
               />
             </div>
           </Tooltip>

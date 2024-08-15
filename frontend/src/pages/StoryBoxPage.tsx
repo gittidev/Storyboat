@@ -115,7 +115,7 @@ const StoryBoxPage = () => {
                     <SubTopBar title={"스튜디오 STORY"} content='스튜디오의 스토리를 작성하고 새로운 플롯을 추가하세요' />
                 </Box>
                 <Box sx={{ flexShrink: 0 }}>
-                    <CustomButton content='+ 생성하기' bgcolor="lightgreen" hoverBgColor="green" onClick={handleOpen} />
+                    <CustomButton content='+ 생성하기' bgcolor="#77E4C8" hoverBgColor="#4C3BCF" onClick={handleOpen} />
                 </Box>
             </Box>
             {/* 모달 영역 */}

@@ -130,7 +130,7 @@ const IdeaBoxPage: React.FC = () => {
           <SubTopBar title={"스튜디오 아이디어 보관함"} content="팀과 함께 멋진 아이디어를 떠올리세요" />
         </Box>
         <Box sx={{ flexShrink: 0 }}>
-          <CustomButton content='+ 생성하기' bgcolor="lightgreen" hoverBgColor="green" onClick={handleOpen} />
+          <CustomButton content='+ 생성하기' bgcolor="#77E4C8" hoverBgColor="#4C3BCF" onClick={handleOpen} />
         </Box>
       </Box>
 

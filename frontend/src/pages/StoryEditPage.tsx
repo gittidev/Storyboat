@@ -58,8 +58,7 @@ const StoryEditPage: React.FC = () => {
         <Box sx={{ flexShrink: 0 }}>
           <CustomButton
             content="+ 생성하기"
-            bgcolor="lightgreen"
-            hoverBgColor="green"
+            bgcolor="#77E4C8" hoverBgColor="#4C3BCF"
           />
         </Box>
       </Box>

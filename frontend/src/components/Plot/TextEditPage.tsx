@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { FormControl, InputLabel, Select, MenuItem } from '@mui/material';
+import { FormControl, InputLabel, Select, MenuItem, Tooltip } from '@mui/material';
 import { Box, AppBar, Toolbar, Typography, TextField, IconButton, Chip, Button, Checkbox } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
@@ -7,9 +7,12 @@ import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
-import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import SelectAllIcon from '@mui/icons-material/SelectAll';
+import RefreshIcon from '@mui/icons-material/Refresh';
 import * as Y from 'yjs';
+import SaveIcon from '@mui/icons-material/Save';
+import CancelIcon from '@mui/icons-material/Cancel';
+import CreateIcon from '@mui/icons-material/Create';
 import { WebrtcProvider } from 'y-webrtc';
 import { useParams } from 'react-router-dom';
 import { SelectChangeEvent } from '@mui/material';
@@ -47,10 +50,14 @@ const TextEditPage: React.FC = () => {
   const studioId = useRecoilValue(selectedStudioState);
   const token = useRecoilValue(accessTokenState);
   const userName = useRecoilValue(nameState);
-
+  // const [epubUrl, setEpubUrl] = useState<string | null>(null);
+  // const viewerRef = useRef<any>(null);
+  const [fullText, setFullText] = useState<string>('');
 
   const [Texthistories, setTextHistories] = useState<TextHistory[]>([])
   const [selectedTextHistory, setSelectedTextHistory] = useState<string | null>(null)
+
+
 
   const fetchTextHistories = async () => {
     try {
@@ -96,6 +103,7 @@ const TextEditPage: React.FC = () => {
     if (!ydocRef.current) {
       ydocRef.current = new Y.Doc();
     }
+
     const ydoc = ydocRef.current
 
     if (!providerRef.current) {
@@ -293,6 +301,57 @@ const TextEditPage: React.FC = () => {
     }
   };
 
+  const makeEpub = async () => {
+    try {
+      const response = await axios.get(`${svURL}/api/studios/${studioId}/stories/${storyId}/text`, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+      const script: Sentence[] = JSON.parse(response.data.data);
+      console.log(script)
+      const combinedText = script.map(sentence => sentence.text).join(' ');
+
+      // Store the combined text in state
+      setFullText(combinedText);
+
+      console.log(combinedText);
+    } catch (error) {
+      console.error()
+    }
+  }
+
+  const generateEpub = async () => {
+    try {
+      const response = await axios.post(`${svURL}/api/epub/create`,
+        {
+          title: 'My eBook',
+          text: `${fullText}`,
+        },
+        {
+          responseType: 'blob',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+        })
+      await console.log(response.data)
+      const blob = await response.data
+      const link = document.createElement('a');
+      link.href = blob;
+      link.download = `My eBook.epub`; // Name of the file to be saved
+      link.click();
+    } catch (error) {
+      console.error('Error generating EPUB:', error);
+    }
+  };
+
+  const makeFile = () => {
+    makeEpub()
+    generateEpub()
+  }
+
   const fetchText = async () => {
     try {
       const response = await axios.get(`${svURL}/api/studios/${studioId}/stories/${storyId}/text`, {
@@ -301,22 +360,21 @@ const TextEditPage: React.FC = () => {
           'Authorization': `Bearer ${token}`,
         },
       });
-      
       const script: Sentence[] = JSON.parse(response.data.data);
-      
       if (ydocRef.current) {
         const sharedArray = ydocRef.current.getArray<Sentence>('sentences');
-        
-        ydocRef.current.transact(() => {
-          // sharedArray.delete(0, sharedArray.length);
-          if (sharedArray.length === 0) {
-            sharedArray.insert(0, script);
+        ydocRef.current?.transact(() => {
+          while (sharedArray.length > 0) {
+            sharedArray.delete(sharedArray.length - 1, 1);
           }
+          // sharedArray.delete(0, sharedArray.length);
+          sharedArray.insert(0, script);
         });
       }
-  
-      console.log("스크립트 데이터:", script);
-  
+      console.log(script)
+      // if (ydocRef.current) {
+      //   ydocRef.current.clipboard.dangerouslyPasteHTML(script.text);
+      // }
     } catch (error) {
       console.error('원고를 가져오지 못하였습니다:', error);
     }
@@ -329,100 +387,99 @@ const TextEditPage: React.FC = () => {
   };
 
   useEffect(() => {
-    async function initialize() {
-      if (ydocRef.current) {
-        const ydoc = ydocRef.current;
-  
-        // sharedArray 초기화 대기
-        const sharedArray = await waitForSharedArrayInitialization(ydoc);
-        
-        if (sharedArray) {
-          await fetchText(); // sharedArray 초기화 후 fetchText 실행
-          fetchTextHistories();
-        } else {
-          console.error("sharedArray 초기화 실패");
-        }
-      }
-    }
-  
-    initialize();
+    fetchText()
+    fetchTextHistories()
   }, [studioId, storyId]);
-  
-  async function waitForSharedArrayInitialization(ydoc: Y.Doc): Promise<Y.Array<Sentence>> {
-    return new Promise((resolve) => {
-      const sharedArray = ydoc.getArray<Sentence>('sentences');
-  
-      // sharedArray가 초기화되었는지 확인
-      if (sharedArray.length > 0) {
-        resolve(sharedArray);
-      } else {
-        // 옵저버를 사용하여 sharedArray가 초기화될 때까지 대기
-        sharedArray.observe(() => {
-          if (sharedArray.length > 0) {
-            resolve(sharedArray);
-          }
-        });
-      }
-    });
-  }
 
   return (
     <>
       <AppBar position="relative" color="transparent" elevation={0}>
         <Toolbar>
           <Typography variant="h6" noWrap>
-            소설 작성 
+            공동 소설 작성
           </Typography>
-          <Button onClick={fetchText} color="inherit">
-            새로고침
-          </Button>
-          <FormControl variant="outlined" size="small" style={{ minWidth: 120 }}>
-            <InputLabel id="history-select-label">History</InputLabel>
-            <Select
-              labelId="history-select-label"
-              value={selectedTextHistory || ''}
-              onChange={handleHistoryChange}
-              label="History"
-            >
-              {Texthistories.map((textHistory) => (
-                <MenuItem key={textHistory.textId} value={textHistory.textId}>
-                  {`${textHistory.dateTime} - ${textHistory.penName}`}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+          <Box sx={{ ml: 2 }}> {/* Adds left margin */}
+            <FormControl variant="outlined" size="small" style={{ minWidth: 120 }}>
+              <InputLabel id="history-select-label">History</InputLabel>
+              <Select
+                labelId="history-select-label"
+                value={selectedTextHistory || ''}
+                onChange={handleHistoryChange}
+                label="History"
+              >
+                {Texthistories.map((textHistory) => (
+                  <MenuItem key={textHistory.textId} value={textHistory.textId}>
+                    {`${textHistory.dateTime} - ${textHistory.penName}`}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <Tooltip title="저장">
+              <IconButton
+                onClick={handleSaveToList}
+              >
+                <SaveIcon />
+              </IconButton>
+            </Tooltip>
+          </Box>
+          {activeUsers.map((user, index) => (
+            <Chip key={index} label={user} color="primary" variant="outlined" />
+          ))}
           <Box sx={{ ml: 2, display: 'flex', gap: 1 }}>
-            {activeUsers.map((user, index) => (
-              <Chip key={index} label={user} color="primary" variant="outlined" />
-            ))}
           </Box>
           <Box sx={{ flexGrow: 1 }} />
-          <Button
-            variant="contained"
-            color="primary"
-            startIcon={isViewerMode ? <VisibilityOffIcon /> : <VisibilityIcon />}
-            onClick={toggleViewerMode}
-          >
-            {isViewerMode ? 'Edit Mode' : 'Viewer Mode'}
-          </Button>
-          <Button
+          <Tooltip title="새로고침">
+            <IconButton onClick={fetchText}>
+              <RefreshIcon />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="ePub으로 내보내기">
+            <IconButton onClick={makeFile}>
+              <CreateIcon />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title={isViewerMode ? '편집모드' : '뷰어모드'}>
+            <IconButton
+              onClick={toggleViewerMode}
+            >
+              {isViewerMode ? <VisibilityOffIcon /> : <VisibilityIcon />}
+              {/* {isViewerMode ? 'Edit Mode' : 'Viewer Mode'} */}
+            </IconButton>
+
+          </Tooltip>
+          <Tooltip title={isCheckMode ? '취소' : '체크모드'} >
+            <IconButton
+              onClick={toggleCheckMode}
+            // Tooltip text
+            >
+              {isCheckMode ? <CancelIcon /> : <CheckBoxIcon />}
+            </IconButton>
+
+          </Tooltip>
+          {/* <Button
+            startIcon={isCheckMode ? <CheckBoxIcon /> : <CheckBoxOutlineBlankIcon />}
             variant="contained"
             color="secondary"
-            startIcon={isCheckMode ? <CheckBoxIcon /> : <CheckBoxOutlineBlankIcon />}
             onClick={toggleCheckMode}
           >
             {isCheckMode ? 'Cancel' : 'Check Mode'}
-          </Button>
+          </Button> */}
           {isCheckMode && (
-            <Button
-              variant="contained"
-              color="warning"
-              startIcon={<SelectAllIcon />}
-              onClick={handleSelectAll}
-              sx={{ ml: 1 }}
-            >
-              {selectedIds.size === content.length ? 'Deselect All' : 'Select All'}
-            </Button>
+            <Tooltip title="모두 선택">
+              <IconButton onClick={handleSelectAll}>
+                <SelectAllIcon />
+              </IconButton>
+
+            </Tooltip>
+            // <Button
+            //   variant="contained"
+            //   color="warning"
+            //   startIcon={<SelectAllIcon />}
+            //   onClick={handleSelectAll}
+            //   sx={{ ml: 1 }}
+            // >
+            //   {selectedIds.size === content.length ? 'Deselect All' : 'Select All'}
+            // </Button>
           )}
           {isCheckMode && selectedIds.size > 0 && (
             <Button
@@ -535,17 +592,10 @@ const TextEditPage: React.FC = () => {
                 {provided.placeholder}
                 {!isViewerMode && (
                   <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
-                    <IconButton onClick={handleAddNewSentenceAtBottom} color="primary">
+                    <IconButton onClick={handleAddNewSentenceAtBottom}>
                       <AddIcon />
                     </IconButton>
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      onClick={handleSaveToList}
-                      sx={{ ml: 2 }}
-                    >
-                      저장
-                    </Button>
+
                   </Box>
                 )}
               </Box>

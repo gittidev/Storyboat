@@ -114,7 +114,7 @@ const StudioSetting: React.FC = () => {
               </label>
             </Box>
             <div style={{ textAlign: 'right' }}>
-            <CustomButton type="submit" content="저장하기" bgcolor='lightgreen' hoverBgColor='green'/>
+            <CustomButton type="submit" content="저장하기" bgcolor="#77E4C8" hoverBgColor="#4C3BCF"/>
             </div>
           
           </Box>

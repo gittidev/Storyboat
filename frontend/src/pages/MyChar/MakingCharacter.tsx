@@ -173,15 +173,13 @@ const MakingCharacter: React.FC<MakingCharacterProps> = ({ onCharacterCreated })
         </Box>
         <Box sx={{ flexShrink: 0, display: 'flex', gap: 1 }}>
           <CustomButton 
-            content={'캐릭터 생성'} 
-            bgcolor="lightgreen" 
-            hoverBgColor="green" 
+            content={'+ 생성하기'} 
+            bgcolor="#77E4C8" hoverBgColor="#4C3BCF"
             onClick={handleOpen} 
           />
           <CustomButton 
             content={'AI 활용하기'} 
-            bgcolor="lightblue" 
-            hoverBgColor="blue" 
+            bgcolor="#9a67ff" hoverBgColor="#4C3BCF"
             onClick={() => navigate('/storyboat/AIPaintingPage')}
           />
         </Box>
