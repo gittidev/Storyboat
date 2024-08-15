@@ -15,8 +15,6 @@ import {
 import MenuIcon from '@mui/icons-material/Menu';
 import logo from '../../assets/logo.png';
 import { useNavigate } from 'react-router-dom';
-import { useRecoilValue } from 'recoil';
-import { refreshTokenState } from '../../recoil/atoms/authAtom'; // Recoil 상태를 불러오는 경로로 수정하세요.
 
 const LandingNav: React.FC = () => {
     const theme = useTheme();
@@ -24,8 +22,6 @@ const LandingNav: React.FC = () => {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const [navHeight, setNavHeight] = useState<string>('7vh');
     const navigate = useNavigate();
-
-    const isLoggedIn = useRecoilValue(refreshTokenState);
 
     const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorEl(event.currentTarget);
@@ -43,8 +39,8 @@ const LandingNav: React.FC = () => {
     ];
 
     const rightMenuItems = [
-        { name: '메인으로', path: '/storyboat' },
-        ...(!isLoggedIn ? [{ name: '로그인', path: '/login' }] : []),
+        { name: '로그인', path: '/login' },
+        { name: '메인으로', path: '/storyboat' }
     ];
 
     const handleNavigation = (path: string) => {
