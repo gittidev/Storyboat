@@ -1,22 +1,19 @@
-
 .Carouselai-container {
   position: relative;
-  width: 80%;
-  height: 1000px;
+  width: 70%; /* 전체 폭을 70%로 줄임 */
+  height: 600px; /* 전체 높이를 600px로 줄임 */
   /* overflow: hidden; */
   padding: 0 16px; 
 }
-
 
 .Carouselai-inner {
   display: flex;
   transition: transform 0.5s ease-in-out;
 }
 
-
 .Carouselai-slide {
   min-width: 33.33%; 
-  height: 800px; 
+  height: 500px; /* 슬라이드 높이를 500px로 줄임 */
   background-color: #f5f5f5; 
   display: flex;
   align-items: center;
@@ -25,7 +22,6 @@
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2); 
   padding: 16px; 
 }
-
 
 .Carouselai-button {
   position: absolute;
@@ -44,7 +40,6 @@
 .Carouselai-button:hover {
   background-color: #115293; 
 }
-
 
 .Carouselai-button-prev {
   left: 0;

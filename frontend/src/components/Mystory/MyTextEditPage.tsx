@@ -13,7 +13,7 @@ import { useRecoilValue } from 'recoil';
 import { accessTokenState } from '../../recoil/atoms/authAtom';
 import { SelectChangeEvent } from '@mui/material';
 import { TextHistory } from '../Plot/HistoryDropdown';
-import { myStudioState } from '../../recoil/atoms/CharstudioAtom';
+import { myStudioState } from '../../recoil/atoms/studioAtom';
 
 Quill.register('modules/cursors', QuillCursors);
 const svURL = import.meta.env.VITE_SERVER_URL;

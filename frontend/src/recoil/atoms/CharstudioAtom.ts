@@ -1,5 +1,5 @@
 import { atom } from 'recoil';
-import { StudioType, CharacterType } from '../../types/StudioTypeChar';
+import { CharacterType } from '../../types/StudioTypeChar';
 // import { dummyStudios } from '../DummyDatas/dummyStudios';
 // import { testUserType } from '../../types/TestUserType';
 // import { dummyMyStory } from '../DummyDatas/dummyStudios';
@@ -26,36 +26,36 @@ import { StudioType, CharacterType } from '../../types/StudioTypeChar';
 
 
 
-// 나의 스튜디오
-export const myStudioState = atom<string | number>({
-  key: 'myStudioState',
-  default: '',
-});
+// // 나의 스튜디오
+// export const myStudioState = atom<string | number>({
+//   key: 'myStudioState',
+//   default: '',
+// });
 
 
 
-// 현재 스튜디오의 목록들
-export const studioListState = atom<StudioType[]>({
-  key: 'studioListState',
-  default: [],
-});
+// // 현재 스튜디오의 목록들
+// export const studioListState = atom<StudioType[]>({
+//   key: 'studioListState',
+//   default: [],
+// });
 
 
 
-// 선택된 스튜디오의 정보
-export const selectedStudioState = atom<string | number>({
-  key: 'selectedStudioState',
-  default: '',
-});
+// // 선택된 스튜디오의 정보
+// export const selectedStudioState = atom<string | number>({
+//   key: 'selectedStudioState',
+//   default: '',
+// });
 
 
 
 
-//내 스튜디오를 제외한 스튜디오=>스튜디오 전환 목록에 들어감
-export const otherStudioState = atom<StudioType[]>({
-  key: 'otherStudioState',
-  default : [],
-})
+// //내 스튜디오를 제외한 스튜디오=>스튜디오 전환 목록에 들어감
+// export const otherStudioState = atom<StudioType[]>({
+//   key: 'otherStudioState',
+//   default : [],
+// })
 
 
 

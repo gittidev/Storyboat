@@ -1,4 +1,3 @@
-// src/pages/LandingPage/LandingPage.tsx
 import React, { useState, useRef, useEffect } from 'react';
 import { Box, Button } from '@mui/material';
 import { styled } from '@mui/system';
@@ -11,11 +10,9 @@ import Lanmid from '../../components/Landing/Lanmid';
 import Lanstory from '../../components/Landing/Lanstory';
 import Friends from '../../components/Landing/Friends';
 import MidMenu from '../../components/Landing/MidMenu';
-import MainAI from '../../components/Landing/MainAI';
-import MainAI2 from '../../components/Landing/MainAI2';
-import MainAI3 from '../../components/Landing/MainAI3';
 import Faq from '../../components/Landing/Faq';
 import LanReview from '../../components/Landing/LanReview';
+import './LandingPage.css';
 
 const CustomButton = styled(Button)`
   margin: 8px;
@@ -72,70 +69,95 @@ const LandingPage: React.FC = () => {
   };
 
   const scrollToNextSection = () => {
-    if (sectionRefs.current.length === 0) return;
-
     const nextIndex = (currentSectionIndex + 1) % sectionRefs.current.length;
-    sectionRefs.current[nextIndex]?.scrollIntoView({ behavior: 'smooth' });
-    setCurrentSectionIndex(nextIndex);
+    scrollToSection(nextIndex);
   };
+
   useEffect(() => {
     const query = new URLSearchParams(location.search);
     const page = query.get('page');
 
     switch (page) {
-        case 'lanstory':
-            setTimeout(() => scrollToSection(1), 100);
-            break;
-        case 'friends':
-            setTimeout(() => scrollToSection(3), 100);
-            break;
-        case 'MainAI':
-            setTimeout(() => scrollToSection(4), 100);
-            break;
-        case 'LanReview':
-            setTimeout(() => scrollToSection(8), 100);
-            break;
-        default:
-            scrollToSection(0);
-            break;
+      case 'lanstory':
+        scrollToSection(1);
+        break;
+      case 'friends':
+        scrollToSection(3);
+        break;
+      case 'MainAI':
+        scrollToSection(5);
+        break;
+      case 'LanReview':
+        scrollToSection(8);
+        break;
+      default:
+        scrollToSection(0);
+        break;
     }
-}, [location.search]);
-
+  }, [location.search]);
 
   return (
     <>
-      <div ref={el => (sectionRefs.current[0] = el)}>
+      <div ref={el => (sectionRefs.current[0] = el)} className="section">
         <LandingNav />
         <LanIntro />
       </div>
-      <div ref={el => (sectionRefs.current[1] = el)}>
+      <div ref={el => (sectionRefs.current[1] = el)} className="section">
         <Lanstory />
       </div>
-      <div ref={el => (sectionRefs.current[2] = el)}>
+      <div ref={el => (sectionRefs.current[2] = el)} className="section">
         <Friends />
       </div>
-      <div ref={el => (sectionRefs.current[3] = el)}>
+      <div ref={el => (sectionRefs.current[3] = el)} className="section">
         <MidMenu />
       </div>
-      <div ref={el => (sectionRefs.current[4] = el)}>
+      <div ref={el => (sectionRefs.current[4] = el)} className="section">
         <Lanmid />
       </div>
-      <div ref={el => (sectionRefs.current[5] = el)}>
-        <MainAI />
+      <div 
+        ref={el => (sectionRefs.current[5] = el)} 
+        className="section" 
+        style={{ 
+          display: 'flex', 
+          justifyContent: 'center', 
+          alignItems: 'center', 
+          margin: '40px 0',
+          width: '100%' 
+        }}
+      >
+        <img src="/plot.gif" alt="Main AI" style={{ width: '70%', maxWidth: '100%', height: 'auto' }} />
       </div>
-      <div ref={el => (sectionRefs.current[6] = el)}>
-        <MainAI2 />
+      <div 
+        ref={el => (sectionRefs.current[6] = el)} 
+        className="section" 
+        style={{ 
+          display: 'flex', 
+          justifyContent: 'center', 
+          alignItems: 'center', 
+          margin: '40px 0',
+          width: '100%' 
+        }}
+      >
+        <img src="/write.gif" alt="Main AI 2" style={{ width: '70%', maxWidth: '100%', height: 'auto' }} />
       </div>
-      <div ref={el => (sectionRefs.current[7] = el)}>
-        <MainAI3 />
+      <div 
+        ref={el => (sectionRefs.current[7] = el)} 
+        className="section" 
+        style={{ 
+          display: 'flex', 
+          justifyContent: 'center', 
+          alignItems: 'center', 
+          margin: '40px 0',
+          width: '100%' 
+        }}
+      >
+        <img src="/AI_painting.gif" alt="Main AI 3" style={{ width: '70%', maxWidth: '100%', height: 'auto' }} />
       </div>
-      <div ref={el => (sectionRefs.current[8] = el)}>
+      <div ref={el => (sectionRefs.current[8] = el)} className="section">
         <LanReview />
       </div>
-      <div ref={el => (sectionRefs.current[9] = el)}>
+      <div ref={el => (sectionRefs.current[9] = el)} className="section">
         <Faq />
-      </div>
-      <div ref={el => (sectionRefs.current[10] = el)}>
         <Footer />
       </div>
       <ButtonContainer>
