@@ -1,6 +1,5 @@
 package com.ssafy.storyboat.domain.epub.api;
 
-import com.ssafy.storyboat.common.exception.InternalServerErrorException;
 import com.ssafy.storyboat.domain.epub.application.EpubService;
 import com.ssafy.storyboat.domain.epub.dto.EpubRequest;
 import lombok.RequiredArgsConstructor;
@@ -23,17 +22,19 @@ public class EpubController {
     private final EpubService epubService;
 
     @PostMapping("/create")
-    public ResponseEntity<byte[]> createEpub(@RequestBody EpubRequest request) {
+    public ResponseEntity<String> createEpub(@RequestBody EpubRequest request) {
         try {
-            byte[] epubBytes =
-                    epubService.createEpub(request.getTitle(), request.getText());
+            // EPUB 파일 생성
+            byte[] epubBytes = epubService.createEpub(request.getTitle(), request.getText());
 
-            Base64.getEncoder().encode(epubBytes);
+            // Base64로 인코딩
+            String encodedEpub = Base64.getEncoder().encodeToString(epubBytes);
+
             HttpHeaders headers = new HttpHeaders();
-            headers.add(HttpHeaders.CONTENT_TYPE, "application/epub+zip");
-            headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=book.epub");
+            headers.add(HttpHeaders.CONTENT_TYPE, "application/octet-stream");
+            headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + request.getTitle() + ".epub");
 
-            return new ResponseEntity<>(epubBytes, headers, HttpStatus.OK);
+            return new ResponseEntity<>(encodedEpub, headers, HttpStatus.OK);
         } catch (IOException e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
