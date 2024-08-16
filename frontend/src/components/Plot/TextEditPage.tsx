@@ -12,7 +12,6 @@ import RefreshIcon from '@mui/icons-material/Refresh';
 import * as Y from 'yjs';
 import SaveIcon from '@mui/icons-material/Save';
 import CancelIcon from '@mui/icons-material/Cancel';
-import CreateIcon from '@mui/icons-material/Create';
 import { WebrtcProvider } from 'y-webrtc';
 import { useParams } from 'react-router-dom';
 import { SelectChangeEvent } from '@mui/material';
@@ -23,6 +22,7 @@ import { nameState } from '../../recoil/atoms/userAtom';
 import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
 import axios from 'axios';
 import { TextHistory } from './HistoryDropdown';
+import DownloadIcon from '@mui/icons-material/Download';
 
 const svURL = import.meta.env.VITE_SERVER_URL;
 
@@ -46,13 +46,13 @@ const TextEditPage: React.FC = () => {
   const [isViewerMode, setIsViewerMode] = useState<boolean>(false);
   const [isCheckMode, setIsCheckMode] = useState<boolean>(false);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [fullText, setFullText] = useState<string>('');
 
   const studioId = useRecoilValue(selectedStudioState);
   const token = useRecoilValue(accessTokenState);
   const userName = useRecoilValue(nameState);
   // const [epubUrl, setEpubUrl] = useState<string | null>(null);
   // const viewerRef = useRef<any>(null);
-  const [fullText, setFullText] = useState<string>('');
 
   const [Texthistories, setTextHistories] = useState<TextHistory[]>([])
   const [selectedTextHistory, setSelectedTextHistory] = useState<string | null>(null)
@@ -322,33 +322,28 @@ const TextEditPage: React.FC = () => {
     }
   }
 
-  const generateEpub = async () => {
-    try {
-      const response = await axios.post(`${svURL}/api/epub/create`,
-        {
-          title: 'My eBook',
-          text: `${fullText}`,
-        },
-        {
-          responseType: 'blob',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          },
-        })
-      await console.log(response.data)
-      const blob = await response.data
-      const link = document.createElement('a');
-      link.href = blob;
-      link.download = `My eBook.epub`; // Name of the file to be saved
-      link.click();
-    } catch (error) {
-      console.error('Error generating EPUB:', error);
-    }
-  };
+  const generateEpub = () => {
+    makeEpub()
+    const text = fullText
+    // generatePdf (text)
+    const blob = new Blob([text],{type : 'text/plain'})
+
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement('a')
+    a.href = url;
+    a.download = 'file.txt'
+
+    document.body.appendChild(a)
+    a.click()
+
+    document.body.removeChild(a)
+    URL.revokeObjectURL(url)
+  }
+
 
   const makeFile = () => {
-    makeEpub()
+    // makeEpub()
     generateEpub()
   }
 
@@ -433,9 +428,9 @@ const TextEditPage: React.FC = () => {
               <RefreshIcon />
             </IconButton>
           </Tooltip>
-          <Tooltip title="ePub으로 내보내기">
+          <Tooltip title="txt로 내보내기">
             <IconButton onClick={makeFile}>
-              <CreateIcon />
+              <DownloadIcon />
             </IconButton>
           </Tooltip>
           <Tooltip title={isViewerMode ? '편집모드' : '뷰어모드'}>
