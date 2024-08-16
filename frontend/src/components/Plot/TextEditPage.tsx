@@ -326,7 +326,7 @@ const TextEditPage: React.FC = () => {
     makeEpub()
     const text = fullText
     // generatePdf (text)
-    const blob = new Blob([text],{type : 'text/plain'})
+    const blob = new Blob([text], { type: 'text/plain' })
 
     const url = URL.createObjectURL(blob);
 
@@ -342,10 +342,10 @@ const TextEditPage: React.FC = () => {
   }
 
 
-  const makeFile = () => {
-    // makeEpub()
-    generateEpub()
-  }
+  // const makeFile = () => {
+  //   // makeEpub()
+  //   generateEpub()
+  // }
 
   const fetchText = async () => {
     try {
@@ -382,76 +382,111 @@ const TextEditPage: React.FC = () => {
   };
 
   useEffect(() => {
-    fetchText()
-    fetchTextHistories()
+    // fetchText()
+    // fetchTextHistories()
+    async function initialize() {
+      if (ydocRef.current) {
+        const ydoc = ydocRef.current;
+
+        // sharedArray 초기화 대기
+        const sharedArray = await waitForSharedArrayInitialization(ydoc);
+
+        if (sharedArray) {
+          await fetchText(); // sharedArray 초기화 후 fetchText 실행
+          fetchTextHistories();
+        } else {
+          console.error("sharedArray 초기화 실패");
+        }
+      }
+    }
+
+    initialize();
   }, [studioId, storyId]);
 
-  return (
-    <>
-      <AppBar position="relative" color="transparent" elevation={0}>
-        <Toolbar>
-          <Typography variant="h6" noWrap>
-            공동 소설 작성
-          </Typography>
-          <Box sx={{ ml: 2 }}> {/* Adds left margin */}
-            <FormControl variant="outlined" size="small" style={{ minWidth: 120 }}>
-              <InputLabel id="history-select-label">History</InputLabel>
-              <Select
-                labelId="history-select-label"
-                value={selectedTextHistory || ''}
-                onChange={handleHistoryChange}
-                label="History"
-              >
-                {Texthistories.map((textHistory) => (
-                  <MenuItem key={textHistory.textId} value={textHistory.textId}>
-                    {`${textHistory.dateTime} - ${textHistory.penName}`}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-            <Tooltip title="저장">
-              <IconButton
-                onClick={handleSaveToList}
-              >
-                <SaveIcon />
-              </IconButton>
-            </Tooltip>
-          </Box>
-          {activeUsers.map((user, index) => (
-            <Chip key={index} label={user} color="primary" variant="outlined" />
-          ))}
-          <Box sx={{ ml: 2, display: 'flex', gap: 1 }}>
-          </Box>
-          <Box sx={{ flexGrow: 1 }} />
-          <Tooltip title="새로고침">
-            <IconButton onClick={fetchText}>
-              <RefreshIcon />
-            </IconButton>
-          </Tooltip>
-          <Tooltip title="txt로 내보내기">
-            <IconButton onClick={makeFile}>
-              <DownloadIcon />
-            </IconButton>
-          </Tooltip>
-          <Tooltip title={isViewerMode ? '편집모드' : '뷰어모드'}>
-            <IconButton
-              onClick={toggleViewerMode}
-            >
-              {isViewerMode ? <VisibilityOffIcon /> : <VisibilityIcon />}
-              {/* {isViewerMode ? 'Edit Mode' : 'Viewer Mode'} */}
-            </IconButton>
+  async function waitForSharedArrayInitialization(ydoc: Y.Doc): Promise<Y.Array<Sentence>> {
+    return new Promise((resolve) => {
+      const sharedArray = ydoc.getArray<Sentence>('sentences');
 
-          </Tooltip>
-          <Tooltip title={isCheckMode ? '취소' : '체크모드'} >
-            <IconButton
-              onClick={toggleCheckMode}
-            // Tooltip text
-            >
-              {isCheckMode ? <CancelIcon /> : <CheckBoxIcon />}
-            </IconButton>
+      // sharedArray가 초기화되었는지 확인
+      if (sharedArray.length > 0) {
+        resolve(sharedArray);
+      } else {
+        // 옵저버를 사용하여 sharedArray가 초기화될 때까지 대기
+        sharedArray.observe(() => {
+          if (sharedArray.length > 0) {
+            resolve(sharedArray);
+          }
+        });
+      }
+    });
+  }
 
+return (
+  <>
+    <AppBar position="relative" color="transparent" elevation={0}>
+      <Toolbar>
+        <Typography variant="h6" noWrap>
+          공동 소설 작성
+        </Typography>
+        <Box sx={{ ml: 2 }}> {/* Adds left margin */}
+          <FormControl variant="outlined" size="small" style={{ minWidth: 120 }}>
+            <InputLabel id="history-select-label">History</InputLabel>
+            <Select
+              labelId="history-select-label"
+              value={selectedTextHistory || ''}
+              onChange={handleHistoryChange}
+              label="History"
+            >
+              {Texthistories.map((textHistory) => (
+                <MenuItem key={textHistory.textId} value={textHistory.textId}>
+                  {`${textHistory.dateTime} - ${textHistory.penName}`}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          <Tooltip title="저장">
+            <IconButton
+              onClick={handleSaveToList}
+            >
+              <SaveIcon />
+            </IconButton>
           </Tooltip>
-          {/* <Button
+        </Box>
+        {activeUsers.map((user, index) => (
+          <Chip key={index} label={user} color="primary" variant="outlined" />
+        ))}
+        <Box sx={{ ml: 2, display: 'flex', gap: 1 }}>
+        </Box>
+        <Box sx={{ flexGrow: 1 }} />
+        <Tooltip title="새로고침">
+          <IconButton onClick={fetchText}>
+            <RefreshIcon />
+          </IconButton>
+        </Tooltip>
+        <Tooltip title="txt로 내보내기">
+          <IconButton onClick={generateEpub}>
+            <DownloadIcon />
+          </IconButton>
+        </Tooltip>
+        <Tooltip title={isViewerMode ? '편집모드' : '뷰어모드'}>
+          <IconButton
+            onClick={toggleViewerMode}
+          >
+            {isViewerMode ? <VisibilityOffIcon /> : <VisibilityIcon />}
+            {/* {isViewerMode ? 'Edit Mode' : 'Viewer Mode'} */}
+          </IconButton>
+
+        </Tooltip>
+        <Tooltip title={isCheckMode ? '취소' : '체크모드'} >
+          <IconButton
+            onClick={toggleCheckMode}
+          // Tooltip text
+          >
+            {isCheckMode ? <CancelIcon /> : <CheckBoxIcon />}
+          </IconButton>
+
+        </Tooltip>
+        {/* <Button
             startIcon={isCheckMode ? <CheckBoxIcon /> : <CheckBoxOutlineBlankIcon />}
             variant="contained"
             color="secondary"
@@ -459,147 +494,147 @@ const TextEditPage: React.FC = () => {
           >
             {isCheckMode ? 'Cancel' : 'Check Mode'}
           </Button> */}
-          {isCheckMode && (
-            <Tooltip title="모두 선택">
-              <IconButton onClick={handleSelectAll}>
-                <SelectAllIcon />
-              </IconButton>
+        {isCheckMode && (
+          <Tooltip title="모두 선택">
+            <IconButton onClick={handleSelectAll}>
+              <SelectAllIcon />
+            </IconButton>
 
-            </Tooltip>
-            // <Button
-            //   variant="contained"
-            //   color="warning"
-            //   startIcon={<SelectAllIcon />}
-            //   onClick={handleSelectAll}
-            //   sx={{ ml: 1 }}
-            // >
-            //   {selectedIds.size === content.length ? 'Deselect All' : 'Select All'}
-            // </Button>
-          )}
-          {isCheckMode && selectedIds.size > 0 && (
-            <Button
-              variant="contained"
-              color="error"
-              startIcon={<DeleteIcon />}
-              onClick={handleBulkDelete}
-              sx={{ ml: 1 }}
+          </Tooltip>
+          // <Button
+          //   variant="contained"
+          //   color="warning"
+          //   startIcon={<SelectAllIcon />}
+          //   onClick={handleSelectAll}
+          //   sx={{ ml: 1 }}
+          // >
+          //   {selectedIds.size === content.length ? 'Deselect All' : 'Select All'}
+          // </Button>
+        )}
+        {isCheckMode && selectedIds.size > 0 && (
+          <Button
+            variant="contained"
+            color="error"
+            startIcon={<DeleteIcon />}
+            onClick={handleBulkDelete}
+            sx={{ ml: 1 }}
+          >
+            Delete Selected
+          </Button>
+        )}
+      </Toolbar>
+    </AppBar>
+    <Box sx={{ padding: 2, flexGrow: 1, overflowY: 'auto' }}>
+      <DragDropContext onDragEnd={onDragEnd}>
+        <Droppable droppableId="sentences">
+          {(provided: any) => (
+            <Box
+              {...provided.droppableProps}
+              ref={provided.innerRef}
+              sx={{
+                marginTop: 2,
+                padding: 2,
+                border: '1px solid #ccc',
+                borderRadius: '4px',
+                backgroundColor: '#f9f9f9',
+              }}
             >
-              Delete Selected
-            </Button>
-          )}
-        </Toolbar>
-      </AppBar>
-      <Box sx={{ padding: 2, flexGrow: 1, overflowY: 'auto' }}>
-        <DragDropContext onDragEnd={onDragEnd}>
-          <Droppable droppableId="sentences">
-            {(provided: any) => (
-              <Box
-                {...provided.droppableProps}
-                ref={provided.innerRef}
-                sx={{
-                  marginTop: 2,
-                  padding: 2,
-                  border: '1px solid #ccc',
-                  borderRadius: '4px',
-                  backgroundColor: '#f9f9f9',
-                }}
-              >
-                {content.map((sentence, index) => (
-                  <Draggable key={sentence.id} draggableId={sentence.id} index={index}>
-                    {(provided: any) => (
-                      <Box
-                        ref={provided.innerRef}
-                        {...provided.draggableProps}
-                        sx={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          mb: 1,
-                          position: 'relative',
-                          '&:hover .action-icons, &:hover .drag-icon': { opacity: 1 }
-                        }}
-                        onClick={() => handleLineClick(sentence.id)}
-                      >
-                        {!isViewerMode && (
-                          <Box
-                            {...provided.dragHandleProps}
-                            className="drag-icon"
-                            sx={{
-                              mr: 1,
-                              color: 'lightgray',
-                              fontSize: '20px',
-                              opacity: 0,
-                              transition: 'opacity 0.2s'
-                            }}
-                          >
-                            <DragIndicatorIcon />
-                          </Box>
-                        )}
-                        {isCheckMode && (
-                          <Checkbox
-                            checked={selectedIds.has(sentence.id)}
-                            onClick={(e) => e.stopPropagation()} // 이벤트 전파를 막음
-                            onChange={() => toggleSelect(sentence.id)}
-                            color="primary"
-                            sx={{ mr: 1 }}
-                          />
-                        )}
-                        {editingId === sentence.id && !isViewerMode ? (
-                          <TextField
-                            fullWidth
-                            variant="outlined"
-                            defaultValue={sentence.text}
-                            onBlur={(e) => handleSave(sentence.id, e.target.value)}
-                            onKeyPress={(e) => handleKeyPress(e, sentence.id, index, (e.target as HTMLInputElement).value)}
-                            autoFocus
-                            sx={{ fontSize: '0.875rem' }}
-                          />
-                        ) : (
-                          <Typography variant="body2" sx={{ flexGrow: 1, fontSize: '0.875rem' }}>
-                            {sentence.text
-                              ? sentence.text
-                              : sentence.isEditing
-                                ? <em>작성 중...</em>
-                                : ""}
-                          </Typography>
-                        )}
-                        {!isViewerMode && !isCheckMode && (
-                          <Box
-                            className="action-icons"
-                            sx={{
-                              display: 'flex',
-                              alignItems: 'center',
-                              opacity: 0,
-                              transition: 'opacity 0.2s',
-                              position: 'absolute',
-                              right: 0
-                            }}
-                          >
-                            <Chip label={sentence.lastEditor} size="small" sx={{ mr: 1 }} />
-                            <IconButton size="small" onClick={() => handleDelete(sentence.id)}>
-                              <DeleteIcon />
-                            </IconButton>
-                          </Box>
-                        )}
-                      </Box>
-                    )}
-                  </Draggable>
-                ))}
-                {provided.placeholder}
-                {!isViewerMode && (
-                  <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
-                    <IconButton onClick={handleAddNewSentenceAtBottom}>
-                      <AddIcon />
-                    </IconButton>
+              {content.map((sentence, index) => (
+                <Draggable key={sentence.id} draggableId={sentence.id} index={index}>
+                  {(provided: any) => (
+                    <Box
+                      ref={provided.innerRef}
+                      {...provided.draggableProps}
+                      sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        mb: 1,
+                        position: 'relative',
+                        '&:hover .action-icons, &:hover .drag-icon': { opacity: 1 }
+                      }}
+                      onClick={() => handleLineClick(sentence.id)}
+                    >
+                      {!isViewerMode && (
+                        <Box
+                          {...provided.dragHandleProps}
+                          className="drag-icon"
+                          sx={{
+                            mr: 1,
+                            color: 'lightgray',
+                            fontSize: '20px',
+                            opacity: 0,
+                            transition: 'opacity 0.2s'
+                          }}
+                        >
+                          <DragIndicatorIcon />
+                        </Box>
+                      )}
+                      {isCheckMode && (
+                        <Checkbox
+                          checked={selectedIds.has(sentence.id)}
+                          onClick={(e) => e.stopPropagation()} // 이벤트 전파를 막음
+                          onChange={() => toggleSelect(sentence.id)}
+                          color="primary"
+                          sx={{ mr: 1 }}
+                        />
+                      )}
+                      {editingId === sentence.id && !isViewerMode ? (
+                        <TextField
+                          fullWidth
+                          variant="outlined"
+                          defaultValue={sentence.text}
+                          onBlur={(e) => handleSave(sentence.id, e.target.value)}
+                          onKeyPress={(e) => handleKeyPress(e, sentence.id, index, (e.target as HTMLInputElement).value)}
+                          autoFocus
+                          sx={{ fontSize: '0.875rem' }}
+                        />
+                      ) : (
+                        <Typography variant="body2" sx={{ flexGrow: 1, fontSize: '0.875rem' }}>
+                          {sentence.text
+                            ? sentence.text
+                            : sentence.isEditing
+                              ? <em>작성 중...</em>
+                              : ""}
+                        </Typography>
+                      )}
+                      {!isViewerMode && !isCheckMode && (
+                        <Box
+                          className="action-icons"
+                          sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            opacity: 0,
+                            transition: 'opacity 0.2s',
+                            position: 'absolute',
+                            right: 0
+                          }}
+                        >
+                          <Chip label={sentence.lastEditor} size="small" sx={{ mr: 1 }} />
+                          <IconButton size="small" onClick={() => handleDelete(sentence.id)}>
+                            <DeleteIcon />
+                          </IconButton>
+                        </Box>
+                      )}
+                    </Box>
+                  )}
+                </Draggable>
+              ))}
+              {provided.placeholder}
+              {!isViewerMode && (
+                <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
+                  <IconButton onClick={handleAddNewSentenceAtBottom}>
+                    <AddIcon />
+                  </IconButton>
 
-                  </Box>
-                )}
-              </Box>
-            )}
-          </Droppable>
-        </DragDropContext>
-      </Box>
-    </>
-  );
+                </Box>
+              )}
+            </Box>
+          )}
+        </Droppable>
+      </DragDropContext>
+    </Box>
+  </>
+);
 };
 
 export default TextEditPage;
