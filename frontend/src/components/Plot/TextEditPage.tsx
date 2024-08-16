@@ -87,12 +87,8 @@ const TextEditPage: React.FC = () => {
         // ydocRef.current.clipboard.dangerouslyPasteHTML(script.text);
         const sharedArray = ydocRef.current.getArray<Sentence>('sentences');
         ydocRef.current.transact(() => {
-          // sharedArray.delete(0, sharedArray.length);
-          // sharedArray.insert(0, script);
-          if (sharedArray.length === 0) {
-            sharedArray.insert(0, script);
-          }
-
+          sharedArray.delete(0, sharedArray.length);
+          sharedArray.insert(0, script);
         });
       }
     } catch (error) {

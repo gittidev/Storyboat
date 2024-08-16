@@ -453,7 +453,7 @@ const StudioOverviewFlow: React.FC = () => {
                     bgColor={isMainNodeMode ? '#FFD700' : '#808080'}  // 노랑(#FFD700) 및 회색(#808080) 배경색 설정
                     onClick={toggleMainNodeMode}
                 >
-                    {isMainNodeMode ? "메인 노드 선택 모드 On" : "메인 노드 선택 모드 Off"}
+                    {isMainNodeMode ? "메인 플롯 선택 모드 On" : "메인 플롯 선택 모드 Off"}
                 </StyledButton>
                 <StyledButton variant="contained" className="secondary" onClick={deleteAllNodes}>전체삭제</StyledButton>
             </div>
