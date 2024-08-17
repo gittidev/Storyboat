@@ -101,7 +101,7 @@ DPO : 사용자 선호도를 직접 최적화하는 머신러닝 모델의 강�
 <details>
 <summary> 1️⃣ 메인페이지 </summary>
 <div markdown="1">
-![메인페이지](https://lab.ssafy.com/s11-webmobile1-sub2/S11P12C107/-/raw/Readme_image/AFTER_IMG/1._%EB%A9%94%EC%9D%B8%ED%8E%98%EC%9D%B4%EC%A7%80.gif)
+![메인페이지](https://lab.ssafy.com/s11-webmobile1-sub2/S11P12C107/-/raw/Readme_image/1._main.gif)
 <br><br>네비게이션바를 사용해서 반응형으로 제작
 <br>
 </div>
@@ -109,7 +109,8 @@ DPO : 사용자 선호도를 직접 최적화하는 머신러닝 모델의 강�
 <details>
 <summary> 2️⃣ 프로필 페이지  </summary>
 <div markdown="1">
-![프로필 페이지](https://lab.ssafy.com/s11-webmobile1-sub2/S11P12C107/-/raw/Readme_image/README_IMG/3.%20%ED%94%84%EB%A1%9C%ED%95%84.png?ref_type=heads)
+![프로필 페이지](https://lab.ssafy.com/s11-webmobile1-sub2/S11P12C107/-/raw/Readme_image/3.%ED%94%84%EB%A1%9C%ED%95%84.jpg?ref_type=heads)
+![로그인](https://lab.ssafy.com/s11-webmobile1-sub2/S11P12C107/-/raw/Readme_image/2._login.gif)
 <br><br>회원의 기본 정보를 출력
 <br>
 </div>
@@ -126,16 +127,14 @@ DPO : 사용자 선호도를 직접 최적화하는 머신러닝 모델의 강�
 <details>
 <summary> 4️⃣ 팀원 모집 </summary>
 <div markdown="1">
-![팀 찾기1](https://lab.ssafy.com/s11-webmobile1-sub2/S11P12C107/-/raw/Readme_image/README_IMG/5.1%20%ED%8C%80%20%EC%B0%BE%EC%95%84%EB%B3%B4%EA%B8%B0.png?ref_type=heads)
+![팀 찾기1](https://lab.ssafy.com/s11-webmobile1-sub2/S11P12C107/-/raw/Readme_image/5._%ED%8C%80_%EC%B0%BE%EA%B8%B0.gif?ref_type=heads)
 </div>
 </details>
 
 <details>
 <summary> 5️⃣ 캐릭터 보관함 </summary>
 <div markdown="1">
-![캐릭터 보관함1](https://lab.ssafy.com/s11-webmobile1-sub2/S11P12C107/-/raw/Readme_image/README_IMG/6.1%20%EC%BA%90%EB%A6%AD%ED%84%B0%20%ED%8E%98%EC%9D%B4%EC%A7%80.jpg?ref_type=heads)
-![캐릭터 보관함2](https://lab.ssafy.com/s11-webmobile1-sub2/S11P12C107/-/raw/Readme_image/README_IMG/6.2%20%EC%BA%90%EB%A6%AD%ED%84%B0%20%ED%8E%98%EC%9D%B4%EC%A7%80.jpg?ref_type=heads)
-![캐릭터 보관함3](https://lab.ssafy.com/s11-webmobile1-sub2/S11P12C107/-/raw/Readme_image/README_IMG/6.3%20%EC%BA%90%EB%A6%AD%ED%84%B0%20%ED%8E%98%EC%9D%B4%EC%A7%80.jpg?ref_type=heads)
+![캐릭터 보관함1](https://lab.ssafy.com/s11-webmobile1-sub2/S11P12C107/-/raw/Readme_image/4._%EC%BA%90%EB%A6%AD%ED%84%B0.gif?ref_type=heads)
 <br><br>캐릭터 카드 생성, 이미지 업로드 및 수정기능
  <br>
  </div>
