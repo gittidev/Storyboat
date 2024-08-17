@@ -101,7 +101,7 @@ DPO : 사용자 선호도를 직접 최적화하는 머신러닝 모델의 강�
 <details>
 <summary> 1️⃣ 메인페이지 </summary>
 <div markdown="1">
-![메인페이지](https://lab.ssafy.com/s11-webmobile1-sub2/S11P12C107/-/raw/Readme_image/1._main.gif)
+![메인페이지](https://lab.ssafy.com/s11-webmobile1-sub2/S11P12C107/-/raw/Readme_image/%EC%83%88%20%EB%B2%84%EC%A0%84/1._%EB%A9%94%EC%9D%B8_%EB%8B%A4%EC%8B%9C_.gif)
 <br><br>네비게이션바를 사용해서 반응형으로 제작
 <br>
 </div>
@@ -110,7 +110,7 @@ DPO : 사용자 선호도를 직접 최적화하는 머신러닝 모델의 강�
 <summary> 2️⃣ 프로필 페이지  </summary>
 <div markdown="1">
 ![프로필 페이지](https://lab.ssafy.com/s11-webmobile1-sub2/S11P12C107/-/raw/Readme_image/3.%ED%94%84%EB%A1%9C%ED%95%84.jpg?ref_type=heads)
-![로그인](https://lab.ssafy.com/s11-webmobile1-sub2/S11P12C107/-/raw/Readme_image/2._login.gif)
+![로그인](https://lab.ssafy.com/s11-webmobile1-sub2/S11P12C107/-/raw/Readme_image/%EC%83%88%20%EB%B2%84%EC%A0%84/2._login.gif)
 <br><br>회원의 기본 정보를 출력
 <br>
 </div>
@@ -127,14 +127,14 @@ DPO : 사용자 선호도를 직접 최적화하는 머신러닝 모델의 강�
 <details>
 <summary> 4️⃣ 팀원 모집 </summary>
 <div markdown="1">
-![팀 찾기1](https://lab.ssafy.com/s11-webmobile1-sub2/S11P12C107/-/raw/Readme_image/5._%ED%8C%80_%EC%B0%BE%EA%B8%B0.gif?ref_type=heads)
+![팀 찾기1](https://lab.ssafy.com/s11-webmobile1-sub2/S11P12C107/-/raw/Readme_image/%EC%83%88%20%EB%B2%84%EC%A0%84/5._%ED%8C%80_%EC%B0%BE%EA%B8%B0.gif)
 </div>
 </details>
 
 <details>
 <summary> 5️⃣ 캐릭터 보관함 </summary>
 <div markdown="1">
-![캐릭터 보관함1](https://lab.ssafy.com/s11-webmobile1-sub2/S11P12C107/-/raw/Readme_image/4._%EC%BA%90%EB%A6%AD%ED%84%B0.gif?ref_type=heads)
+![캐릭터 보관함1](https://lab.ssafy.com/s11-webmobile1-sub2/S11P12C107/-/raw/Readme_image/%EC%83%88%20%EB%B2%84%EC%A0%84/%EC%BA%90%EB%A6%AD%ED%84%B0_2__1_.gif)
 <br><br>캐릭터 카드 생성, 이미지 업로드 및 수정기능
  <br>
  </div>
