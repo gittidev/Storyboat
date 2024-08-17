@@ -188,7 +188,14 @@ SDXL은 Diffusion 모델을 기반으로 하며, 큰 해상도를 가진 이미�
 <summary> 3️⃣ 글쓰기 : DPO(H4zephyr-7b-beta 프롬프트 기반 텍스트 생성 모델) </summary>
 <div markdown="1">
 
-Zephy 모델은 DPO(Deep Proportional Optimization) 강화 학습 훈련방법을 기반으로 한 인공지능 모델로, 파라미터를 비율적으로 조정하여 최적화하였습니다. UltraFeedback의 64000개의 프롬프트 오픈 소스 데이터셋을 사용하였고, 2023년 11월에 출시되었습니다. 저희는 Hugging Face에서 제공하는 Inference를 사용하여, 이 모델을 활용하였습니다. 서버가 없어도 사용할 수 있고, TypeScript에서 라이브러리의 형태로 간편하게 모델을 불러올 수 있다는 장점이 있습니다. 다만, 이 모델은 영어 input과 output만 가능하기 때문에 중간에 오픈소스 MyMemory API 를 사용해서 번역하는 기능을 추가했습니다.  
+
+Zephyr 모델은 DPO(Deep Proportional Optimization) 강화 학습 훈련방법을 기반으로 한 인공지능 모델로, 파라미터를 비율적으로 조정하여 최적화하였습니다. UltraFeedback의 64000개의 프롬프트 오픈 소스 데이터셋을 사용하였고, 2023년 11월에 출시되었습니다. 저희는 Hugging Face에서 제공하는 Inference를 사용하여, 이 모델을 활용하였습니다. 서버가 없어도 사용할 수 있고, TypeScript에서 라이브러리의 형태로 간편하게 모델을 불러올 수 있다는 장점이 있습니다. 다만, 이 모델은 영어 input과 output만 가능하기 때문에 중간에 오픈소스 MyMemory API 를 사용해서 번역하는 기능을 추가했습니다.  
+
+LLM 자연어 처리 모델을 평가하기 위해서, 사용되는 지표는 여러가지 있습니다. 그 중 MT-Bench와 같은 경우에는 모델이 대화의 일관성을 잘 유지하는지, 상황을 잘 이해하고 있는지 평가하는 지표입니다. AlpacaEval은 모델의 응답 품질을 평가하고, 모델이 주어진 프롬프트에 대해 얼마나 잘 반응하는지 측정하는 역할을 합니다. 
+
+![Zephyr](https://lab.ssafy.com/s11-webmobile1-sub2/S11P12C107/-/raw/Readme_image/Zephyr.jpg)
+
+같은 Size 즉, 같은 프롬포트 Size에서 비교해봤을 때 Zephyer는 상당히 높은 MT-Bench, AlpacaEval 값을 가집니다. Size를 크게 해서 비교를 해봤을 때, GPT-3.5-turbo보다는 높은 값을 가지며, GPT-4보다는 아쉬운 성능을 가지고 있습니다. Size 값에 대해서 추가로 설명을 하자면, 이 Size는 매개변수의 사이즈를 이야기합니다. 파라미터가 클수록 메모리 요구량이 많고,  필요한 데이터 양이 많으며, 전력 소모량이 큽니다. AI 모델은 우리 뇌의 시냅스를 본따 만들었다고 하는데, 이 시냅스가 AI에서 파라미터 또는 매개변수 값인 것입니다. 최근에는 gpt처럼 다재다능한 LLM 모델 말고도, 특수한 상황에서만 사용하는, parameter를 줄인 small LLM도 많이 개발 중입니다. 그러한 상황에서 저희가 LLM 모델로 Zephyr을 선택한 것은 Size 대비 뛰어난 성능을 가지고 있고, 오픈 소스이며, TypeScript 환경에서 라이브러리 형태로 출력할 수 있는 Inference를 제공하기 때문입니다.
 
 참고 사이트 <br/>
 [Hugging Face Zephyr-7B Beta 모델](https://huggingface.co/HuggingFaceH4/zephyr-7b-beta)
